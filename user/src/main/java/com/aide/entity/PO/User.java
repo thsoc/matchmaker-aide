@@ -2,8 +2,10 @@ package com.aide.entity.PO;
 
 import com.aide.entity.DO.UserDo;
 import com.baomidou.mybatisplus.annotation.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -16,6 +18,8 @@ import java.time.LocalDateTime;
  */
 @Data// 更推荐的方式
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("aide_user")
 public class User {
     private static final long serialVersionUID = 1L;
@@ -204,10 +208,6 @@ public class User {
 
     @TableField("reserved8")
     private Integer reserved8;
-
-    public User() {
-    }
-
 
 //    /**
 //     * 添加 Builder

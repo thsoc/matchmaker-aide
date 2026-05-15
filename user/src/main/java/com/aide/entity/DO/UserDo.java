@@ -1,13 +1,10 @@
 package com.aide.entity.DO;
 
 import com.aide.entity.PO.User;
-import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-
-import java.math.BigDecimal;
-
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -21,6 +18,8 @@ import java.time.LocalDateTime;
  */
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserDo {
     private Long id;
     private String account;
@@ -49,11 +48,7 @@ public class UserDo {
     private String updateBy;
     private Integer version;
 
-    public UserDo() {
-    }
-
     /**
-     * @return
      * @author mazg
      * @description 充值
      * @date 19:08 2026/5/14
