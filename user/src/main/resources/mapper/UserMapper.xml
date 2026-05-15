@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aide.mapper.UserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.aide.entity.PO.User">
+        <id column="id" property="id"/>
+        <result column="account" property="account"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="description" property="description"/>
+        <result column="introduce" property="introduce"/>
+        <result column="role" property="role"/>
+        <result column="status" property="status"/>
+        <result column="sex" property="sex"/>
+        <result column="avatar" property="avatar"/>
+        <result column="email" property="email"/>
+        <result column="mobile" property="mobile"/>
+        <result column="birthday" property="birthday"/>
+        <result column="income" property="income"/>
+        <result column="occupation" property="occupation"/>
+        <result column="integral" property="integral"/>
+        <result column="money" property="money"/>
+        <result column="login_count" property="loginCount"/>
+        <result column="last_login_time" property="lastLoginTime"/>
+        <result column="last_login_ip" property="lastLoginIp"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="del_flag" property="delFlag"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="version" property="version"/>
+        <result column="reserved1" property="reserved1"/>
+        <result column="reserved2" property="reserved2"/>
+        <result column="reserved3" property="reserved3"/>
+        <result column="reserved4" property="reserved4"/>
+        <result column="reserved5" property="reserved5"/>
+        <result column="reserved6" property="reserved6"/>
+        <result column="reserved7" property="reserved7"/>
+        <result column="reserved8" property="reserved8"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, account, username, password, description, introduce, role, status, sex, avatar,
+        email, mobile, birthday, income, occupation, integral, money, login_count,
+        last_login_time, last_login_ip, create_time, update_time, del_flag,
+        create_by, update_by, version,
+        reserved1, reserved2, reserved3, reserved4, reserved5, reserved6, reserved7, reserved8
+    </sql>
+
+    <!-- 根据ID查询用户 -->
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM aide_user
+        WHERE id = #{id} AND del_flag = 0
+    </select>
+
+    <!-- 根据账号查询用户 -->
+    <select id="selectByAccount" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM aide_user
+        WHERE account = #{account} AND del_flag = 0
+        LIMIT 1
+    </select>
+
+    <!-- 根据手机号查询用户 -->
+    <select id="selectByMobile" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM aide_user
+        WHERE mobile = #{mobile} AND del_flag = 0
+        LIMIT 1
+    </select>
+
+    <!-- 根据邮箱查询用户 -->
+    <select id="selectByEmail" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM aide_user
+        WHERE email = #{email} AND del_flag = 0
+        LIMIT 1
+    </select>
+
+    <!-- 分页查询用户列表 -->
+    <select id="selectUserPage" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM aide_user
+        <where>
+            del_flag = 0
+            <if test="user.username != null and user.username != ''">
+                AND username LIKE CONCAT('%', #{user.username}, '%')
+            </if>
+            <if test="user.mobile != null and user.mobile != ''">
+                AND mobile = #{user.mobile}
+            </if>
+            <if test="user.email != null and user.email != ''">
+                AND email = #{user.email}
+            </if>
+            <if test="user.status != null and user.status != ''">
+                AND status = #{user.status}
+            </if>
+            <if test="user.role != null and user.role != ''">
+                AND role = #{user.role}
+            </if>
+            <if test="user.sex != null and user.sex != ''">
+                AND sex = #{user.sex}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND create_time &lt;= #{endTime}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 插入用户 -->
+    <insert id="insert" parameterType="com.aide.entity.PO.User">
+        INSERT INTO aide_user (
+        <trim suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="account != null and account != ''">account,</if>
+            <if test="username != null and username != ''">username,</if>
+            <if test="password != null and password != ''">password,</if>
+            <if test="description != null">description,</if>
+            <if test="introduce != null">introduce,</if>
+            <if test="role != null">role,</if>
+            <if test="status != null">status,</if>
+            <if test="sex != null">sex,</if>
+            <if test="avatar != null">avatar,</if>
+            <if test="email != null">email,</if>
+            <if test="mobile != null">mobile,</if>
+            <if test="birthday != null">birthday,</if>
+            <if test="income != null">income,</if>
+            <if test="occupation != null">occupation,</if>
+            <if test="integral != null">integral,</if>
+            <if test="money != null">money,</if>
+            <if test="loginCount != null">login_count,</if>
+            <if test="lastLoginTime != null">last_login_time,</if>
+            <if test="lastLoginIp != null">last_login_ip,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="version != null">version,</if>
+            <if test="reserved1 != null">reserved1,</if>
+            <if test="reserved2 != null">reserved2,</if>
+            <if test="reserved3 != null">reserved3,</if>
+            <if test="reserved4 != null">reserved4,</if>
+            <if test="reserved5 != null">reserved5,</if>
+            <if test="reserved6 != null">reserved6,</if>
+            <if test="reserved7 != null">reserved7,</if>
+            <if test="reserved8 != null">reserved8,</if>
+        </trim>
+        ) VALUES (
+        <trim suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="account != null and account != ''">#{account},</if>
+            <if test="username != null and username != ''">#{username},</if>
+            <if test="password != null and password != ''">#{password},</if>
+            <if test="description != null">#{description},</if>
+            <if test="introduce != null">#{introduce},</if>
+            <if test="role != null">#{role},</if>
+            <if test="status != null">#{status},</if>
+            <if test="sex != null">#{sex},</if>
+            <if test="avatar != null">#{avatar},</if>
+            <if test="email != null">#{email},</if>
+            <if test="mobile != null">#{mobile},</if>
+            <if test="birthday != null">#{birthday},</if>
+            <if test="income != null">#{income},</if>
+            <if test="occupation != null">#{occupation},</if>
+            <if test="integral != null">#{integral},</if>
+            <if test="money != null">#{money},</if>
+            <if test="loginCount != null">#{loginCount},</if>
+            <if test="lastLoginTime != null">#{lastLoginTime},</if>
+            <if test="lastLoginIp != null">#{lastLoginIp},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="version != null">#{version},</if>
+            <if test="reserved1 != null">#{reserved1},</if>
+            <if test="reserved2 != null">#{reserved2},</if>
+            <if test="reserved3 != null">#{reserved3},</if>
+            <if test="reserved4 != null">#{reserved4},</if>
+            <if test="reserved5 != null">#{reserved5},</if>
+            <if test="reserved6 != null">#{reserved6},</if>
+            <if test="reserved7 != null">#{reserved7},</if>
+            <if test="reserved8 != null">#{reserved8},</if>
+        </trim>
+        )
+    </insert>
+
+    <!-- 批量插入用户 -->
+    <insert id="insertBatch" parameterType="java.util.List">
+        INSERT INTO aide_user (
+        id, account, username, password, description, introduce, role, status, sex, avatar,
+        email, mobile, birthday, income, occupation, integral, money, login_count,
+        last_login_time, last_login_ip, create_time, update_time, del_flag,
+        create_by, update_by, version
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id}, #{item.account}, #{item.username}, #{item.password},
+            #{item.description}, #{item.introduce}, #{item.role}, #{item.status},
+            #{item.sex}, #{item.avatar}, #{item.email}, #{item.mobile},
+            #{item.birthday}, #{item.income}, #{item.occupation}, #{item.integral},
+            #{item.money}, #{item.loginCount}, #{item.lastLoginTime}, #{item.lastLoginIp},
+            #{item.createTime}, #{item.updateTime}, #{item.delFlag},
+            #{item.createBy}, #{item.updateBy}, #{item.version}
+            )
+        </foreach>
+    </insert>
+
+    <!-- 根据ID更新用户（动态字段） -->
+    <update id="updateById" parameterType="com.aide.entity.PO.User">
+        UPDATE aide_user
+        <set>
+            <if test="account != null and account != ''">account = #{account},</if>
+            <if test="username != null and username != ''">username = #{username},</if>
+            <if test="password != null and password != ''">password = #{password},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="introduce != null">introduce = #{introduce},</if>
+            <if test="role != null">role = #{role},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="sex != null">sex = #{sex},</if>
+            <if test="avatar != null">avatar = #{avatar},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="mobile != null">mobile = #{mobile},</if>
+            <if test="birthday != null">birthday = #{birthday},</if>
+            <if test="income != null">income = #{income},</if>
+            <if test="occupation != null">occupation = #{occupation},</if>
+            <if test="integral != null">integral = #{integral},</if>
+            <if test="money != null">money = #{money},</if>
+            <if test="loginCount != null">login_count = #{loginCount},</if>
+            <if test="lastLoginTime != null">last_login_time = #{lastLoginTime},</if>
+            <if test="lastLoginIp != null">last_login_ip = #{lastLoginIp},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="version != null">version = version + 1,</if>
+        </set>
+        WHERE id = #{id} AND del_flag = 0
+    </update>
+
+    <!-- 根据ID逻辑删除 -->
+    <update id="deleteById">
+        UPDATE aide_user
+        SET del_flag = 1, update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 批量逻辑删除 -->
+    <update id="deleteBatchIds">
+        UPDATE aide_user
+        SET del_flag = 1, update_time = NOW()
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!-- 统计用户数量 -->
+    <select id="countUsers" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM aide_user
+        <where>
+            del_flag = 0
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+            <if test="role != null and role != ''">
+                AND role = #{role}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND create_time &lt;= #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <!-- 检查账号是否存在 -->
+    <select id="existsByAccount" resultType="java.lang.Boolean">
+        SELECT COUNT(1) > 0
+        FROM aide_user
+        WHERE account = #{account} AND del_flag = 0
+    </select>
+
+    <!-- 检查手机号是否存在 -->
+    <select id="existsByMobile" resultType="java.lang.Boolean">
+        SELECT COUNT(1) > 0
+        FROM aide_user
+        WHERE mobile = #{mobile} AND del_flag = 0
+    </select>
+
+    <!-- 更新最后登录信息 -->
+    <update id="updateLastLoginInfo">
+        UPDATE aide_user
+        SET last_login_time = #{lastLoginTime},
+        last_login_ip = #{lastLoginIp},
+        login_count = login_count + 1,
+        update_time = NOW()
+        WHERE id = #{id} AND del_flag = 0
+    </update>
+
+    <!-- 更新用户状态 -->
+    <update id="updateStatus">
+        UPDATE aide_user
+        SET status = #{status},
+        update_time = NOW(),
+        update_by = #{updateBy}
+        WHERE id = #{id} AND del_flag = 0
+    </update>
+
+    <!-- 查询需要清理的用户（长时间未登录） -->
+    <select id="selectInactiveUsers" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM aide_user
+        WHERE del_flag = 0
+        AND status = 'INACTIVE'
+        AND (last_login_time IS NULL OR last_login_time &lt; #{thresholdDate})
+        ORDER BY last_login_time ASC
+        LIMIT #{limit}
+    </select>
+
+</mapper>
