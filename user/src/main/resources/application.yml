@@ -4,6 +4,11 @@ server:
 spring:
   application:
     name: user-service
+  cloud:
+    nacos:
+      discovery:
+        # 确保这里的地址是实际 Nacos 服务器的地址
+        server-addr: ${NACOS_ADDR:192.168.2.20:8848}
 
   jackson:
     generator:
@@ -11,7 +16,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.2.20:3306/matchmaker?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://${MYSQL_HOST:192.168.2.20}:3306/matchmaker?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
     password: 123456
 

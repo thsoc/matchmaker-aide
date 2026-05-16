@@ -1,0 +1,2 @@
+docker cp nacos-server:/home/nacos/logs/ /var/nacos/logs/
+docker cp nacos-server:/home/nacos/conf/ /var/nacos/conf
