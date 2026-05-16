@@ -5,6 +5,7 @@ import com.aide.entity.VO.LoginRequest;
 import com.aide.entity.VO.LoginResponse;
 import com.aide.service.UserService;
 import org.springframework.web.bind.annotation.*;
+import com.aide.entity.VO.RegisterRequest;
 
 import javax.validation.Valid;
 
@@ -38,8 +39,17 @@ public class UserController {
      * 用户注册接口 - POST 请求
      */
     @PostMapping("/register")
-    public String register() {
-        return "注册成功";
+    public Result<LoginResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
+        try {
+            LoginResponse response = userService.register(registerRequest);
+            return Result.success("注册成功", response);
+        } catch (IllegalArgumentException e) {
+            return Result.error(e.getMessage());
+        } catch (IllegalStateException e) {
+            return Result.error(403, e.getMessage());
+        } catch (Exception e) {
+            return Result.error("注册失败: " + e.getMessage());
+        }
     }
 
     /**

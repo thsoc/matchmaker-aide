@@ -2,6 +2,7 @@ package com.aide.service;
 
 import com.aide.entity.PO.User;
 import com.aide.entity.VO.LoginResponse;
+import com.aide.entity.VO.RegisterRequest;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -28,5 +29,18 @@ public interface UserService extends IService<User> {
 
     boolean batchImportUsers(List<User> users);
 
+    /**
+     * 用户登录
+     * @param account 用户账号
+     * @param password 用户密码
+     * @return 登录后的用户响应
+     */
     LoginResponse login(String account, String password);
+
+    /**
+     * 用户注册
+     * @param registerRequest 注册用户信息
+     * @return 注册后的用户响应
+     */
+    LoginResponse register(RegisterRequest registerRequest);
 }

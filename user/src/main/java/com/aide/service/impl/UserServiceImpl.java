@@ -5,6 +5,7 @@ import com.aide.domain.UserDomainService;
 import com.aide.entity.DO.UserDo;
 import com.aide.entity.PO.User;
 import com.aide.entity.VO.LoginResponse;
+import com.aide.entity.VO.RegisterRequest;
 import com.aide.mapper.UserMapper;
 import com.aide.service.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -33,32 +35,44 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public LoginResponse login(String account, String password) {
-        // 通过领域服务获取用户信息
-        UserDo userDo = userDomainService.getUserByAccount(account);
+        // 应用服务只负责：
+        // 1. 获取真实IP（实际项目中应从请求中获取）
+        String loginIp = "127.0.0.1";
 
-        // 验证密码（实际项目中应该使用加密比较）
-        if (!password.equals(userDo.getPassword())) {
-            throw new IllegalArgumentException("密码错误");
-        }
+        // 2. 调用领域服务完成核心业务逻辑
+        UserDo userDo = userDomainService.login(account, password, loginIp);
 
-        // 检查用户状态
-        if (!userDo.isActive()) {
-            throw new IllegalStateException("用户账户已被禁用");
-        }
-        // 记录登录信息
-        String loginIp = "127.0.0.1"; // 实际项目中应从请求中获取真实IP
-        userDo.recordLogin(loginIp);
-        // 更新用户信息，时间更新，最后登录 时间
-        userDomainService.updateUser(userDo);
+        // 3. 记录日志
+        log.info("用户登录成功，用户ID: {}, 账号: {}", userDo.getId(), userDo.getAccount());
 
-        // 构建登录响应
+        // 4. 构建响应VO
         return LoginResponse.builder()
                 .userId(userDo.getId())
                 .account(userDo.getAccount())
                 .username(userDo.getUsername())
-                .token(generateToken(userDo)) // 生成JWT令牌
+                .token(generateToken(userDo))
                 .role(userDo.getRole())
                 .status(userDo.getStatus())
+                .build();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public LoginResponse register(RegisterRequest registerRequest) {
+        UserDo userDo = new UserDo();
+        BeanUtils.copyProperties(registerRequest, userDo);
+
+        UserDo createdUser = userDomainService.createUser(userDo);
+
+        log.info("用户注册成功，用户ID: {}, 账号: {}", createdUser.getId(), createdUser.getAccount());
+
+        return LoginResponse.builder()
+                .userId(createdUser.getId())
+                .account(createdUser.getAccount())
+                .username(createdUser.getUsername())
+                .token(generateToken(createdUser))
+                .role(createdUser.getRole())
+                .status(createdUser.getStatus())
                 .build();
     }
 

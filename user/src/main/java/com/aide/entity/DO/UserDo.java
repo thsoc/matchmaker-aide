@@ -48,6 +48,59 @@ public class UserDo {
     private String updateBy;
     private Integer version;
 
+
+    /**
+     * 初始化新用户默认值 - 领域方法
+     * 这是创建新用户时的领域规则
+     */
+    public void initializeNewUser() {
+        // 新用户默认状态为正常
+        if (this.status == null || this.status.isEmpty()) {
+            this.status = "NORMAL";
+        }
+
+        // 新用户默认角色为普通用户
+        if (this.role == null || this.role.isEmpty()) {
+            this.role = "USER";
+        }
+
+        // 初始化积分和余额
+        if (this.integral == null) {
+            this.integral = 0;
+        }
+        if (this.money == null) {
+            this.money = BigDecimal.ZERO;
+        }
+        if (this.loginCount == null) {
+            this.loginCount = 0;
+        }
+        if (this.delFlag == null) {
+            this.delFlag = 0;
+        }
+        // 设置创建时间和更新时间
+        LocalDateTime now = LocalDateTime.now();
+        this.createTime = now;
+        this.updateTime = now;
+    }
+
+    /**
+     * 验证登录 - 领域方法
+     * 封装登录的核心业务规则
+     * @param password 输入的密码
+     */
+    public void validateLogin(String password) {
+        // 验证密码
+        if (password == null || !password.equals(this.password)) {
+            throw new IllegalArgumentException("密码错误");
+        }
+
+        // 验证用户状态
+        if (!isActive()) {
+            throw new IllegalStateException("用户账户已被禁用");
+        }
+    }
+
+
     /**
      * @author mazg
      * @description 充值

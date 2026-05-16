@@ -19,6 +19,9 @@ public class UserDomainService {
         validateUser(userDo);
         checkUniqueness(userDo);
 
+        // 通过领域方法初始化默认值 - 这是领域知识
+        userDo.initializeNewUser();
+
         User user = convertToPo(userDo);
         userMapper.insert(user);
         
@@ -48,6 +51,31 @@ public class UserDomainService {
         }
         return convertToDo(user);
     }
+
+    /**
+     * 用户登录 - 领域服务方法
+     * 职责：
+     * 1. 获取用户
+     * 2. 验证登录（密码、状态）
+     * 3. 记录登录信息
+     * 4. 更新用户
+     */
+    public UserDo login(String account, String password, String loginIp) {
+        // 1. 获取用户
+        UserDo userDo = getUserByAccount(account);
+
+        // 2. 验证登录（通过领域方法）
+        userDo.validateLogin(password);
+
+        // 3. 记录登录信息（通过领域方法）
+        userDo.recordLogin(loginIp);
+
+        // 4. 更新用户
+        updateUser(userDo);
+
+        return userDo;
+    }
+
     
     private void validateUser(UserDo userDo) {
         if (userDo.getAccount() == null || userDo.getAccount().trim().isEmpty()) {
@@ -78,4 +106,5 @@ public class UserDomainService {
     private UserDo convertToDo(User user) {
         return new UserDo().copy(user);
     }
+
 }
