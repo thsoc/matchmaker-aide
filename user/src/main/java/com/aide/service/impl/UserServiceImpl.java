@@ -1,46 +1,61 @@
 
 package com.aide.service.impl;
 
+import com.aide.common.IpUtils;
 import com.aide.domain.UserDomainService;
 import com.aide.entity.DO.UserDo;
 import com.aide.entity.PO.User;
 import com.aide.entity.VO.LoginResponse;
 import com.aide.entity.VO.RegisterRequest;
 import com.aide.mapper.UserMapper;
+import com.aide.service.CacheService;
 import com.aide.service.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.math.BigDecimal;
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
-
     private final UserDomainService userDomainService;
+    private final CacheService cacheService;
+    private final ObjectMapper objectMapper;
 
-    public UserServiceImpl(UserDomainService userDomainService) {
+    public UserServiceImpl(UserDomainService userDomainService, CacheService cacheService, ObjectMapper objectMapper) {
         this.userDomainService = userDomainService;
+        this.cacheService = cacheService;
+        this.objectMapper = objectMapper;
     }
 
 
     @Override
-    public LoginResponse login(String account, String password) {
+    public LoginResponse login(String account, String password, HttpServletRequest request) {
         // 应用服务只负责：
         // 1. 获取真实IP（实际项目中应从请求中获取）
-        String loginIp = "127.0.0.1";
+        String loginIp = IpUtils.getIpAddress(request);
 
         // 2. 调用领域服务完成核心业务逻辑
         UserDo userDo = userDomainService.login(account, password, loginIp);
+
+        // 3. 记录日志
+        log.info("用户登录成功，用户ID: {}, 账号: {}", userDo.getId(), userDo.getAccount());
+
+        // 4. 生成token
+        String token = generateToken(userDo);
+
+        // 5. 将用户信息保存到缓存（使用token作为key）
+        saveUserToCache(token, userDo);
 
         // 3. 记录日志
         log.info("用户登录成功，用户ID: {}, 账号: {}", userDo.getId(), userDo.getAccount());
@@ -58,13 +73,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public LoginResponse register(RegisterRequest registerRequest) {
+    public LoginResponse register(RegisterRequest registerRequest, HttpServletRequest request) {
         UserDo userDo = new UserDo();
         BeanUtils.copyProperties(registerRequest, userDo);
 
-        UserDo createdUser = userDomainService.createUser(userDo);
+        UserDo createdUser = userDomainService.createUser(userDo, IpUtils.getIpAddress(request));
 
         log.info("用户注册成功，用户ID: {}, 账号: {}", createdUser.getId(), createdUser.getAccount());
+
+        // 生成token
+        String token = generateToken(createdUser);
+
+        // 将用户信息保存到缓存
+        saveUserToCache(token, createdUser);
 
         return LoginResponse.builder()
                 .userId(createdUser.getId())
@@ -111,11 +132,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean createUser(User user) {
+    public boolean createUser(User user, HttpServletRequest request) {
         UserDo userDo = new UserDo();
         BeanUtils.copyProperties(user, userDo);
 
-        UserDo createdUser = userDomainService.createUser(userDo);
+        UserDo createdUser = userDomainService.createUser(userDo, IpUtils.getIpAddress(request));
 
         BeanUtils.copyProperties(createdUser, user);
         log.info("创建用户成功，用户ID: {}, 账号: {}", user.getId(), user.getAccount());
@@ -162,16 +183,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return result;
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public boolean updateLastLoginInfo(Long id, String ip) {
-        UserDo userDo = userDomainService.getUserById(id);
-        userDo.recordLogin(ip);
-
-        userDomainService.updateUser(userDo);
-        log.debug("更新用户登录信息成功，用户ID: {}, IP: {}", id, ip);
-        return true;
-    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -209,24 +220,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return Math.toIntExact(this.count(wrapper));
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public boolean batchImportUsers(List<User> users) {
-        if (users == null || users.isEmpty()) {
-            throw new IllegalArgumentException("用户列表不能为空");
+    private void saveUserToCache(String token, UserDo userDo) {
+        try {
+            // 直接传递对象，由RedisTemplate自动序列化
+            cacheService.setUserCache(token, userDo, 7200);
+            log.info("用户信息已保存到缓存，token: {}", token);
+        } catch (Exception e) {
+            log.error("保存用户信息到缓存失败", e);
         }
-
-        for (User user : users) {
-            try {
-                UserDo userDo = new UserDo();
-                BeanUtils.copyProperties(user, userDo);
-                userDomainService.createUser(userDo);
-            } catch (Exception e) {
-                log.warn("导入用户失败，账号: {}, 原因: {}", user.getAccount(), e.getMessage());
-            }
-        }
-
-        log.info("批量导入用户完成，总数: {}", users.size());
-        return true;
     }
 }

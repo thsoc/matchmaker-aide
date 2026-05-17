@@ -3,7 +3,6 @@ package com.aide.domain;
 import com.aide.entity.DO.UserDo;
 import com.aide.mapper.UserMapper;
 import com.aide.entity.PO.User;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,19 +14,25 @@ public class UserDomainService {
         this.userMapper = userMapper;
     }
     
-    public UserDo createUser(UserDo userDo) {
+    public UserDo createUser(UserDo userDo, String registerIp) {
         validateUser(userDo);
         checkUniqueness(userDo);
 
-        // 通过领域方法初始化默认值 - 这是领域知识
         userDo.initializeNewUser();
+
+        if (registerIp != null) {
+            userDo.record(registerIp);
+        }
 
         User user = convertToPo(userDo);
         userMapper.insert(user);
-        
+
         userDo = convertToDo(user);
         return userDo;
     }
+
+
+
     
     public void updateUser(UserDo userDo) {
         validateUser(userDo);
@@ -68,7 +73,7 @@ public class UserDomainService {
         userDo.validateLogin(password);
 
         // 3. 记录登录信息（通过领域方法）
-        userDo.recordLogin(loginIp);
+        userDo.record(loginIp);
 
         // 4. 更新用户
         updateUser(userDo);

@@ -7,6 +7,7 @@ import com.aide.service.UserService;
 import org.springframework.web.bind.annotation.*;
 import com.aide.entity.VO.RegisterRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -14,6 +15,7 @@ import javax.validation.Valid;
 public class UserController {
 
     private final UserService userService;
+
     public UserController(UserService userService) {
         this.userService = userService;
     }
@@ -22,9 +24,9 @@ public class UserController {
      * 用户登录接口 - POST 请求
      */
     @PostMapping("/login")
-    public Result<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+    public Result<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletRequest request) {
         try {
-            LoginResponse response = userService.login(loginRequest.getAccount(), loginRequest.getPassword());
+            LoginResponse response = userService.login(loginRequest.getAccount(), loginRequest.getPassword(), request);
             return Result.success("登录成功", response);
         } catch (IllegalArgumentException e) {
             return Result.error(e.getMessage());
@@ -39,9 +41,9 @@ public class UserController {
      * 用户注册接口 - POST 请求
      */
     @PostMapping("/register")
-    public Result<LoginResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
+    public Result<LoginResponse> register(@Valid @RequestBody RegisterRequest registerRequest, HttpServletRequest request) {
         try {
-            LoginResponse response = userService.register(registerRequest);
+            LoginResponse response = userService.register(registerRequest, request);
             return Result.success("注册成功", response);
         } catch (IllegalArgumentException e) {
             return Result.error(e.getMessage());

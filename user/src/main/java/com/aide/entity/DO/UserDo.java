@@ -155,10 +155,11 @@ public class UserDo {
         this.password = newPassword;
     }
 
-    public void recordLogin(String ip) {
+    public void record(String ip) {
         this.lastLoginTime = LocalDateTime.now();
         this.lastLoginIp = ip;
         this.loginCount = this.loginCount == null ? 1 : this.loginCount + 1;
+        this.createBy = getAccount();
         this.updateBy = getAccount();
         this.updateTime = LocalDateTime.now();
     }
