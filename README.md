@@ -1,4 +1,7 @@
-# 结构介绍
+# 项目结构介绍
+
+
+# 服务器环境配置
 
 ## docker-config
 
@@ -24,7 +27,7 @@ docker pull mysql:5.7
 ## nacos
 
 ### 拉取nacos
-docker pull nacos-server:v2.3.1
+docker pull nacos/nacos-server:v2.3.1
 
 ### 创建数据库和表
 [docker-nacos-mysql.sql](docker-config/docker-nacos-mysql.sql)
@@ -35,4 +38,13 @@ docker pull nacos-server:v2.3.1
 ### 启动nacos
 [nacos-start.sh](docker-config/nacos-start.sh)
 
+## redis
 
+### 拉取redis
+docker pull redis:7.2 
+
+### 修改配置文件
+[redis.conf](docker-config/redis.conf)
+
+### 启动redis
+[redis-start.sh](docker-config/redis-start.sh)
