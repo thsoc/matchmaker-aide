@@ -15,14 +15,19 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -31,11 +36,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private final UserDomainService userDomainService;
     private final CacheService cacheService;
     private final ObjectMapper objectMapper;
+    private final SecretKey jwtSecretKey;
+    private final Long jwtExpiration;
 
-    public UserServiceImpl(UserDomainService userDomainService, CacheService cacheService, ObjectMapper objectMapper) {
+    public UserServiceImpl(UserDomainService userDomainService,
+                           CacheService cacheService,
+                           ObjectMapper objectMapper,
+                           SecretKey jwtSecretKey,
+                           @Value("${jwt.expiration:7200}") Long jwtExpiration) {
         this.userDomainService = userDomainService;
         this.cacheService = cacheService;
         this.objectMapper = objectMapper;
+        this.jwtSecretKey = jwtSecretKey;
+        this.jwtExpiration = jwtExpiration;
     }
 
 
@@ -101,8 +114,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * 生成JWT令牌（简化版本，实际项目中需要使用JWT库）
      */
     private String generateToken(UserDo userDo) {
-        // 这里只是一个示例，实际项目中应该使用JWT库生成真正的令牌
-        return "token_" + userDo.getId() + "_" + System.currentTimeMillis();
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + jwtExpiration * 1000);
+
+        return Jwts.builder()
+                .setSubject(String.valueOf(userDo.getId()))
+                .claim("account", userDo.getAccount())
+                .claim("username", userDo.getUsername())
+                .claim("role", userDo.getRole())
+                .claim("sex", userDo.getSex())
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(jwtSecretKey, SignatureAlgorithm.HS256)
+                .compact();
     }
 
     @Override
