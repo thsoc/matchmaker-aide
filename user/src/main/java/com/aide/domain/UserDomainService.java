@@ -20,9 +20,7 @@ public class UserDomainService {
 
         userDo.initializeNewUser();
 
-        if (registerIp != null) {
-            userDo.record(registerIp);
-        }
+        userDo.record(registerIp);
 
         User user = convertToPo(userDo);
         userMapper.insert(user);

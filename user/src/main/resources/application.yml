@@ -23,7 +23,7 @@ spring:
   redis:
     host: ${REDIS_HOST:192.168.2.20}
     port: 6379
-    password: ${REDIS_PASSWORD:}
+    password: ${REDIS_PASSWORD:123456}
     database: 0
     timeout: 3000ms
     lettuce:
@@ -46,6 +46,6 @@ mybatis-plus:
       id-type: assign_id
   mapper-locations: classpath*:/mapper/**/*.xml
 
-  jwt:
-    secret: myVerySecureSecretKeyForMatchmakerAideApplicationThatIsAtLeast256BitsLong
-    expiration: 7200  # 令牌过期时间（秒），默认2小时
+jwt:
+  secret: myVerySecureSecretKeyForMatchmakerAideApplicationThatIsAtLeast256BitsLong
+  expiration: 7200  # 令牌过期时间（秒），默认2小时

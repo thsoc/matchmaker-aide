@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * @author 20721
+ * @author mazg
  * @description 登录响应参数
  * @date 2026/5/15
  * @date 12:31

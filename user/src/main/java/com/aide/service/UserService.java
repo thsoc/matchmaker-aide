@@ -30,17 +30,17 @@ public interface UserService extends IService<User> {
      *
      * @param account  用户账号
      * @param password 用户密码
-     * @param request
+     * @param loginIp
      * @return 登录后的用户响应
      */
-    LoginResponse login(String account, String password, HttpServletRequest request);
+    LoginResponse login(String account, String password, String loginIp);
 
     /**
      * 用户注册
      *
      * @param registerRequest 注册用户信息
-     * @param request
+     * @param loginIp
      * @return 注册后的用户响应
      */
-    LoginResponse register(RegisterRequest registerRequest, HttpServletRequest request);
+    LoginResponse register(RegisterRequest registerRequest, String loginIp);
 }

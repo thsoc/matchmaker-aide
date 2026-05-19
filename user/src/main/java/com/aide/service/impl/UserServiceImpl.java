@@ -53,27 +53,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
 
     @Override
-    public LoginResponse login(String account, String password, HttpServletRequest request) {
+    public LoginResponse login(String account, String password, String loginIp) {
         // 应用服务只负责：
-        // 1. 获取真实IP（实际项目中应从请求中获取）
-        String loginIp = IpUtils.getIpAddress(request);
 
-        // 2. 调用领域服务完成核心业务逻辑
+        // 1. 调用领域服务完成核心业务逻辑
         UserDo userDo = userDomainService.login(account, password, loginIp);
 
-        // 3. 记录日志
+        // 2. 记录日志
         log.info("用户登录成功，用户ID: {}, 账号: {}", userDo.getId(), userDo.getAccount());
 
-        // 4. 生成token
+        // 3. 生成token
         String token = generateToken(userDo);
 
-        // 5. 将用户信息保存到缓存（使用token作为key）
+        // 4. 将用户信息保存到缓存（使用token作为key）
         saveUserToCache(token, userDo);
 
-        // 3. 记录日志
-        log.info("用户登录成功，用户ID: {}, 账号: {}", userDo.getId(), userDo.getAccount());
-
-        // 4. 构建响应VO
+        // 5. 构建响应VO
         return LoginResponse.builder()
                 .userId(userDo.getId())
                 .account(userDo.getAccount())
@@ -86,11 +81,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public LoginResponse register(RegisterRequest registerRequest, HttpServletRequest request) {
-        UserDo userDo = new UserDo();
-        BeanUtils.copyProperties(registerRequest, userDo);
+    public LoginResponse register(RegisterRequest registerRequest, String loginIp) {
+        // 使用 Builder 模式创建领域对象，而不是 BeanUtils.copyProperties
+        UserDo userDo = UserDo.builder()
+                .account(registerRequest.getAccount())
+                .password(registerRequest.getPassword())
+                .username(registerRequest.getUsername())
+                .mobile(registerRequest.getMobile())
+                .email(registerRequest.getEmail())
+                .sex(registerRequest.getSex())
+                .birthday(registerRequest.getBirthday())
+                .occupation(registerRequest.getOccupation())
+                .build();
 
-        UserDo createdUser = userDomainService.createUser(userDo, IpUtils.getIpAddress(request));
+        UserDo createdUser = userDomainService.createUser(userDo, loginIp);
 
         log.info("用户注册成功，用户ID: {}, 账号: {}", createdUser.getId(), createdUser.getAccount());
 

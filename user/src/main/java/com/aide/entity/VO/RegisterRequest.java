@@ -6,7 +6,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 /**
- * @author 20721
+ * @author mazg
  * @description 用户注册请求参数
  * @date 2026/5/16
  * @date 12:43

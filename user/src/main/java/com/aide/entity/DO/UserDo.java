@@ -8,10 +8,11 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 
 
 /**
- * @author 20721
+ * @author mazg
  * @description 用户领域对象
  * @date 2026/5/14
  * @date 17:47
@@ -54,6 +55,10 @@ public class UserDo {
      * 这是创建新用户时的领域规则
      */
     public void initializeNewUser() {
+        // 生成雪花算法 ID（解决 MyBatis-Plus 3.4.3 的 BUG）
+        if (this.id == null) {
+            this.id = IdWorker.getId();
+        }
         // 新用户默认状态为正常
         if (this.status == null || this.status.isEmpty()) {
             this.status = "NORMAL";
@@ -155,9 +160,15 @@ public class UserDo {
         this.password = newPassword;
     }
 
-    public void record(String ip) {
+    public void record(String loginIp) {
+        // 领域规则：IP地址不能为空，如果为空则设置为"unknown"
+        if (loginIp == null || loginIp.trim().isEmpty()) {
+            this.lastLoginIp = "unknown";
+        } else {
+            this.lastLoginIp = loginIp.trim();
+        }
         this.lastLoginTime = LocalDateTime.now();
-        this.lastLoginIp = ip;
+        this.lastLoginIp = loginIp;
         this.loginCount = this.loginCount == null ? 1 : this.loginCount + 1;
         this.createBy = getAccount();
         this.updateBy = getAccount();
@@ -206,126 +217,6 @@ public class UserDo {
         this.updateTime = updateTime;
     }
 
-
-
-    //    /**
-//     * 添加 Builder
-//     */
-//    public static class Builder {
-//        private UserDo userDo;
-//        public Builder() {
-//            userDo = new UserDo();
-//        }
-//        public Builder id(Long id) {
-//            userDo.id = id;
-//            return this;
-//        }
-//        public Builder account(String account) {
-//            userDo.account = account;
-//            return this;
-//        }
-//
-//        public Builder username(String username) {
-//            userDo.username = username;
-//            return this;
-//        }
-//
-//        public Builder password(String password) {
-//            userDo.password = password;
-//            return this;
-//        }
-//        public Builder description(String description) {
-//            userDo.description = description;
-//            return this;
-//        }
-//        public Builder introduce(String introduce) {
-//            userDo.introduce = introduce;
-//            return this;
-//        }
-//        public Builder role(String role) {
-//            userDo.role = role;
-//            return this;
-//        }
-//        public Builder status(String status) {
-//            userDo.status = status;
-//            return this;
-//        }
-//        public Builder sex(String sex) {
-//            userDo.sex = sex;
-//            return this;
-//        }
-//        public Builder avatar(String avatar) {
-//            userDo.avatar = avatar;
-//            return this;
-//        }
-//        public Builder email(String email) {
-//            userDo.email = email;
-//            return this;
-//        }
-//        public Builder mobile(String mobile) {
-//            userDo.mobile = mobile;
-//            return this;
-//        }
-//        public Builder birthday(String birthday) {
-//            userDo.birthday = birthday;
-//            return this;
-//        }
-//        public Builder income(BigDecimal income) {
-//            userDo.income = income;
-//            return this;
-//        }
-//        public Builder occupation(String occupation) {
-//            userDo.occupation = occupation;
-//            return this;
-//        }
-//        public Builder integral(Integer integral) {
-//            userDo.integral = integral;
-//            return this;
-//        }
-//        public Builder money(BigDecimal money) {
-//            userDo.money = money;
-//            return this;
-//        }
-//        public Builder loginCount(Integer loginCount) {
-//            userDo.loginCount = loginCount;
-//            return this;
-//        }
-//        public Builder lastLoginTime(LocalDateTime lastLoginTime) {
-//            userDo.lastLoginTime = lastLoginTime;
-//            return this;
-//        }
-//        public Builder lastLoginIp(String lastLoginIp) {
-//            userDo.lastLoginIp = lastLoginIp;
-//            return this;
-//        }
-//        public Builder createTime(LocalDateTime createTime) {
-//            userDo.createTime = createTime;
-//            return this;
-//        }
-//        public Builder updateTime(LocalDateTime updateTime) {
-//            userDo.updateTime = updateTime;
-//            return this;
-//        }
-//        public Builder delFlag(Integer delFlag) {
-//            userDo.delFlag = delFlag;
-//            return this;
-//        }
-//        public Builder createBy(String createBy) {
-//            userDo.createBy = createBy;
-//            return this;
-//        }
-//        public Builder updateBy(String updateBy) {
-//            userDo.updateBy = updateBy;
-//            return this;
-//        }
-//        public Builder version(Integer version) {
-//            userDo.version = version;
-//            return this;
-//        }
-//        public UserDo build() {
-//            return userDo;
-//        }
-//    }
     public UserDo copy(User user) {
         if (user == null) {
             return null;

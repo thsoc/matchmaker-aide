@@ -1,5 +1,6 @@
 package com.aide.controller;
 
+import com.aide.common.IpUtils;
 import com.aide.common.Result;
 import com.aide.entity.VO.LoginRequest;
 import com.aide.entity.VO.LoginResponse;
@@ -26,7 +27,7 @@ public class UserController {
     @PostMapping("/login")
     public Result<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletRequest request) {
         try {
-            LoginResponse response = userService.login(loginRequest.getAccount(), loginRequest.getPassword(), request);
+            LoginResponse response = userService.login(loginRequest.getAccount(), loginRequest.getPassword(), IpUtils.getIpAddress(request));
             return Result.success("登录成功", response);
         } catch (IllegalArgumentException e) {
             return Result.error(e.getMessage());
@@ -43,7 +44,7 @@ public class UserController {
     @PostMapping("/register")
     public Result<LoginResponse> register(@Valid @RequestBody RegisterRequest registerRequest, HttpServletRequest request) {
         try {
-            LoginResponse response = userService.register(registerRequest, request);
+            LoginResponse response = userService.register(registerRequest, IpUtils.getIpAddress(request));
             return Result.success("注册成功", response);
         } catch (IllegalArgumentException e) {
             return Result.error(e.getMessage());

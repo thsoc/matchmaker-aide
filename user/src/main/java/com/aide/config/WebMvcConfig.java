@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * @description 用户认证拦截器配置
- * @author 20721
+ * @author mazg
  * @date 2026/5/18
  * @date 11:08
  */
