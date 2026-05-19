@@ -58,7 +58,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
-        <!-- 显式添加 Jackson Java 8 日期时间支持 -->
+        <!-- 显式添加 Jackson Java 8 日期时间支持,虽然springboot自带但是未正确注入 -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
