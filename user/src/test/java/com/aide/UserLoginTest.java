@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @date 2026/5/19
  * @date 15:47
  */
-@SpringBootTest
+@SpringBootTest(classes = UserClientApp.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserLoginTest {
 
     @Autowired

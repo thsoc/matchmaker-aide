@@ -146,7 +146,45 @@ public class UserDo {
             this.mobile = mobile;
         }
         if (avatar != null && !avatar.trim().isEmpty()) {
+            // 验证头像URL格式
+            validateAvatarUrl(avatar);
             this.avatar = avatar;
+        }
+    }
+
+    /**
+     * 更新用户头像 - 领域方法
+     * 封装头像更新的业务规则
+     */
+    public void updateAvatar(String avatarUrl) {
+        if (avatarUrl == null || avatarUrl.trim().isEmpty()) {
+            throw new IllegalArgumentException("头像URL不能为空");
+        }
+
+        // 验证头像URL格式
+        validateAvatarUrl(avatarUrl);
+
+        this.avatar = avatarUrl;
+        this.updateTime = LocalDateTime.now();
+    }
+
+    /**
+     * 验证头像URL格式
+     */
+    private void validateAvatarUrl(String avatarUrl) {
+        // 简单的URL格式验证
+        if (!avatarUrl.startsWith("/") && !avatarUrl.startsWith("http")) {
+            throw new IllegalArgumentException("无效的头像URL格式");
+        }
+
+        // 可以添加更多验证规则，比如检查文件扩展名等
+        String lowerUrl = avatarUrl.toLowerCase();
+        if (lowerUrl.matches(".*\\.(jpg|jpeg|png|gif|bmp|webp)$")) {
+            // 是有效的图片格式
+            return;
+        } else if (!lowerUrl.startsWith("http")) {
+            // 如果不是HTTP URL，则检查是否为相对路径且以图片扩展名结尾
+            throw new IllegalArgumentException("头像URL必须以有效的图片格式结尾(.jpg, .png, .gif, .bmp, .webp)");
         }
     }
 

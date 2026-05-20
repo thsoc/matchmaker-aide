@@ -5,6 +5,7 @@ import com.aide.entity.VO.LoginResponse;
 import com.aide.entity.VO.RegisterRequest;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -13,17 +14,10 @@ public interface UserService extends IService<User> {
 
     IPage<User> pageUsers(int current, int size, User user, String startTime, String endTime);
 
-    boolean createUser(User user, HttpServletRequest request);
 
     boolean updateUser(User user);
 
     boolean deleteUser(Long id);
-
-    boolean deleteBatchUsers(List<Long> ids);
-
-    boolean updateStatus(Long id, String status, String updateBy);
-
-    Integer countUsers(String status, String role, String startTime, String endTime);
 
     /**
      * 用户登录
@@ -43,4 +37,14 @@ public interface UserService extends IService<User> {
      * @return 注册后的用户响应
      */
     LoginResponse register(RegisterRequest registerRequest, String loginIp);
+
+    /**
+     * 上传用户头像
+     * @param
+     * @param avatarFile 头像文件
+     * @param request HTTP请求对象
+     * @return 头像访问URL
+     */
+    String uploadAvatar(MultipartFile avatarFile, HttpServletRequest request) throws Exception;
+
 }

@@ -7,6 +7,7 @@ import com.aide.entity.VO.LoginResponse;
 import com.aide.service.UserService;
 import org.springframework.web.bind.annotation.*;
 import com.aide.entity.VO.RegisterRequest;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -56,26 +57,17 @@ public class UserController {
     }
 
     /**
-     * 获取用户信息 - GET 请求，带路径参数
+     * 上传用户头像
      */
-    @GetMapping("/{id}")
-    public String getUserById(@PathVariable Long id) {
-        return "获取用户ID: " + id;
-    }
-
-    /**
-     * 更新用户信息 - PUT 请求
-     */
-    @PutMapping("/{id}")
-    public String updateUser(@PathVariable Long id) {
-        return "更新用户ID: " + id;
-    }
-
-    /**
-     * 删除用户 - DELETE 请求
-     */
-    @DeleteMapping("/{id}")
-    public String deleteUser(@PathVariable Long id) {
-        return "删除用户ID: " + id;
+    @PostMapping("/uploadAvatar")
+    public Result<String> uploadAvatar(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+        try {
+            String avatarUrl = userService.uploadAvatar(file, request);
+            return Result.success("头像上传成功", avatarUrl);
+        } catch (IllegalArgumentException e) {
+            return Result.error(e.getMessage());
+        } catch (Exception e) {
+            return Result.error("头像上传失败: " + e.getMessage());
+        }
     }
 }

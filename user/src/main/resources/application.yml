@@ -49,3 +49,9 @@ mybatis-plus:
 jwt:
   secret: myVerySecureSecretKeyForMatchmakerAideApplicationThatIsAtLeast256BitsLong
   expiration: 7200  # 令牌过期时间（秒），默认2小时
+
+# 文件上传配置
+file:
+  upload:
+    path: /uploads
+

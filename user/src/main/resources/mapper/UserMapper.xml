@@ -220,31 +220,41 @@
     </insert>
 
     <!-- 根据ID更新用户（动态字段） -->
-    <update id="updateById" parameterType="com.aide.entity.PO.User">
+    <update id="updateUserById" parameterType="com.aide.entity.PO.User">
         UPDATE aide_user
         <set>
-            <if test="account != null and account != ''">account = #{account},</if>
-            <if test="username != null and username != ''">username = #{username},</if>
-            <if test="password != null and password != ''">password = #{password},</if>
-            <if test="description != null">description = #{description},</if>
-            <if test="introduce != null">introduce = #{introduce},</if>
-            <if test="role != null">role = #{role},</if>
-            <if test="status != null">status = #{status},</if>
-            <if test="sex != null">sex = #{sex},</if>
-            <if test="avatar != null">avatar = #{avatar},</if>
-            <if test="email != null">email = #{email},</if>
-            <if test="mobile != null">mobile = #{mobile},</if>
-            <if test="birthday != null">birthday = #{birthday},</if>
-            <if test="income != null">income = #{income},</if>
-            <if test="occupation != null">occupation = #{occupation},</if>
-            <if test="integral != null">integral = #{integral},</if>
-            <if test="money != null">money = #{money},</if>
-            <if test="loginCount != null">login_count = #{loginCount},</if>
-            <if test="lastLoginTime != null">last_login_time = #{lastLoginTime},</if>
-            <if test="lastLoginIp != null">last_login_ip = #{lastLoginIp},</if>
-            <if test="updateTime != null">update_time = #{updateTime},</if>
-            <if test="updateBy != null">update_by = #{updateBy},</if>
-            <if test="version != null">version = version + 1,</if>
+            <if test="user.account != null and user.account != ''">account = #{user.account},</if>
+            <if test="user.username != null and user.username != ''">username = #{user.username},</if>
+            <if test="user.password != null and user.password != ''">password = #{user.password},</if>
+            <if test="user.description != null">description = #{user.description},</if>
+            <if test="user.introduce != null">introduce = #{user.introduce},</if>
+            <if test="user.role != null">role = #{user.role},</if>
+            <if test="user.status != null">status = #{user.status},</if>
+            <if test="user.sex != null">sex = #{user.sex},</if>
+            <if test="user.avatar != null">avatar = #{user.avatar},</if>
+            <if test="user.email != null">email = #{user.email},</if>
+            <if test="user.mobile != null">mobile = #{user.mobile},</if>
+            <if test="user.birthday != null">birthday = #{user.birthday},</if>
+            <if test="user.income != null">income = #{user.income},</if>
+            <if test="user.occupation != null">occupation = #{user.occupation},</if>
+            <if test="user.integral != null">integral = #{user.integral},</if>
+            <if test="user.money != null">money = #{user.money},</if>
+            <if test="user.loginCount != null">login_count = #{user.loginCount},</if>
+            <if test="user.lastLoginTime != null">last_login_time = #{user.lastLoginTime},</if>
+            <if test="user.lastLoginIp != null">last_login_ip = #{user.lastLoginIp},</if>
+            <if test="user.updateTime != null">update_time = #{user.updateTime},</if>
+            <if test="user.updateBy != null">update_by = #{user.updateBy},</if>
+            <if test="user.version != null">version = user.version + 1,</if>
+        </set>
+        WHERE id = #{user.id} AND del_flag = 0
+    </update>
+
+
+    <!-- 根据ID更新用户头像 -->
+    <update id="updateAvatarById">
+        UPDATE aide_user
+        <set>
+            <if test="avatar != null">avatar = #{avatar}</if>
         </set>
         WHERE id = #{id} AND del_flag = 0
     </update>

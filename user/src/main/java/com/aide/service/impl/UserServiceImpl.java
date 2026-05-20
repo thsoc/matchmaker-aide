@@ -2,11 +2,13 @@
 package com.aide.service.impl;
 
 import com.aide.common.IpUtils;
+import com.aide.context.UserContext;
 import com.aide.domain.UserDomainService;
 import com.aide.entity.DO.UserDo;
 import com.aide.entity.PO.User;
 import com.aide.entity.VO.LoginResponse;
 import com.aide.entity.VO.RegisterRequest;
+import com.aide.infrastructure.FileStorageService;
 import com.aide.mapper.UserMapper;
 import com.aide.service.CacheService;
 import com.aide.service.UserService;
@@ -23,9 +25,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -38,21 +42,28 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private final ObjectMapper objectMapper;
     private final SecretKey jwtSecretKey;
     private final Long jwtExpiration;
+    private final FileStorageService fileStorageService;
+
+    @Value("${server.port:8081}")
+    private String serverPort;
 
     public UserServiceImpl(UserDomainService userDomainService,
                            CacheService cacheService,
                            ObjectMapper objectMapper,
                            SecretKey jwtSecretKey,
-                           @Value("${jwt.expiration:7200}") Long jwtExpiration) {
+                           @Value("${jwt.expiration:7200}") Long jwtExpiration,
+                           FileStorageService fileStorageService) {
         this.userDomainService = userDomainService;
         this.cacheService = cacheService;
         this.objectMapper = objectMapper;
         this.jwtSecretKey = jwtSecretKey;
         this.jwtExpiration = jwtExpiration;
+        this.fileStorageService = fileStorageService;
     }
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public LoginResponse login(String account, String password, String loginIp) {
         // 应用服务只负责：
 
@@ -134,6 +145,55 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String uploadAvatar(MultipartFile avatarFile, HttpServletRequest request) throws Exception {
+        Long userId = UserContext.getUser().getId();
+        // 1. 验证用户是否存在（通过领域服务）
+        UserDo userDo = userDomainService.getUserById(userId);
+
+        // 2. 验证文件类型和大小（应用层验证）
+        validateAvatarFile(avatarFile);
+
+        // 3. 使用基础设施服务保存文件
+        String relativePath = fileStorageService.saveFile(avatarFile, "avatars");
+
+        // 4. 构建完整的访问URL
+        String scheme = request.getScheme();
+        String serverName = request.getServerName();
+        String avatarUrl = scheme + "://" + serverName + ":" + serverPort + relativePath;
+
+        // 5. 通过领域对象更新头像（执行业务规则）
+        userDo.updateAvatar(avatarUrl);
+
+        // 6. 通过领域服务持久化更新
+        userDomainService.updateUser(userDo);
+
+        log.info("用户 {} 头像上传成功，路径: {}", userId, avatarUrl);
+
+        return avatarUrl;
+    }
+
+    /**
+     * 验证头像文件
+     */
+    private void validateAvatarFile(MultipartFile avatarFile) {
+        if (avatarFile == null || avatarFile.isEmpty()) {
+            throw new IllegalArgumentException("头像文件不能为空");
+        }
+
+        // 检查文件类型
+        String contentType = avatarFile.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new IllegalArgumentException("只支持图片格式的文件");
+        }
+
+        // 检查文件大小（限制为5MB）
+        if (avatarFile.getSize() > 5 * 1024 * 1024) {
+            throw new IllegalArgumentException("头像文件大小不能超过5MB");
+        }
+    }
+
+    @Override
     public IPage<User> pageUsers(int current, int size, User user, String startTime, String endTime) {
         Page<User> page = new Page<>(current, size);
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
@@ -158,18 +218,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return this.page(page, wrapper);
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public boolean createUser(User user, HttpServletRequest request) {
-        UserDo userDo = new UserDo();
-        BeanUtils.copyProperties(user, userDo);
-
-        UserDo createdUser = userDomainService.createUser(userDo, IpUtils.getIpAddress(request));
-
-        BeanUtils.copyProperties(createdUser, user);
-        log.info("创建用户成功，用户ID: {}, 账号: {}", user.getId(), user.getAccount());
-        return true;
-    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -197,55 +245,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         boolean result = this.updateById(user);
         log.info("删除用户成功，用户ID: {}", id);
         return result;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public boolean deleteBatchUsers(List<Long> ids) {
-        if (ids == null || ids.isEmpty()) {
-            throw new IllegalArgumentException("用户ID列表不能为空");
-        }
-
-        boolean result = this.removeByIds(ids);
-        log.info("批量删除用户成功，删除数量: {}", ids.size());
-        return result;
-    }
-
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public boolean updateStatus(Long id, String status, String updateBy) {
-        UserDo userDo = userDomainService.getUserById(id);
-
-        if ("NORMAL".equals(status)) {
-            userDo.activate();
-        } else if ("DISABLED".equals(status)) {
-            userDo.deactivate();
-        } else if ("BANNED".equals(status)) {
-            userDo.ban();
-        }
-
-        userDo.updateAuditInfo(updateBy, LocalDateTime.now());
-        userDomainService.updateUser(userDo);
-        log.info("更新用户状态成功，用户ID: {}, 新状态: {}", id, status);
-        return true;
-    }
-
-    @Override
-    public Integer countUsers(String status, String role, String startTime, String endTime) {
-        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(User::getDelFlag, 0)
-                .eq(StringUtils.hasText(status), User::getStatus, status)
-                .eq(StringUtils.hasText(role), User::getRole, role);
-
-        if (StringUtils.hasText(startTime)) {
-            wrapper.ge(User::getCreateTime, startTime);
-        }
-        if (StringUtils.hasText(endTime)) {
-            wrapper.le(User::getCreateTime, endTime);
-        }
-
-        return Math.toIntExact(this.count(wrapper));
     }
 
     private void saveUserToCache(String token, UserDo userDo) {
