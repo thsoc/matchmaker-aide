@@ -38,7 +38,6 @@ public class UserDo {
     private BigDecimal income;
     private String occupation;
     private Integer integral;
-    private BigDecimal money;
     private Integer loginCount;
     private LocalDateTime lastLoginTime;
     private String lastLoginIp;
@@ -73,9 +72,6 @@ public class UserDo {
         if (this.integral == null) {
             this.integral = 0;
         }
-        if (this.money == null) {
-            this.money = BigDecimal.ZERO;
-        }
         if (this.loginCount == null) {
             this.loginCount = 0;
         }
@@ -105,35 +101,6 @@ public class UserDo {
         }
     }
 
-
-    /**
-     * @author mazg
-     * @description 充值
-     * @date 19:08 2026/5/14
-     **/
-    public void recharge(BigDecimal amount) {
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("充值金额必须大于0");
-        }
-        this.money = this.money == null ? amount : this.money.add(amount);
-        this.integral = this.integral == null ? amount.intValue() : this.integral + amount.intValue();
-    }
-
-    /**
-     * @return
-     * @author mazg
-     * @description 提现
-     * @date 19:08 2026/5/14
-     **/
-    public void withdraw(BigDecimal amount) {
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("提现金额必须大于0");
-        }
-        if (this.money == null || this.money.compareTo(amount) < 0) {
-            throw new IllegalStateException("余额不足");
-        }
-        this.money = this.money.subtract(amount);
-    }
 
     public void updateProfile(String username, String email, String mobile, String avatar) {
         if (username != null && !username.trim().isEmpty()) {
@@ -276,7 +243,6 @@ public class UserDo {
                 .income(user.getIncome())
                 .occupation(user.getOccupation())
                 .integral(user.getIntegral())
-                .money(user.getMoney())
                 .loginCount(user.getLoginCount())
                 .lastLoginTime(user.getLastLoginTime())
                 .lastLoginIp(user.getLastLoginIp())

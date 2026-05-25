@@ -1,0 +1,51 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: money-service
+  cloud:
+    nacos:
+      discovery:
+        # 确保这里的地址是实际 Nacos 服务器的地址
+        server-addr: ${NACOS_ADDR:192.168.2.20:8848}
+
+  jackson:
+    generator:
+      write_numbers_as_strings: true
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST:192.168.2.20}:3306/matchmaker?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+
+  redis:
+    host: ${REDIS_HOST:192.168.2.20}
+    port: 6379
+    password: ${REDIS_PASSWORD:123456}
+    database: 0
+    timeout: 3000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
+
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      logic-delete-field: delFlag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      id-type: assign_id
+  mapper-locations: classpath*:/mapper/**/*.xml
+
+jwt:
+  secret: myVerySecureSecretKeyForMatchmakerAideApplicationThatIsAtLeast256BitsLong
+  expiration: 7200  # 令牌过期时间（秒），默认2小时

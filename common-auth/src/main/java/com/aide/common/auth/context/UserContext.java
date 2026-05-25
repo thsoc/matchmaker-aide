@@ -1,7 +1,7 @@
-package com.aide.context;
+package com.aide.common.auth.context;
 
 
-import com.aide.entity.DO.UserDo;
+import com.aide.common.auth.entity.UserInfo;
 
 /**
  * @author mazg
@@ -10,23 +10,23 @@ import com.aide.entity.DO.UserDo;
  * @date 10:48
  */
 public class UserContext {
-    private static final ThreadLocal<UserDo> userHolder = new ThreadLocal<>();
+    private static final ThreadLocal<UserInfo> userHolder = new ThreadLocal<>();
 
-    public static void setUser(UserDo user) {
+    public static void setUser(UserInfo user) {
         userHolder.set(user);
     }
 
-    public static UserDo getUser() {
+    public static UserInfo getUser() {
         return userHolder.get();
     }
 
     public static Long getUserId() {
-        UserDo user = userHolder.get();
+        UserInfo user = userHolder.get();
         return user != null ? user.getId() : null;
     }
 
     public static String getAccount() {
-        UserDo user = userHolder.get();
+        UserInfo user = userHolder.get();
         return user != null ? user.getAccount() : null;
     }
 

@@ -119,7 +119,6 @@ public class UserRegistest {
         assertEquals("NORMAL", userDo.getStatus(), "默认状态应为NORMAL");
         assertEquals("USER", userDo.getRole(), "默认角色应为USER");
         assertEquals(0, userDo.getIntegral(), "默认积分应为0");
-        assertEquals(BigDecimal.ZERO, userDo.getMoney(), "默认余额应为0");
         assertEquals(0, userDo.getLoginCount(), "默认登录次数应为0");
         assertEquals(0, userDo.getDelFlag(), "默认删除标志应为0");
         assertNotNull(userDo.getCreateTime(), "创建时间不应为空");

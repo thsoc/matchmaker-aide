@@ -1,4 +1,4 @@
-package com.aide.service;
+package com.aide.common.auth.service;
 
 public interface CacheService {
 

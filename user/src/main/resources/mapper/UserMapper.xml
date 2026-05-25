@@ -43,7 +43,7 @@
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, account, username, password, description, introduce, role, status, sex, avatar,
-        email, mobile, birthday, income, occupation, integral, money, login_count,
+        email, mobile, birthday, income, occupation, integral, login_count,
         last_login_time, last_login_ip, create_time, update_time, del_flag,
         create_by, update_by, version,
         reserved1, reserved2, reserved3, reserved4, reserved5, reserved6, reserved7, reserved8

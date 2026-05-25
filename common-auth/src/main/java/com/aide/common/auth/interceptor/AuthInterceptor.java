@@ -1,9 +1,10 @@
-package com.aide.interceptor;
+package com.aide.common.auth.interceptor;
 
 
-import com.aide.context.UserContext;
-import com.aide.entity.DO.UserDo;
-import com.aide.service.CacheService;
+import com.aide.common.Result.Result;
+import com.aide.common.auth.context.UserContext;
+import com.aide.common.auth.entity.UserInfo;
+import com.aide.common.auth.service.CacheService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -42,20 +43,20 @@ public class AuthInterceptor implements HandlerInterceptor {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(objectMapper.writeValueAsString(
-                com.aide.common.Result.error(401, "未登录或登录已过期")
+                Result.error(401, "未登录或登录已过期")
             ));
             return false;
         }
         
         try {
-            UserDo user = validateTokenAndGetUser(token);
+            UserInfo user = validateTokenAndGetUser(token);
             
             if (user == null) {
                 log.warn("Token无效或已过期，路径: {}", request.getRequestURI());
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 response.setContentType("application/json;charset=UTF-8");
                 response.getWriter().write(objectMapper.writeValueAsString(
-                    com.aide.common.Result.error(401, "登录已过期，请重新登录")
+                    Result.error(401, "登录已过期，请重新登录")
                 ));
                 return false;
             }
@@ -69,7 +70,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(objectMapper.writeValueAsString(
-                com.aide.common.Result.error(401, "Token验证失败")
+                Result.error(401, "Token验证失败")
             ));
             return false;
         }
@@ -95,7 +96,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     /**
      * 验证Token并获取用户信息
      */
-    private UserDo validateTokenAndGetUser(String token) {
+    private UserInfo validateTokenAndGetUser(String token) {
         try {
             Claims claims = Jwts.parserBuilder()
                     .setSigningKey(jwtSecretKey)
@@ -107,8 +108,8 @@ public class AuthInterceptor implements HandlerInterceptor {
             if (!StringUtils.hasText(userId)) {
                 return null;
             }
-            
-            UserDo cachedUser = cacheService.getUserCache(token, UserDo.class);
+
+            UserInfo cachedUser = cacheService.getUserCache(token, UserInfo.class);
             if (cachedUser != null) {
                 return cachedUser;
             }

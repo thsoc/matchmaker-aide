@@ -1,6 +1,6 @@
-package com.aide.config;
+package com.aide.common.exception;
 
-import com.aide.common.Result;
+import com.aide.common.Result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

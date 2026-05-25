@@ -1,7 +1,7 @@
 package com.aide.controller;
 
-import com.aide.common.IpUtils;
-import com.aide.common.Result;
+import com.aide.common.Result.IpUtils;
+import com.aide.common.Result.Result;
 import com.aide.entity.VO.LoginRequest;
 import com.aide.entity.VO.LoginResponse;
 import com.aide.service.UserService;

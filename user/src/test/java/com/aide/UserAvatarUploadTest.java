@@ -1,6 +1,7 @@
 package com.aide;
 
-import com.aide.context.UserContext;
+import com.aide.common.auth.context.UserContext;
+import com.aide.common.auth.entity.UserInfo;
 import com.aide.entity.DO.UserDo;
 import com.aide.entity.PO.User;
 import com.aide.entity.VO.LoginResponse;
@@ -48,8 +49,32 @@ public class UserAvatarUploadTest {
 
             // 设置 UserContext
             User user = userService.getById(testUserLogin.getUserId());
-            UserDo userDo = new UserDo().copy(user);
-            UserContext.setUser(userDo);
+            UserInfo userinfo = UserInfo.builder()
+                    .id(user.getId())
+                    .account(user.getAccount())
+                    .username(user.getUsername())
+                    .password(user.getPassword())
+                    .description(user.getDescription())
+                    .introduce(user.getIntroduce())
+                    .role(user.getRole())
+                    .status(user.getStatus())
+                    .sex(user.getSex())
+                    .avatar(user.getAvatar())
+                    .email(user.getEmail())
+                    .mobile(user.getMobile())
+                    .birthday(user.getBirthday())
+                    .income(user.getIncome())
+                    .occupation(user.getOccupation())
+                    .integral(user.getIntegral())
+                    .loginCount(user.getLoginCount())
+                    .lastLoginTime(user.getLastLoginTime())
+                    .createTime(user.getCreateTime())
+                    .updateTime(user.getUpdateTime())
+                    .delFlag(user.getDelFlag())
+                    .createBy(user.getCreateBy())
+                    .updateBy(user.getUpdateBy())
+                    .version(user.getVersion()).build();
+            UserContext.setUser(userinfo);
         }
     }
 

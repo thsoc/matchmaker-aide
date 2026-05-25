@@ -1,4 +1,4 @@
-package com.aide.config;
+package com.aide.common.auth.config;
 
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;

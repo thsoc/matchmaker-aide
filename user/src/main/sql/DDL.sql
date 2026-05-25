@@ -22,7 +22,6 @@ CREATE TABLE `aide_user` (
   `income` DECIMAL(10,2) DEFAULT NULL COMMENT '收入',
   `occupation` VARCHAR(50) DEFAULT NULL COMMENT '职业',
   `integral` INT DEFAULT 0 COMMENT '积分',
-  `money` DECIMAL(10,2) DEFAULT 0.00 COMMENT '金额',
   `login_count` INT DEFAULT 0 COMMENT '登录次数',
   `last_login_time` DATETIME DEFAULT NULL COMMENT '最后登录时间',
   `last_login_ip` VARCHAR(50) DEFAULT NULL COMMENT '最后登录IP',

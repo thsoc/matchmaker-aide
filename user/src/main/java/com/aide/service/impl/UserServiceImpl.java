@@ -1,8 +1,8 @@
 
 package com.aide.service.impl;
 
-import com.aide.common.IpUtils;
-import com.aide.context.UserContext;
+import com.aide.common.auth.context.UserContext;
+import com.aide.common.auth.service.CacheService;
 import com.aide.domain.UserDomainService;
 import com.aide.entity.DO.UserDo;
 import com.aide.entity.PO.User;
@@ -10,7 +10,6 @@ import com.aide.entity.VO.LoginResponse;
 import com.aide.entity.VO.RegisterRequest;
 import com.aide.infrastructure.FileStorageService;
 import com.aide.mapper.UserMapper;
-import com.aide.service.CacheService;
 import com.aide.service.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -29,10 +28,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.List;
 
 @Slf4j
 @Service

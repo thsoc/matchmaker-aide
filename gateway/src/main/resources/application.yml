@@ -54,4 +54,9 @@ spring:
             allowCredentials: true # 是否允许携带cookie
             maxAge: 360000 # 这次跨域检测的有效期
 
+jwt:
+  secret: myVerySecureSecretKeyForMatchmakerAideApplicationThatIsAtLeast256BitsLong
+  expiration: 7200
+
+
 

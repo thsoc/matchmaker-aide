@@ -119,13 +119,7 @@ public class User {
      */
     @TableField("integral")
     private Integer integral;
-    
-    /**
-     * 金额
-     */
-    @TableField("money")
-    private BigDecimal money;
-    
+
     /**
      * 登录次数
      */
@@ -348,7 +342,6 @@ public class User {
                 .income(user.getIncome())
                 .occupation(user.getOccupation())
                 .integral(user.getIntegral())
-                .money(user.getMoney())
                 .loginCount(user.getLoginCount())
                 .lastLoginTime(user.getLastLoginTime())
                 .lastLoginIp(user.getLastLoginIp())

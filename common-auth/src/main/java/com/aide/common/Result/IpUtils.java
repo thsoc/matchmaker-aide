@@ -1,4 +1,4 @@
-package com.aide.common;
+package com.aide.common.Result;
 
 import org.springframework.util.StringUtils;
 
