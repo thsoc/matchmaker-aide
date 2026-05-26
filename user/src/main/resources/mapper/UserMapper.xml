@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.aide.mapper.UserMapper">
+<mapper namespace="com.aide.infrastructure.persistence.mapper.UserMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.aide.entity.PO.User">
+    <resultMap id="BaseResultMap" type="com.aide.infrastructure.persistence.entity.User">
         <id column="id" property="id"/>
         <result column="account" property="account"/>
         <result column="username" property="username"/>
@@ -120,7 +120,7 @@
     </select>
 
     <!-- 插入用户 -->
-    <insert id="insert" parameterType="com.aide.entity.PO.User">
+    <insert id="insert" parameterType="com.aide.infrastructure.persistence.entity.User">
         INSERT INTO aide_user (
         <trim suffixOverrides=",">
             <if test="id != null">id,</if>
@@ -220,7 +220,7 @@
     </insert>
 
     <!-- 根据ID更新用户（动态字段） -->
-    <update id="updateUserById" parameterType="com.aide.entity.PO.User">
+    <update id="updateUserById" parameterType="com.aide.infrastructure.persistence.entity.User">
         UPDATE aide_user
         <set>
             <if test="user.account != null and user.account != ''">account = #{user.account},</if>
@@ -257,6 +257,15 @@
             <if test="avatar != null">avatar = #{avatar}</if>
         </set>
         WHERE id = #{id} AND del_flag = 0
+    </update>
+
+    <!-- 根据ID更新用手机号 -->
+    <update id="updateMobileById">
+        UPDATE aide_user
+        <set>
+            <if test="user.mobile != null">mobile = #{user.mobile}</if>
+        </set>
+        WHERE id = #{user.id} AND del_flag = 0
     </update>
 
     <!-- 根据ID逻辑删除 -->

@@ -11,7 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @return
  **/
 @SpringBootApplication
-@MapperScan("com.aide.mapper")
+@MapperScan("com.aide.infrastructure.persistence.mapper")
 public class UserClientApp {
     public static void main(String[] args) {
         SpringApplication.run(UserClientApp.class, args);

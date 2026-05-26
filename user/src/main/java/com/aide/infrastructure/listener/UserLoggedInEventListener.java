@@ -1,18 +1,17 @@
 package com.aide.infrastructure.listener;
 
 import com.aide.domain.event.UserLoggedInEvent;
-import com.aide.entity.PO.User;
-import com.aide.mapper.UserMapper;
+import com.aide.infrastructure.persistence.entity.User;
+import com.aide.infrastructure.persistence.mapper.UserMapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.event.TransactionalEventListener;
-import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * @author 20721
+ * @author mazg
  * @description 用户登录事件监听器
  * @date 2026/5/20
  * @date 11:26

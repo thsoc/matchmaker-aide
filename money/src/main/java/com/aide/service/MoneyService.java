@@ -1,6 +1,6 @@
 package com.aide.service;
 
-import com.aide.entity.PO.Money;
+import com.aide.infrastructure.persistence.entity.Money;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 public interface MoneyService extends IService<Money> {

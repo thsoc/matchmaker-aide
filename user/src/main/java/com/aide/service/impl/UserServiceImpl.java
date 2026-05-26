@@ -1,15 +1,15 @@
 
 package com.aide.service.impl;
 
+import com.aide.adapter.VO.LoginResponse;
+import com.aide.adapter.VO.RegisterRequest;
 import com.aide.common.auth.context.UserContext;
 import com.aide.common.auth.service.CacheService;
-import com.aide.domain.UserDomainService;
-import com.aide.entity.DO.UserDo;
-import com.aide.entity.PO.User;
-import com.aide.entity.VO.LoginResponse;
-import com.aide.entity.VO.RegisterRequest;
-import com.aide.infrastructure.FileStorageService;
-import com.aide.mapper.UserMapper;
+import com.aide.domain.service.UserDomainService;
+import com.aide.domain.model.UserDo;
+import com.aide.infrastructure.storage.FileStorageService;
+import com.aide.infrastructure.persistence.entity.User;
+import com.aide.infrastructure.persistence.mapper.UserMapper;
 import com.aide.service.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -163,11 +163,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         userDo.updateAvatar(avatarUrl);
 
         // 6. 通过领域服务持久化更新
-        userDomainService.updateUser(userDo);
+        userDomainService.updateAvatarById(userDo);
 
         log.info("用户 {} 头像上传成功，路径: {}", userId, avatarUrl);
 
         return avatarUrl;
+    }
+
+    @Override
+    public void updateMobile(Long userId, String mobile) {
+        userDomainService.bindMobile(userId, mobile);
     }
 
     /**

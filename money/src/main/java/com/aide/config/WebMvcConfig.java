@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * @description 拦截器配置
- * @author 20721 
+ * @author mazg 
  * @date 2026/5/25
  * @date 17:24 
  */

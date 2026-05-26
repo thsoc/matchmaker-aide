@@ -1,10 +1,9 @@
 package com.aide;
 
+import com.aide.adapter.VO.LoginResponse;
 import com.aide.common.auth.context.UserContext;
 import com.aide.common.auth.entity.UserInfo;
-import com.aide.entity.DO.UserDo;
-import com.aide.entity.PO.User;
-import com.aide.entity.VO.LoginResponse;
+import com.aide.infrastructure.persistence.entity.User;
 import com.aide.service.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

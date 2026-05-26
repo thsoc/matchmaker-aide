@@ -1,14 +1,13 @@
 package com.aide.service;
 
-import com.aide.entity.PO.User;
-import com.aide.entity.VO.LoginResponse;
-import com.aide.entity.VO.RegisterRequest;
+import com.aide.adapter.VO.LoginResponse;
+import com.aide.adapter.VO.RegisterRequest;
+import com.aide.infrastructure.persistence.entity.User;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 public interface UserService extends IService<User> {
 
@@ -46,5 +45,13 @@ public interface UserService extends IService<User> {
      * @return 头像访问URL
      */
     String uploadAvatar(MultipartFile avatarFile, HttpServletRequest request) throws Exception;
+
+    /**
+     * 更新用户手机号
+     *
+     * @param userId
+     * @param mobile 新手机号
+     */
+    void updateMobile(Long userId, String mobile);
 
 }

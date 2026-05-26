@@ -1,7 +1,7 @@
 package com.aide.domain.event;
 
 /**
- * @author 20721
+ * @author mazg
  * @description 用户登录事件
  * @date 2026/5/20
  * @date 11:26
