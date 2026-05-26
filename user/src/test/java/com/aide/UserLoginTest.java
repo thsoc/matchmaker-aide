@@ -1,6 +1,6 @@
 package com.aide;
 
-import com.aide.entity.VO.LoginResponse;
+import com.aide.adapter.VO.LoginResponse;
 import com.aide.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
