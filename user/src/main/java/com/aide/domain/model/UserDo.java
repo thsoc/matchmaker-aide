@@ -249,37 +249,4 @@ public class UserDo {
         this.updateTime = updateTime;
     }
 
-    public UserDo copy(User user) {
-        if (user == null) {
-            return null;
-        }
-        return this.builder()
-                .id(user.getId())
-                .account(user.getAccount())
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .description(user.getDescription())
-                .introduce(user.getIntroduce())
-                .role(user.getRole())
-                .status(user.getStatus())
-                .sex(user.getSex())
-                .avatar(user.getAvatar())
-                .email(user.getEmail())
-                .mobile(user.getMobile())
-                .birthday(user.getBirthday())
-                .income(user.getIncome())
-                .occupation(user.getOccupation())
-                .integral(user.getIntegral())
-                .loginCount(user.getLoginCount())
-                .lastLoginTime(user.getLastLoginTime())
-                .lastLoginIp(user.getLastLoginIp())
-                .createTime(user.getCreateTime())
-                .updateTime(user.getUpdateTime())
-                .delFlag(user.getDelFlag())
-                .createBy(user.getCreateBy())
-                .updateBy(user.getUpdateBy())
-                .version(user.getVersion())
-                .build();
-    }
-
 }

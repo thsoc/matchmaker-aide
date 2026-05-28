@@ -2,14 +2,14 @@ package com.aide.service;
 
 import com.aide.adapter.VO.LoginResponse;
 import com.aide.adapter.VO.RegisterRequest;
+import com.aide.domain.model.UserDo;
 import com.aide.infrastructure.persistence.entity.User;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 
-public interface UserService extends IService<User> {
+public interface UserService {
 
     IPage<User> pageUsers(int current, int size, User user, String startTime, String endTime);
 
@@ -54,4 +54,11 @@ public interface UserService extends IService<User> {
      */
     void updateMobile(Long userId, String mobile);
 
+    /**
+     * 根据用户ID获取用户信息
+     *
+     * @param userId 用户ID
+     * @return 用户信息
+     */
+    UserDo getById(Long userId);
 }

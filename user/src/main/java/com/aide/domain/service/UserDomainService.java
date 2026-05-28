@@ -2,65 +2,75 @@ package com.aide.domain.service;
 
 import com.aide.domain.event.UserLoggedInEvent;
 import com.aide.domain.model.UserDo;
+import com.aide.domain.repository.UserRepository;
 import com.aide.infrastructure.persistence.entity.User;
-import com.aide.infrastructure.persistence.mapper.UserMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
+@RequiredArgsConstructor
 public class UserDomainService {
 
-    private final UserMapper userMapper;
+    private final UserRepository userRepository;
     private final ApplicationEventPublisher eventPublisher;
-
-    public UserDomainService(UserMapper userMapper,
-                             ApplicationEventPublisher eventPublisher) {
-        this.userMapper = userMapper;
-        this.eventPublisher = eventPublisher;
-    }
     
+    /**
+     * 创建新用户
+     */
     public UserDo createUser(UserDo userDo, String registerIp) {
         validateUser(userDo);
         checkUniqueness(userDo);
 
         userDo.initializeNewUser();
-
         userDo.record(registerIp);
 
-        User user = convertToPo(userDo);
-        userMapper.insert(user);
+        userRepository.save(userDo);
+        return userDo;
+    }
 
-        userDo = convertToDo(user);
+    /**
+     * 更新用户头像
+     */
+    public void updateAvatarById(UserDo userDo) {
+        validateUser(userDo);
+        userRepository.updateAvatar(userDo.getId(), userDo.getAvatar());
+    }
+
+
+
+    /**
+     * 更新用户信息
+     */
+    public void updateUser(UserDo userDo) {
+        validateUser(userDo);
+        userRepository.save(userDo);
+    }
+
+    /**
+     * 根据 ID 获取用户
+     */
+    public UserDo getUserById(Long id) {
+        UserDo userDo = userRepository.findById(id);
+        if (userDo == null) {
+            throw new IllegalArgumentException("用户不存在");
+        }
         return userDo;
     }
 
 
-
-    
-    public void updateAvatarById(UserDo userDo) {
-        validateUser(userDo);
-        userMapper.updateAvatarById(userDo.getAvatar(),userDo.getId());
-    }
-
-    public void updateUser(UserDo userDo) {
-        validateUser(userDo);
-        userMapper.updateAvatarById(userDo.getAvatar(),userDo.getId());
-    }
-    
-    public UserDo getUserById(Long id) {
-        User user = userMapper.selectById(id);
-        if (user == null || user.getDelFlag() == 1) {
-            throw new IllegalArgumentException("用户不存在");
-        }
-        return convertToDo(user);
-    }
-    
+    /**
+     * 根据账号获取用户
+     */
     public UserDo getUserByAccount(String account) {
-        User user = userMapper.selectByAccount(account);
-        if (user == null) {
+        UserDo userDo = userRepository.findByAccount(account);
+        if (userDo == null) {
             throw new IllegalArgumentException("用户不存在");
         }
-        return convertToDo(user);
+        return userDo;
     }
 
     /**
@@ -96,13 +106,10 @@ public class UserDomainService {
                 userDo.getLoginCount()
         ));
 
-//        // 5. 持久化领域对象
-//        updateUser(userDo);
-
         return userDo;
     }
 
-    
+
     private void validateUser(UserDo userDo) {
         if (userDo.getAccount() == null || userDo.getAccount().trim().isEmpty()) {
             throw new IllegalArgumentException("账号不能为空");
@@ -111,14 +118,15 @@ public class UserDomainService {
             throw new IllegalArgumentException("密码长度不能少于6位");
         }
     }
-    
+
+
     private void checkUniqueness(UserDo userDo) {
-        User existingUser = userMapper.selectByAccount(userDo.getAccount());
+        UserDo existingUser = userRepository.findByAccount(userDo.getAccount());
         if (existingUser != null) {
             throw new IllegalArgumentException("账号已存在");
         }
         if (userDo.getMobile() != null) {
-            User byMobile = userMapper.selectByMobile(userDo.getMobile());
+            UserDo byMobile = userRepository.findByMobile(userDo.getMobile());
             if (byMobile != null) {
                 throw new IllegalArgumentException("手机号已被使用");
             }
@@ -145,25 +153,38 @@ public class UserDomainService {
         userDo.bindMobile(mobile);
 
         // 4. 持久化更新手机号
-        userMapper.updateMobileById(userDo);
+        userRepository.updateMobile(userId, mobile);
     }
 
     /**
      * 检查手机号唯一性
      */
     private void checkMobileUniqueness(String mobile, Long excludeUserId) {
-        User existingUser = userMapper.selectByMobile(mobile);
+        UserDo existingUser = userRepository.findByMobile(mobile);
         if (existingUser != null && !existingUser.getId().equals(excludeUserId)) {
             throw new IllegalArgumentException("该手机号已被其他用户绑定");
         }
     }
-    
-    private User convertToPo(UserDo userDo) {
-        return new User().copy(userDo);
-    }
-    
-    private UserDo convertToDo(User user) {
-        return new UserDo().copy(user);
+
+    public IPage<User> getPageUsers(int current, int size, User user, String startTime, String endTime) {
+        return userRepository.getPageUsers(current, size, user, startTime, endTime);
     }
 
+    /**
+     * 删除用户
+     *
+     * @return
+     */
+    public boolean deleteUser(Long id) {
+        User user = userRepository.getUserById(id);
+        if (user == null || user.getDelFlag() == 1) {
+            throw new IllegalArgumentException("用户不存在");
+        }
+
+        user.setDelFlag(1);
+        user.setUpdateTime(LocalDateTime.now());
+
+        boolean result = userRepository.deleteUserById(id);
+        return result;
+    }
 }

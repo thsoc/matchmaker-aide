@@ -3,6 +3,7 @@ package com.aide;
 import com.aide.adapter.VO.LoginResponse;
 import com.aide.common.auth.context.UserContext;
 import com.aide.common.auth.entity.UserInfo;
+import com.aide.domain.model.UserDo;
 import com.aide.infrastructure.persistence.entity.User;
 import com.aide.service.UserService;
 import org.junit.jupiter.api.AfterEach;
@@ -47,7 +48,7 @@ public class UserAvatarUploadTest {
             testUserLogin = userService.login("testuser001", "password123", "127.0.0.1");
 
             // 设置 UserContext
-            User user = userService.getById(testUserLogin.getUserId());
+            UserDo user = userService.getById(testUserLogin.getUserId());
             UserInfo userinfo = UserInfo.builder()
                     .id(user.getId())
                     .account(user.getAccount())

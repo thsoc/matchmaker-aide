@@ -13,37 +13,37 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class AsyncConfig {
     
     /**
-     * 登录事件专用线程池
-     * 
-     * 为什么需要专用线程池？
-     * 1. 避免与其他异步任务竞争资源
-     * 2. 可以针对登录场景独立调优
-     * 3. 便于监控和问题排查
+     * 支付回调专用线程池
+     *
+     * 什么需要专用线程池？
+     * 1. 支付回调是关键业务，需要独立资源保障
+     * 2. 避免与其他异步任务竞争
+     * 3. 可以针对支付场景独立调优和监控
      */
-    @Bean("loginEventExecutor")
-    public Executor loginEventExecutor() {
+    @Bean("paymentCallbackExecutor")
+    public Executor paymentCallbackExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        
-        // 核心线程数：根据 CPU 核数和业务特点调整
-        executor.setCorePoolSize(10);
-        
-        // 最大线程数：应对突发流量
-        executor.setMaxPoolSize(50);
-        
-        // 队列容量：缓冲峰值请求
-        executor.setQueueCapacity(500);
-        
+
+        // 核心线程数：支付回调通常不需要太多并发
+        executor.setCorePoolSize(5);
+
+        // 最大线程数：应对高峰期
+        executor.setMaxPoolSize(20);
+
+        // 队列容量：缓冲峰值回调请求
+        executor.setQueueCapacity(200);
+
         // 线程存活时间（秒）
         executor.setKeepAliveSeconds(60);
-        
+
         // 线程名称前缀（便于调试）
-        executor.setThreadNamePrefix("login-event-");
-        
-        // 拒绝策略：队列满时由调用线程执行
+        executor.setThreadNamePrefix("payment-callback-");
+
+        // 拒绝策略：队列满时由调用线程执行（保证不丢失）
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
 
         executor.setWaitForTasksToCompleteOnShutdown(true);
-        executor.setAwaitTerminationSeconds(30);  // 最多等待30秒
+        executor.setAwaitTerminationSeconds(30);
 
         executor.initialize();
         return executor;

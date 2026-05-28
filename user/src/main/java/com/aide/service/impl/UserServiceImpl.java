@@ -3,21 +3,21 @@ package com.aide.service.impl;
 
 import com.aide.adapter.VO.LoginResponse;
 import com.aide.adapter.VO.RegisterRequest;
+import com.aide.adapter.converter.UserVoConverter;
 import com.aide.common.auth.context.UserContext;
 import com.aide.common.auth.service.CacheService;
-import com.aide.domain.service.UserDomainService;
 import com.aide.domain.model.UserDo;
-import com.aide.infrastructure.storage.FileStorageService;
+import com.aide.domain.service.UserDomainService;
 import com.aide.infrastructure.persistence.entity.User;
-import com.aide.infrastructure.persistence.mapper.UserMapper;
+import com.aide.infrastructure.storage.FileStorageService;
 import com.aide.service.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,37 +33,25 @@ import java.util.Date;
 
 @Slf4j
 @Service
-public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService {
     private final UserDomainService userDomainService;
     private final CacheService cacheService;
     private final ObjectMapper objectMapper;
     private final SecretKey jwtSecretKey;
     private final Long jwtExpiration;
     private final FileStorageService fileStorageService;
+    private final UserVoConverter userVoConverter;
 
     @Value("${server.port:8081}")
     private String serverPort;
 
-    public UserServiceImpl(UserDomainService userDomainService,
-                           CacheService cacheService,
-                           ObjectMapper objectMapper,
-                           SecretKey jwtSecretKey,
-                           @Value("${jwt.expiration:7200}") Long jwtExpiration,
-                           FileStorageService fileStorageService) {
-        this.userDomainService = userDomainService;
-        this.cacheService = cacheService;
-        this.objectMapper = objectMapper;
-        this.jwtSecretKey = jwtSecretKey;
-        this.jwtExpiration = jwtExpiration;
-        this.fileStorageService = fileStorageService;
-    }
 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public LoginResponse login(String account, String password, String loginIp) {
         // 应用服务只负责：
-
         // 1. 调用领域服务完成核心业务逻辑
         UserDo userDo = userDomainService.login(account, password, loginIp);
 
@@ -76,50 +64,29 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 4. 将用户信息保存到缓存（使用token作为key）
         saveUserToCache(token, userDo);
 
-        // 5. 构建响应VO
-        return LoginResponse.builder()
-                .userId(userDo.getId())
-                .account(userDo.getAccount())
-                .username(userDo.getUsername())
-                .token(generateToken(userDo))
-                .role(userDo.getRole())
-                .status(userDo.getStatus())
-                .build();
+        // 5. 使用Converter构建响应VO
+        return userVoConverter.toLoginResponse(userDo, token);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public LoginResponse register(RegisterRequest registerRequest, String loginIp) {
-        // 使用 Builder 模式创建领域对象，而不是 BeanUtils.copyProperties
-        UserDo userDo = UserDo.builder()
-                .account(registerRequest.getAccount())
-                .password(registerRequest.getPassword())
-                .username(registerRequest.getUsername())
-                .mobile(registerRequest.getMobile())
-                .email(registerRequest.getEmail())
-                .sex(registerRequest.getSex())
-                .birthday(registerRequest.getBirthday())
-                .occupation(registerRequest.getOccupation())
-                .build();
+        // 1. 使用Converter将请求VO转换为领域对象
+        UserDo userDo = userVoConverter.fromRegisterRequest(registerRequest);
 
+        // 2. 调用领域服务创建用户
         UserDo createdUser = userDomainService.createUser(userDo, loginIp);
 
         log.info("用户注册成功，用户ID: {}, 账号: {}", createdUser.getId(), createdUser.getAccount());
 
-        // 生成token
+        // 3. 生成token
         String token = generateToken(createdUser);
 
-        // 将用户信息保存到缓存
+        // 4. 将用户信息保存到缓存
         saveUserToCache(token, createdUser);
 
-        return LoginResponse.builder()
-                .userId(createdUser.getId())
-                .account(createdUser.getAccount())
-                .username(createdUser.getUsername())
-                .token(generateToken(createdUser))
-                .role(createdUser.getRole())
-                .status(createdUser.getStatus())
-                .build();
+        // 5. 使用Converter构建响应VO
+        return userVoConverter.toLoginResponse(createdUser, token);
     }
 
     /**
@@ -176,6 +143,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     /**
+     * 获取用户信息
+     */
+    @Override
+    public UserDo getById(Long userId) {
+        UserDo userDo = userDomainService.getUserById(userId);
+
+        return userDo;
+    }
+
+    /**
      * 验证头像文件
      */
     private void validateAvatarFile(MultipartFile avatarFile) {
@@ -197,27 +174,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public IPage<User> pageUsers(int current, int size, User user, String startTime, String endTime) {
-        Page<User> page = new Page<>(current, size);
-        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
-
-        wrapper.eq(User::getDelFlag, 0)
-                .like(StringUtils.hasText(user.getUsername()), User::getUsername, user.getUsername())
-                .eq(StringUtils.hasText(user.getMobile()), User::getMobile, user.getMobile())
-                .eq(StringUtils.hasText(user.getEmail()), User::getEmail, user.getEmail())
-                .eq(StringUtils.hasText(user.getStatus()), User::getStatus, user.getStatus())
-                .eq(StringUtils.hasText(user.getRole()), User::getRole, user.getRole())
-                .eq(StringUtils.hasText(user.getSex()), User::getSex, user.getSex());
-
-        if (StringUtils.hasText(startTime)) {
-            wrapper.ge(User::getCreateTime, startTime);
-        }
-        if (StringUtils.hasText(endTime)) {
-            wrapper.le(User::getCreateTime, endTime);
-        }
-
-        wrapper.orderByDesc(User::getCreateTime);
-
-        return this.page(page, wrapper);
+        return userDomainService.getPageUsers(current, size, user, startTime, endTime);
     }
 
 
@@ -236,15 +193,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteUser(Long id) {
-        User user = this.getById(id);
-        if (user == null || user.getDelFlag() == 1) {
-            throw new IllegalArgumentException("用户不存在");
-        }
-
-        user.setDelFlag(1);
-        user.setUpdateTime(LocalDateTime.now());
-
-        boolean result = this.updateById(user);
+        boolean result = userDomainService.deleteUser(id);
         log.info("删除用户成功，用户ID: {}", id);
         return result;
     }
