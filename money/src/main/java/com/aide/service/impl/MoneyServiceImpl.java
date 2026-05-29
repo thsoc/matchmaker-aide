@@ -4,6 +4,8 @@ package com.aide.service.impl;
 import com.aide.adapter.converter.RechargeRecordConverter;
 import com.aide.adapter.dto.RechargeRequestDTO;
 import com.aide.adapter.dto.RechargeResponseDTO;
+import com.aide.domain.event.PaymentFailureEvent;
+import com.aide.domain.event.PaymentSuccessEvent;
 import com.aide.domain.model.MoneyDo;
 import com.aide.domain.model.RechargeRecordDo;
 import com.aide.domain.repository.MoneyRepository;
@@ -12,8 +14,11 @@ import com.aide.domain.service.MoneyDomainService;
 import com.aide.service.MoneyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /**
  * @author mazg
@@ -36,6 +41,7 @@ public class MoneyServiceImpl implements MoneyService {
     private final MoneyRepository moneyRepository;
     private final RechargeRecordRepository rechargeRecordRepository;
     private final RechargeRecordConverter rechargeRecordConverter;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public Long getMoney(String account) {
@@ -101,34 +107,58 @@ public class MoneyServiceImpl implements MoneyService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void handlePaymentCallback(String orderNo, String transactionId) {
-        log.info("应用服务层：开始处理支付回调，订单号: {}, 交易号: {}", orderNo, transactionId);
+        // 1. 调用领域服务处理业务逻辑（返回结果，不发布事件）
+        MoneyDomainService.PaymentCallbackResult result =
+                moneyDomainService.handlePaymentSuccess(orderNo, transactionId);
 
-        try {
-            // 调用领域服务处理支付回调
-            moneyDomainService.handlePaymentCallback(orderNo, transactionId);
-
-            log.info("应用服务层：支付回调处理成功，订单号: {}", orderNo);
-
-        } catch (Exception e) {
-            log.error("应用服务层：支付回调处理异常，订单号: {}", orderNo, e);
-            throw new RuntimeException("支付回调处理失败: " + e.getMessage(), e);
+        if (result == null) {
+            log.warn("支付回调已处理，无需发布事件，订单号: {}", orderNo);
+            return;
         }
+
+        // 2. 在应用层发布事件（注册事务同步回调）
+        TransactionSynchronizationManager.registerSynchronization(
+                new TransactionSynchronizationAdapter() {
+                    @Override
+                    public void afterCommit() {
+                        eventPublisher.publishEvent(
+                                new PaymentSuccessEvent(
+                                        result.getRechargeRecord(),
+                                        result.getTransactionIdOrFailureReason()
+                                )
+                        );
+                        log.info("事务提交成功，发布支付成功事件，订单号: {}", orderNo);
+                    }
+                }
+        );
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void handlePaymentFailure(String orderNo, String failureReason) {
-        log.info("应用服务层：开始处理支付失败回调，订单号: {}, 原因: {}", orderNo, failureReason);
+        // 1. 调用领域服务处理业务逻辑
+        MoneyDomainService.PaymentCallbackResult result =
+                moneyDomainService.handlePaymentFailure(orderNo, failureReason);
 
-        try {
-            // 调用领域服务处理支付失败
-            moneyDomainService.handlePaymentFailure(orderNo, failureReason);
-
-            log.info("应用服务层：支付失败回调处理完成，订单号: {}", orderNo);
-
-        } catch (Exception e) {
-            log.error("应用服务层：支付失败回调处理异常，订单号: {}", orderNo, e);
-            throw new RuntimeException("支付失败回调处理失败: " + e.getMessage(), e);
+        if (result == null) {
+            log.warn("支付失败回调已处理，无需发布事件，订单号: {}", orderNo);
+            return;
         }
+
+        // 2. 在应用层发布事件（注册事务同步回调）
+        TransactionSynchronizationManager.registerSynchronization(
+                new TransactionSynchronizationAdapter() {
+                    @Override
+                    public void afterCommit() {
+                        eventPublisher.publishEvent(
+                                new PaymentFailureEvent(
+                                        result.getRechargeRecord(),
+                                        result.getTransactionIdOrFailureReason()
+                                )
+                        );
+                        log.info("事务提交成功，发布支付失败事件，订单号: {}", orderNo);
+                    }
+                }
+        );
     }
 }

@@ -1,7 +1,5 @@
 package com.aide.domain.service;
 
-import com.aide.domain.event.PaymentFailureEvent;
-import com.aide.domain.event.PaymentSuccessEvent;
 import com.aide.domain.model.MoneyDo;
 import com.aide.domain.model.RechargeRecordDo;
 import com.aide.domain.repository.MoneyRepository;
@@ -10,12 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronizationAdapter;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.concurrent.TimeUnit;
 
@@ -34,14 +28,13 @@ import java.math.BigDecimal;
  * @date 10:51
  */
 @Slf4j
-@Component
 @RequiredArgsConstructor
+@Service
 public class MoneyDomainService {
 
     private final MoneyRepository moneyRepository;
     private final RechargeRecordRepository rechargeRecordRepository;
     private final PaymentContext paymentContext;
-    private final ApplicationEventPublisher eventPublisher;
     private final RedissonClient redissonClient;
 
     // ==================== 账户相关的方法 ====================
@@ -159,17 +152,19 @@ public class MoneyDomainService {
 
     /**
      * 处理支付回调 - 支付成功
- *      * 职责：
-     *      * 1. 验证订单状态
-     *      * 2. 更新充值记录
-     *      * 3. 发布支付成功事件（由监听器更新余额）
-     *  * 安全防护（三层防护）：
-     *      * 1. Redis分布式锁 - 防止高并发（第一道防线）
-     *      * 2. 数据库乐观锁 - 防止并发更新（第二道防线，最终保障）
-     *      * 3. 状态检查 - 实现幂等性（快速失败）
+     * * 职责：
+     * * 1. 验证订单状态
+     * * 2. 更新充值记录
+     * * 3. 发布支付成功事件（由监听器更新余额）
+     * * 安全防护（三层防护）：
+     * * 1. Redis分布式锁 - 防止高并发（第一道防线）
+     * * 2. 数据库乐观锁 - 防止并发更新（第二道防线，最终保障）
+     * * 3. 状态检查 - 实现幂等性（快速失败）
+     *
+     * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public void handlePaymentCallback(String orderNo, String transactionId) {
+    public PaymentCallbackResult handlePaymentSuccess(String orderNo, String transactionId) {
         log.info("开始处理支付回调，订单号: {}, 交易号: {}", orderNo, transactionId);
 
         // ========== 使用 Redisson 分布式锁（带看门狗）==========
@@ -194,7 +189,7 @@ public class MoneyDomainService {
 
             if (rechargeRecord.isSuccess()) {
                 log.warn("充值记录已处理成功，订单号: {}, 交易号: {}", orderNo, transactionId);
-                return;
+                return null;
             }
 
             // ========== 第三层防护：数据库乐观锁（最终保障）==========
@@ -202,14 +197,18 @@ public class MoneyDomainService {
 
             if (updatedRows == 0) {
                 log.warn("充值记录已被其他请求处理，订单号: {}", orderNo);
-                return;
+                return null;
             }
 
             // 重新查询获取最新数据
             rechargeRecord = rechargeRecordRepository.findByOrderNo(orderNo);
 
-            // 发布支付成功事件（只发布一次）
-            eventPublisher.publishEvent(new PaymentSuccessEvent(rechargeRecord, transactionId));
+            // 返回回调结果（包含事件数据），由应用层发布
+            PaymentCallbackResult result = new PaymentCallbackResult(
+                    rechargeRecord,
+                    transactionId,
+                    true // 成功标志
+            );
 //            // 修复：注册事务同步回调，在事务提交后再发布事件
 //            TransactionSynchronizationManager.registerSynchronization(
 //                    new TransactionSynchronizationAdapter() {
@@ -226,6 +225,7 @@ public class MoneyDomainService {
 
             log.info("支付回调处理完成，订单号: {}, 用户ID: {}, 金额: {}",
                     orderNo, rechargeRecord.getUserId(), rechargeRecord.getAmount());
+            return result;
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -242,9 +242,11 @@ public class MoneyDomainService {
 
     /**
      * 处理支付回调 - 支付失败
+     *
+     * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public void handlePaymentFailure(String orderNo, String failureReason) {
+    public PaymentCallbackResult handlePaymentFailure(String orderNo, String failureReason) {
         log.info("开始处理支付失败回调，订单号: {}, 原因: {}", orderNo, failureReason);
 
         String lockKey = "payment:callback:fail:lock:" + orderNo;
@@ -255,39 +257,75 @@ public class MoneyDomainService {
 
             if (!locked) {
                 log.warn("支付失败回调正在处理中，订单号: {}", orderNo);
-                return;
+                return null;
             }
 
             RechargeRecordDo rechargeRecord = rechargeRecordRepository.findByOrderNo(orderNo);
             if (rechargeRecord == null) {
                 log.error("充值记录不存在，订单号: {}", orderNo);
-                return;
+                return null;
             }
 
             if (rechargeRecord.isFailed()) {
                 log.warn("充值记录已标记为失败，订单号: {}", orderNo);
-                return;
+                return null;
             }
 
             int updatedRows = rechargeRecordRepository.updateStatusToFailure(orderNo, failureReason);
 
             if (updatedRows == 0) {
                 log.warn("充值记录已被其他请求处理，订单号: {}", orderNo);
-                return;
+                return null;
             }
 
             rechargeRecord = rechargeRecordRepository.findByOrderNo(orderNo);
-            eventPublisher.publishEvent(new PaymentFailureEvent(rechargeRecord, failureReason));
+            // 返回回调结果（包含事件数据），由应用层发布
+            PaymentCallbackResult result = new PaymentCallbackResult(
+                    rechargeRecord,
+                    failureReason,
+                    false // 失败标志
+            );
 
             log.info("支付失败回调处理完成，订单号: {}", orderNo);
+            return result;
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.error("获取锁被中断，订单号: {}", orderNo, e);
+            return null;
         } finally {
             if (lock.isHeldByCurrentThread()) {
                 lock.unlock();
             }
+        }
+    }
+
+    /**
+     * 支付回调结果（用于传递给应用层）
+     */
+    public static class PaymentCallbackResult {
+        private final RechargeRecordDo rechargeRecord;
+        private final String transactionIdOrFailureReason;
+        private final boolean success;
+
+        public PaymentCallbackResult(RechargeRecordDo rechargeRecord,
+                                     String transactionIdOrFailureReason,
+                                     boolean success) {
+            this.rechargeRecord = rechargeRecord;
+            this.transactionIdOrFailureReason = transactionIdOrFailureReason;
+            this.success = success;
+        }
+
+        public RechargeRecordDo getRechargeRecord() {
+            return rechargeRecord;
+        }
+
+        public String getTransactionIdOrFailureReason() {
+            return transactionIdOrFailureReason;
+        }
+
+        public boolean isSuccess() {
+            return success;
         }
     }
 }

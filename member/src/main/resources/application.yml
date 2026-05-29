@@ -1,9 +1,9 @@
 server:
-  port: 8084
+  port: 8081
 
 spring:
   application:
-    name: user-service
+    name: member-service
   cloud:
     nacos:
       discovery:
@@ -49,30 +49,4 @@ mybatis-plus:
 jwt:
   secret: myVerySecureSecretKeyForMatchmakerAideApplicationThatIsAtLeast256BitsLong
   expiration: 7200  # 令牌过期时间（秒），默认2小时
-
-# 文件上传配置
-file:
-  upload:
-    path: /uploads
-
-sms:
-  # 当前使用的短信提供商: mock | aliyun | tencent
-  provider: mock
-
-  # 阿里云配置
-  aliyun:
-    access-key-id: your-access-key-id
-    access-key-secret: your-access-key-secret
-    sign-name: 您的签名
-    template-code: SMS_XXXXXX
-    region-id: cn-hangzhou
-
-  # 腾讯云配置
-  tencent:
-    secret-id: your-secret-id
-    secret-key: your-secret-key
-    sms-sdk-app-id: your-app-id
-    sign-name: 您的签名
-    template-id: your-template-id
-    region: ap-guangzhou
 
