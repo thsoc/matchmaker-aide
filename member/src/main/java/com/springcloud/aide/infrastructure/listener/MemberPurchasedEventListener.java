@@ -67,8 +67,8 @@ public class MemberPurchasedEventListener {
 
         } catch (Exception e) {
             log.error("处理会员购买事件失败，用户ID: {}", event.getUserId(), e);
-            // TODO: 这里可以添加补偿机制或重试逻辑
-            throw e;
+            // TODO: 这里可以添加补偿机制或重试逻辑，确保事件处理成功 1.发送mq，2.直接重试 3.告警 4.补偿，5.本地消息表+定时任务 6.注释@Async使用同步
+//            throw e; //防止无限重试
         }
     }
 }

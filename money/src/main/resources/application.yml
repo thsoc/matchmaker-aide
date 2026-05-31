@@ -14,11 +14,128 @@ spring:
     generator:
       write_numbers_as_strings: true
 
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${MYSQL_HOST:192.168.2.20}:3306/matchmaker?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
-    username: root
-    password: 123456
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://${MYSQL_HOST:192.168.2.20}:3306/matchmaker?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+#    username: root
+#    password: 123456
+
+
+    # ShardingSphere 配置
+    shardingsphere:
+      # 数据源配置
+      datasource:
+        names: ds0,ds1,ds2
+
+        # 数据源0
+        ds0:
+          type: com.zaxxer.hikari.HikariDataSource
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          jdbc-url: jdbc:mysql://${MYSQL_HOST_0:192.168.2.20}:3306/matchmaker?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+          username: root
+          password: 123456
+
+        # 数据源1
+        ds1:
+          type: com.zaxxer.hikari.HikariDataSource
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          jdbc-url: jdbc:mysql://${MYSQL_HOST_1:192.168.2.21}:3306/matchmaker_db1?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+          username: root
+          password: 123456
+
+        # 数据源2（预留，后续扩容启用）
+        ds2:
+          type: com.zaxxer.hikari.HikariDataSource
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          jdbc-url: jdbc:mysql://${MYSQL_HOST_2:192.168.2.22}:3306/matchmaker_db2?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+          username: root
+          password: 123456
+
+      # 分片规则配置
+      rules:
+        sharding:
+          tables:
+            aide_money:
+              # 实际数据节点
+#              actual-data-nodes: ds$->{0..1}.aide_money
+              actual-data-nodes: ds$->{0}.aide_money
+
+              # 分库策略
+              database-strategy:
+                standard:
+                  sharding-column: account  # 分片键
+                  sharding-algorithm-name: database-bucket
+
+          # 分片算法配置
+          sharding-algorithms:
+            # 自定义哈希桶算法
+            database-bucket:
+              type: CLASS_BASED
+              props:
+                strategy: standard
+                algorithmClassName: com.aide.config.BucketShardingAlgorithm
+
+      # 其他属性
+      props:
+        sql-show: true  # 打印实际执行的 SQL
+        check-table-metadata-enabled: true  # 检查表元数据
+
+
+#    # ShardingSphere 配置
+#  shardingsphere:
+#    datasource:
+#      names: ds0,ds1
+#
+#      # 数据源0
+#      ds0:
+#        type: com.zaxxer.hikari.HikariDataSource
+#        driver-class-name: com.mysql.cj.jdbc.Driver
+#        jdbc-url: jdbc:mysql://${MYSQL_HOST_0:192.168.2.20}:3306/matchmaker_db?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+#        username: root
+#        password: 123456
+#
+##      # 数据源1
+##      ds1:
+##        type: com.zaxxer.hikari.HikariDataSource
+##        driver-class-name: com.mysql.cj.jdbc.Driver
+##        jdbc-url: jdbc:mysql://${MYSQL_HOST_1:192.168.2.21}:3306/matchmaker_db1?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+##        username: root
+##        password: 123456
+#
+#    rules:
+#      sharding:
+#        tables:
+#          aide_money:
+#            # 实际数据节点：ds0.aide_money, ds1.aide_money
+#            actual-data-nodes: ds$->{0..1}.aide_money
+#
+#            # 分库策略：根据 user_id 取模
+#            database-strategy:
+#              standard:
+#                sharding-column: account  # 分片键（表中是 account 字段）
+#                sharding-algorithm-name: database-mod
+#
+##            # 分表策略（如果需要分表）
+##            table-strategy:
+##              standard:
+##                sharding-column: account
+##                sharding-algorithm-name: table-mod
+#
+#        sharding-algorithms:
+#          # 分库算法：user_id % 2
+#          database-mod:
+#            type: MOD
+#            props:
+#              sharding-count: 2
+#
+##          # 分表算法：user_id % 4
+##          table-mod:
+##            type: MOD
+##            props:
+##              sharding-count: 4
+#
+#    props:
+#      sql-show: true  # 打印实际执行的 SQL
 
   redis:
     host: ${REDIS_HOST:192.168.2.20}

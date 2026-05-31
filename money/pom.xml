@@ -18,6 +18,20 @@
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.springcloud</groupId>
+            <artifactId>common-auth</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- 引入分片 SDK -->
+        <dependency>
+            <groupId>com.springcloud</groupId>
+            <artifactId>aide-sharding-sdk</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
@@ -75,18 +89,30 @@
             <scope>test</scope>
         </dependency>
 
-
-        <dependency>
-            <groupId>com.springcloud</groupId>
-            <artifactId>common-auth</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.redisson</groupId>
             <artifactId>redisson-spring-boot-starter</artifactId>
             <version>3.17.0</version>
+        </dependency>
+
+        <!-- ShardingSphere-JDBC 分库分表 -->
+        <!-- ShardingSphere-JDBC Core Spring Boot Starter -->
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>shardingsphere-jdbc-core-spring-boot-starter</artifactId>
+            <version>5.1.0</version>
+        </dependency>
+
+        <!-- HikariCP 连接池 -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+        </dependency>
+
+        <!-- Spring Boot Starter Data JDBC -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jdbc</artifactId>
         </dependency>
     </dependencies>
 </project>

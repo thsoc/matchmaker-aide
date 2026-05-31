@@ -328,5 +328,34 @@ public class MoneyDomainService {
             return success;
         }
     }
+
+    /**
+     * 为用户扣款（账户层面的业务逻辑）
+     *
+     * 职责：
+     * 1. 查询或创建用户账户
+     * 2. 执行扣款业务规则（余额检查、金额验证）
+     * 3. 持久化扣款结果
+     *
+     * @param userId      用户ID
+     * @param amount      扣款金额
+     * @param description 扣款描述
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void deductAccount(Long userId, BigDecimal amount, String description) {
+        log.info("开始处理扣款，用户ID: {}, 金额: {}, 描述: {}", userId, amount, description);
+
+        // 1. 查询账户（不存在则创建）
+        MoneyDo account = getOrCreateAccount(userId);
+
+        // 2. 执行扣款业务规则（封装在领域对象中）
+        account.deductBalance(amount);
+
+        // 3. 持久化更新后的账户
+        moneyRepository.save(account);
+
+        log.info("账户扣款成功，用户ID: {}, 扣款金额: {}, 新余额: {}, 描述: {}",
+                userId, amount, account.getMoney(), description);
+    }
 }
 

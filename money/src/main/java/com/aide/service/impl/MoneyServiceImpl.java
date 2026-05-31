@@ -14,11 +14,16 @@ import com.aide.domain.service.MoneyDomainService;
 import com.aide.service.MoneyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import java.math.BigDecimal;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author mazg
@@ -42,6 +47,7 @@ public class MoneyServiceImpl implements MoneyService {
     private final RechargeRecordRepository rechargeRecordRepository;
     private final RechargeRecordConverter rechargeRecordConverter;
     private final ApplicationEventPublisher eventPublisher;
+    private final RedissonClient redissonClient;
 
     @Override
     public Long getMoney(String account) {
@@ -160,5 +166,46 @@ public class MoneyServiceImpl implements MoneyService {
                     }
                 }
         );
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deduct(Long userId, BigDecimal amount, String description) {
+//        // 强制走主库（避免主从延迟）
+//        DataSourceContextHolder.setMaster();
+//        // ========== 第一层防护：设置数据源路由 ==========
+//        String dataSourceKey = dataSourceRouter.getDataSourceKey(userId);
+//        DynamicRoutingDataSource.setDataSourceKey(dataSourceKey);
+        log.info("开始处理扣款请求，用户ID: {}, 金额: {}, 描述: {}", userId, amount, description);
+
+        // ========== 第一层防护：Redisson 分布式锁（应用层负责并发控制）==========
+        String lockKey = "money:deduct:lock:" + userId;
+        RLock lock = redissonClient.getLock(lockKey);
+
+        try {
+            // 尝试获取锁，最多等待3秒，锁自动续期
+            boolean locked = lock.tryLock(3, TimeUnit.SECONDS);
+
+            if (!locked) {
+                log.warn("用户账户正在处理其他扣款请求，用户ID: {}", userId);
+                throw new IllegalStateException("账户操作繁忙，请稍后重试");
+            }
+
+            // ========== 第二层防护：调用领域服务执行业务逻辑 ==========
+            moneyDomainService.deductAccount(userId, amount, description);
+
+            log.info("扣款处理成功，用户ID: {}, 金额: {}", userId, amount);
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error("获取分布式锁被中断，用户ID: {}", userId, e);
+            throw new RuntimeException("获取锁失败", e);
+        } finally {
+            // 释放锁（只有当前线程持有的锁才能释放）
+            if (lock.isHeldByCurrentThread()) {
+                lock.unlock();
+                log.debug("释放分布式锁，用户ID: {}", userId);
+            }
+        }
     }
 }

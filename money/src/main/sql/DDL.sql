@@ -40,3 +40,6 @@ CREATE TABLE aide_transaction_record (
     INDEX idx_order_no (related_order_no),
     INDEX idx_create_time (create_time)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='交易记录表';
+
+
+

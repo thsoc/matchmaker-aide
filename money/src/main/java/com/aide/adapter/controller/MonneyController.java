@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -151,6 +152,23 @@ public class MonneyController {
         } catch (Exception e) {
             log.error("查询支付状态异常，订单号: {}", orderNo, e);
             return Result.error("查询失败: " + e.getMessage());
+        }
+    }
+
+
+    /**
+     * 扣款
+     */
+    @PostMapping("/deduct")
+    public Result deduct(@RequestParam("userId") Long userId,
+                         @RequestParam("amount") BigDecimal amount,
+                         @RequestParam("description") String description) {
+        try {
+            moneyService.deduct(userId, amount, description);
+            return Result.success("扣款成功");
+        } catch (Exception e) {
+            log.error("扣款失败，用户ID: {}, 金额: {}", userId, amount, e);
+            return Result.error("扣款失败: " + e.getMessage());
         }
     }
 

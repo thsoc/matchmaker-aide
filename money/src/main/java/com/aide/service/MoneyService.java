@@ -5,6 +5,8 @@ import com.aide.adapter.dto.RechargeResponseDTO;
 import com.aide.infrastructure.persistence.entity.Money;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.math.BigDecimal;
+
 /**
  * @author mazg
  * @description 金额服务接口
@@ -47,4 +49,13 @@ public interface MoneyService{
      * @param failureReason    失败原因
      */
     void handlePaymentFailure(String orderNo, String failureReason);
+
+    /**
+     * 扣款
+     *
+     * @param userId      用户ID
+     * @param amount      扣款金额
+     * @param description 扣款描述
+     */
+    void deduct(Long userId, BigDecimal amount, String description);
 }
