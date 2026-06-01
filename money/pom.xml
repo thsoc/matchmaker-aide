@@ -21,9 +21,16 @@
 
         <dependency>
             <groupId>com.springcloud</groupId>
-            <artifactId>common-auth</artifactId>
+            <artifactId>common-api</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
+        </dependency>
+
+        <!-- 添加认证模块 -->
+        <dependency>
+            <groupId>com.springcloud</groupId>
+            <artifactId>auth-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- 引入分片 SDK -->

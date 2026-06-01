@@ -46,6 +46,7 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        // todo 这个过滤器要修改
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
 

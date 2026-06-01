@@ -46,7 +46,7 @@
         <!-- 添加公共认证模块 -->
         <dependency>
             <groupId>com.springcloud</groupId>
-            <artifactId>common-auth</artifactId>
+            <artifactId>common-api</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

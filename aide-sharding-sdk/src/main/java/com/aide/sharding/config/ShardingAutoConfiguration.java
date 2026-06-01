@@ -63,7 +63,7 @@ public class ShardingAutoConfiguration {
         }
 
         BucketShardingAlgorithm.initMapping(bucketMap);
-        log.info("✅ 桶映射初始化成功，共 {} 个桶", bucketMap.size());
+        log.info("桶映射初始化成功，共 {} 个桶", bucketMap.size());
     }
 
     /**
@@ -86,6 +86,8 @@ public class ShardingAutoConfiguration {
 
     /**
      * 桶映射加载器接口（可选实现）
+     * 1.查询自己业务模块桶映射数据库，前提是不要走sharding数据源配置
+     * 2.放在内存中
      */
     public interface BucketMappingLoader {
         Map<Integer, String> loadMappings();

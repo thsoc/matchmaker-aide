@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.IntStream;
 
 import org.apache.shardingsphere.sharding.api.sharding.standard.PreciseShardingValue;
 import org.apache.shardingsphere.sharding.api.sharding.standard.RangeShardingValue;
@@ -62,10 +63,11 @@ public class BucketShardingAlgorithm implements StandardShardingAlgorithm<Long> 
         // 确保已初始化
         ensureInitialized();
 
-        Long userId = shardingValue.getValue();
+        //获取
+        Object keyId = shardingValue.getValue();
 
         // 第一层：计算桶编号
-        int bucketId = Math.abs((int) (userId % BUCKET_COUNT));
+        int bucketId = Math.abs((int) (keyId.hashCode() % BUCKET_COUNT));
 
         // 第二层：获取桶对应的数据源
         String dataSource = BUCKET_MAPPING_CACHE.get(bucketId);
@@ -75,7 +77,7 @@ public class BucketShardingAlgorithm implements StandardShardingAlgorithm<Long> 
             dataSource = DEFAULT_DATA_SOURCE;
         }
 
-        log.debug("用户 {} → 桶 {} → 数据源 {}", userId, bucketId, dataSource);
+        log.debug("分片键 {} → 桶 {} → 数据源 {}", keyId, bucketId, dataSource);
 
         return dataSource;
     }
@@ -163,13 +165,18 @@ public class BucketShardingAlgorithm implements StandardShardingAlgorithm<Long> 
      */
     public static void resetToDefault() {
         BUCKET_MAPPING_CACHE.clear();
-        for (int i = 0; i < BUCKET_COUNT; i++) {
-            if (i < 128) {
-                BUCKET_MAPPING_CACHE.put(i, "ds0");
-            } else {
-                BUCKET_MAPPING_CACHE.put(i, "ds1");
-            }
-        }
+//        for (int i = 0; i < BUCKET_COUNT; i++) {
+//            if (i < 128) {
+//                BUCKET_MAPPING_CACHE.put(i, "ds0");
+//            } else {
+//                BUCKET_MAPPING_CACHE.put(i, "ds1");
+//            }
+//        }
+        IntStream.range(0, BUCKET_COUNT)
+                .forEach(index -> {
+                    BUCKET_MAPPING_CACHE.put(index, "ds0");
+                    System.out.println("处理第 " + index + " 个任务，索引: " + index);
+                });
         DEFAULT_DATA_SOURCE = "ds0";
         log.info("桶映射已重置为默认配置");
     }
@@ -181,6 +188,6 @@ public class BucketShardingAlgorithm implements StandardShardingAlgorithm<Long> 
 
     @Override
     public String getType() {
-        return "";
+        return "Cluster";
     }
 }

@@ -10,7 +10,7 @@
     <artifactId>member</artifactId>
     <packaging>jar</packaging>
 
-    <name>voucher</name>
+    <name>member</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -76,16 +76,27 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- 添加公共认证模块 -->
+        <!-- 添加公共模块 -->
         <dependency>
             <groupId>com.springcloud</groupId>
-            <artifactId>common-auth</artifactId>
+            <artifactId>common-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- 添加认证模块 -->
+        <dependency>
+            <groupId>com.springcloud</groupId>
+            <artifactId>auth-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <!-- 添加OpenFeign支持 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
     </dependencies>
 </project>
