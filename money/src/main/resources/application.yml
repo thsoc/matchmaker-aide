@@ -20,6 +20,44 @@ spring:
 #    username: root
 #    password: 123456
 
+  redis:
+    host: ${REDIS_HOST:192.168.2.20}
+    port: 6379
+    password: ${REDIS_PASSWORD:123456}
+    database: 0
+    timeout: 3000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
+  #  redis:
+  #    # 基本配置
+  #    cluster:
+  #      nodes:
+  #        - 192.168.1.101:6379
+  #        - 192.168.1.102:6379
+  #        - 192.168.1.103:6379
+  #      max-redirects: 3
+  #    password: "your_password"
+  #    timeout: 3000ms
+  #
+  #    # Redisson 配置
+  #    redisson:
+  #      config: |
+  #        clusterServersConfig:
+  #          nodeAddresses:
+  #            - "redis://${spring.redis.cluster.nodes[0]}"
+  #            - "redis://${spring.redis.cluster.nodes[1]}"
+  #            - "redis://${spring.redis.cluster.nodes[2]}"
+  #          password: ${spring.redis.password}
+  #          masterConnectionPoolSize: 64
+  #          slaveConnectionPoolSize: 64
+  #          idleConnectionTimeout: 10000
+  #          connectTimeout: ${spring.redis.timeout}
+  #          timeout: ${spring.redis.timeout}
+
 
 
   # ShardingSphere 配置
@@ -170,18 +208,6 @@ sharding:
 #  bucket:
 #    enabled: true
 
-  redis:
-    host: ${REDIS_HOST:192.168.2.20}
-    port: 6379
-    password: ${REDIS_PASSWORD:123456}
-    database: 0
-    timeout: 3000ms
-    lettuce:
-      pool:
-        max-active: 8
-        max-wait: -1ms
-        max-idle: 8
-        min-idle: 0
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

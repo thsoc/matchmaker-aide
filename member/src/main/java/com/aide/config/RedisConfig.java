@@ -6,6 +6,11 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.redisson.Redisson;
+import org.redisson.api.RedissonClient;
+import org.redisson.codec.JsonJacksonCodec;
+import org.redisson.config.Config;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -20,6 +25,15 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  */
 @Configuration
 public class RedisConfig {
+
+    @Value("${spring.redis.host}")
+    private String REDIS_HOST;
+
+    @Value("${spring.redis.port}")
+    private String REDIS_PORT;
+
+    @Value("${spring.redis.password}")
+    private String REDIS_PASSWORD;
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
@@ -66,5 +80,26 @@ public class RedisConfig {
         mapper.registerModule(new JavaTimeModule());
         // 可以在这里统一配置ObjectMapper的各种属性
         return mapper;
+    }
+
+    // ================== Redisson 配置 ==================
+    @Bean(destroyMethod = "shutdown")
+    public RedissonClient redissonClient() {
+        Config config = new Config();
+        config.useSingleServer()
+                .setAddress("redis://" + REDIS_HOST + ":" + REDIS_PORT + "")
+                .setDatabase(0)
+//                .setUsername("admin")
+                .setPassword(REDIS_PASSWORD)
+                .setConnectionPoolSize(20)
+                .setConnectionMinimumIdleSize(5)
+                .setIdleConnectionTimeout(10000)
+                .setConnectTimeout(10000)
+                .setTimeout(3000);
+
+        // 使用 JSON 序列化
+        config.setCodec(new JsonJacksonCodec());
+
+        return Redisson.create(config);
     }
 }

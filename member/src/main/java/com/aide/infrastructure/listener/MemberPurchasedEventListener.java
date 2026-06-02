@@ -41,6 +41,8 @@ public class MemberPurchasedEventListener {
     public void handleMemberPurchased(MemberPurchasedEvent event) {
         log.info("处理会员购买事件，用户ID: {}, 会员ID: {}", event.getUserId(), event.getMemberId());
 
+        // todo 需要优化
+
         try {
             // 1. 扣款
             moneyFeignClient.deduct(
