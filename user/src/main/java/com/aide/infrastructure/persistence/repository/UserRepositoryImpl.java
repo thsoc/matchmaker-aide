@@ -68,7 +68,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void save(UserDo userDo) {
+    public UserDo save(UserDo userDo) {
         User user = convertToEntity(userDo);
 
         if (userDo.getId() == null) {
@@ -78,6 +78,7 @@ public class UserRepositoryImpl implements UserRepository {
             userMapper.updateById(user);
             log.debug("更新用户，账号: {}", userDo.getAccount());
         }
+        return convertToDomainObject(user);
     }
 
     @Override

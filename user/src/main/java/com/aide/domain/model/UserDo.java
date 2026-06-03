@@ -54,10 +54,10 @@ public class UserDo {
      * 这是创建新用户时的领域规则
      */
     public void initializeNewUser() {
-        // 生成雪花算法 ID（解决 MyBatis-Plus 3.4.3 的 BUG）
-        if (this.id == null) {
-            this.id = IdWorker.getId();
-        }
+//        // 生成雪花算法 ID（解决 MyBatis-Plus 3.4.3 的 BUG）
+//        if (this.id == null) {
+//            this.id = IdWorker.getId();
+//        }
         // 新用户默认状态为正常
         if (this.status == null || this.status.isEmpty()) {
             this.status = "NORMAL";

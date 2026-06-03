@@ -28,8 +28,7 @@ public class UserDomainService {
         userDo.initializeNewUser();
         userDo.record(registerIp);
 
-        userRepository.save(userDo);
-        return userDo;
+        return userRepository.save(userDo);
     }
 
     /**

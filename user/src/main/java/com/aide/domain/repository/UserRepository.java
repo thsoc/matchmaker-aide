@@ -45,8 +45,9 @@ public interface UserRepository {
      * 保存用户（新增或更新）
      *
      * @param userDo 用户领域对象
+     * @return
      */
-    void save(UserDo userDo);
+    UserDo save(UserDo userDo);
 
     /**
      * 更新用户头像

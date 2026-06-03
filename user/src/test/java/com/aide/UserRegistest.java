@@ -42,10 +42,12 @@ public class UserRegistest {
      */
     @Test
     public void testRegisterWithMinimalInfo() {
+        String testuserAccount = "testuser002";
+        String testUsername = "测试用户";
         RegisterRequest request = new RegisterRequest();
-        request.setAccount("testuser001");
+        request.setAccount(testuserAccount);
         request.setPassword("password123");
-        request.setUsername("测试用户");
+        request.setUsername(testUsername);
 
 //        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 //        mockRequest.setRemoteAddr("192.168.1.100");
@@ -54,8 +56,8 @@ public class UserRegistest {
 
         assertNotNull(response, "注册响应不应为空");
         assertNotNull(response.getUserId(), "用户ID不应为空");
-        assertEquals("testuser001", response.getAccount(), "账号应匹配");
-        assertEquals("测试用户", response.getUsername(), "用户名应匹配");
+        assertEquals(testuserAccount, response.getAccount(), "账号应匹配");
+        assertEquals(testUsername, response.getUsername(), "用户名应匹配");
         assertNotNull(response.getToken(), "Token不应为空");
         assertFalse(response.getToken().isEmpty(), "Token不应为空字符串");
         assertEquals("USER", response.getRole(), "新用户角色应为USER");
@@ -75,15 +77,23 @@ public class UserRegistest {
      */
     @Test
     public void testRegisterWithFullInfo() {
+        String testuserAcount = "testuser004";
+        String testUserName = "完整信息用户";
+        String phone = "13800138002";
+        String email = "test@example.com";
+        String sex = "MALE";
+        String occupation = "软件工程师";
+        String birthday = "1990-01-01";
+
         RegisterRequest request = new RegisterRequest();
-        request.setAccount("testuser002");
+        request.setAccount(testuserAcount);
         request.setPassword("password123");
-        request.setUsername("完整信息用户");
-        request.setMobile("13800138000");
-        request.setEmail("test@example.com");
-        request.setSex("MALE");
-        request.setBirthday("1990-01-01");
-        request.setOccupation("工程师");
+        request.setUsername(testUserName);
+        request.setMobile(phone);
+        request.setEmail(email);
+        request.setSex(sex);
+        request.setBirthday(birthday);
+        request.setOccupation(occupation);
 
 //        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 //        mockRequest.setRemoteAddr("10.0.0.1");
@@ -93,8 +103,8 @@ public class UserRegistest {
 
         assertNotNull(response, "注册响应不应为空");
         assertNotNull(response.getUserId(), "用户ID不应为空");
-        assertEquals("testuser002", response.getAccount(), "账号应匹配");
-        assertEquals("完整信息用户", response.getUsername(), "用户名应匹配");
+        assertEquals(testuserAcount, response.getAccount(), "账号应匹配");
+        assertEquals(testUserName, response.getUsername(), "用户名应匹配");
         assertNotNull(response.getToken(), "Token不应为空");
         assertEquals("USER", response.getRole(), "新用户角色应为USER");
         assertEquals("NORMAL", response.getStatus(), "新用户状态应为NORMAL");

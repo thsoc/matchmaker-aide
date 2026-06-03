@@ -20,7 +20,6 @@
         <result column="income" property="income"/>
         <result column="occupation" property="occupation"/>
         <result column="integral" property="integral"/>
-        <result column="money" property="money"/>
         <result column="login_count" property="loginCount"/>
         <result column="last_login_time" property="lastLoginTime"/>
         <result column="last_login_ip" property="lastLoginIp"/>
@@ -119,90 +118,88 @@
         ORDER BY create_time DESC
     </select>
 
-    <!-- 插入用户 -->
-    <insert id="insert" parameterType="com.aide.infrastructure.persistence.entity.User">
-        INSERT INTO aide_user (
-        <trim suffixOverrides=",">
-            <if test="id != null">id,</if>
-            <if test="account != null and account != ''">account,</if>
-            <if test="username != null and username != ''">username,</if>
-            <if test="password != null and password != ''">password,</if>
-            <if test="description != null">description,</if>
-            <if test="introduce != null">introduce,</if>
-            <if test="role != null">role,</if>
-            <if test="status != null">status,</if>
-            <if test="sex != null">sex,</if>
-            <if test="avatar != null">avatar,</if>
-            <if test="email != null">email,</if>
-            <if test="mobile != null">mobile,</if>
-            <if test="birthday != null">birthday,</if>
-            <if test="income != null">income,</if>
-            <if test="occupation != null">occupation,</if>
-            <if test="integral != null">integral,</if>
-            <if test="money != null">money,</if>
-            <if test="loginCount != null">login_count,</if>
-            <if test="lastLoginTime != null">last_login_time,</if>
-            <if test="lastLoginIp != null">last_login_ip,</if>
-            <if test="createTime != null">create_time,</if>
-            <if test="updateTime != null">update_time,</if>
-            <if test="delFlag != null">del_flag,</if>
-            <if test="createBy != null">create_by,</if>
-            <if test="updateBy != null">update_by,</if>
-            <if test="version != null">version,</if>
-            <if test="reserved1 != null">reserved1,</if>
-            <if test="reserved2 != null">reserved2,</if>
-            <if test="reserved3 != null">reserved3,</if>
-            <if test="reserved4 != null">reserved4,</if>
-            <if test="reserved5 != null">reserved5,</if>
-            <if test="reserved6 != null">reserved6,</if>
-            <if test="reserved7 != null">reserved7,</if>
-            <if test="reserved8 != null">reserved8,</if>
-        </trim>
-        ) VALUES (
-        <trim suffixOverrides=",">
-            <if test="id != null">#{id},</if>
-            <if test="account != null and account != ''">#{account},</if>
-            <if test="username != null and username != ''">#{username},</if>
-            <if test="password != null and password != ''">#{password},</if>
-            <if test="description != null">#{description},</if>
-            <if test="introduce != null">#{introduce},</if>
-            <if test="role != null">#{role},</if>
-            <if test="status != null">#{status},</if>
-            <if test="sex != null">#{sex},</if>
-            <if test="avatar != null">#{avatar},</if>
-            <if test="email != null">#{email},</if>
-            <if test="mobile != null">#{mobile},</if>
-            <if test="birthday != null">#{birthday},</if>
-            <if test="income != null">#{income},</if>
-            <if test="occupation != null">#{occupation},</if>
-            <if test="integral != null">#{integral},</if>
-            <if test="money != null">#{money},</if>
-            <if test="loginCount != null">#{loginCount},</if>
-            <if test="lastLoginTime != null">#{lastLoginTime},</if>
-            <if test="lastLoginIp != null">#{lastLoginIp},</if>
-            <if test="createTime != null">#{createTime},</if>
-            <if test="updateTime != null">#{updateTime},</if>
-            <if test="delFlag != null">#{delFlag},</if>
-            <if test="createBy != null">#{createBy},</if>
-            <if test="updateBy != null">#{updateBy},</if>
-            <if test="version != null">#{version},</if>
-            <if test="reserved1 != null">#{reserved1},</if>
-            <if test="reserved2 != null">#{reserved2},</if>
-            <if test="reserved3 != null">#{reserved3},</if>
-            <if test="reserved4 != null">#{reserved4},</if>
-            <if test="reserved5 != null">#{reserved5},</if>
-            <if test="reserved6 != null">#{reserved6},</if>
-            <if test="reserved7 != null">#{reserved7},</if>
-            <if test="reserved8 != null">#{reserved8},</if>
-        </trim>
-        )
-    </insert>
+<!--    &lt;!&ndash; 插入用户 &ndash;&gt;-->
+<!--    <insert id="insert" parameterType="com.aide.infrastructure.persistence.entity.User">-->
+<!--        INSERT INTO aide_user (-->
+<!--        <trim suffixOverrides=",">-->
+<!--            id,-->
+<!--            <if test="account != null and account != ''">account,</if>-->
+<!--            <if test="username != null and username != ''">username,</if>-->
+<!--            <if test="password != null and password != ''">password,</if>-->
+<!--            <if test="description != null">description,</if>-->
+<!--            <if test="introduce != null">introduce,</if>-->
+<!--            <if test="role != null">role,</if>-->
+<!--            <if test="status != null">status,</if>-->
+<!--            <if test="sex != null">sex,</if>-->
+<!--            <if test="avatar != null">avatar,</if>-->
+<!--            <if test="email != null">email,</if>-->
+<!--            <if test="mobile != null">mobile,</if>-->
+<!--            <if test="birthday != null">birthday,</if>-->
+<!--            <if test="income != null">income,</if>-->
+<!--            <if test="occupation != null">occupation,</if>-->
+<!--            <if test="integral != null">integral,</if>-->
+<!--            <if test="loginCount != null">login_count,</if>-->
+<!--            <if test="lastLoginTime != null">last_login_time,</if>-->
+<!--            <if test="lastLoginIp != null">last_login_ip,</if>-->
+<!--            <if test="createTime != null">create_time,</if>-->
+<!--            <if test="updateTime != null">update_time,</if>-->
+<!--            <if test="delFlag != null">del_flag,</if>-->
+<!--            <if test="createBy != null">create_by,</if>-->
+<!--            <if test="updateBy != null">update_by,</if>-->
+<!--            <if test="version != null">version,</if>-->
+<!--            <if test="reserved1 != null">reserved1,</if>-->
+<!--            <if test="reserved2 != null">reserved2,</if>-->
+<!--            <if test="reserved3 != null">reserved3,</if>-->
+<!--            <if test="reserved4 != null">reserved4,</if>-->
+<!--            <if test="reserved5 != null">reserved5,</if>-->
+<!--            <if test="reserved6 != null">reserved6,</if>-->
+<!--            <if test="reserved7 != null">reserved7,</if>-->
+<!--            <if test="reserved8 != null">reserved8,</if>-->
+<!--        </trim>-->
+<!--        ) VALUES (-->
+<!--        <trim suffixOverrides=",">-->
+<!--            #{id},-->
+<!--            <if test="account != null and account != ''">#{account},</if>-->
+<!--            <if test="username != null and username != ''">#{username},</if>-->
+<!--            <if test="password != null and password != ''">#{password},</if>-->
+<!--            <if test="description != null">#{description},</if>-->
+<!--            <if test="introduce != null">#{introduce},</if>-->
+<!--            <if test="role != null">#{role},</if>-->
+<!--            <if test="status != null">#{status},</if>-->
+<!--            <if test="sex != null">#{sex},</if>-->
+<!--            <if test="avatar != null">#{avatar},</if>-->
+<!--            <if test="email != null">#{email},</if>-->
+<!--            <if test="mobile != null">#{mobile},</if>-->
+<!--            <if test="birthday != null">#{birthday},</if>-->
+<!--            <if test="income != null">#{income},</if>-->
+<!--            <if test="occupation != null">#{occupation},</if>-->
+<!--            <if test="integral != null">#{integral},</if>-->
+<!--            <if test="loginCount != null">#{loginCount},</if>-->
+<!--            <if test="lastLoginTime != null">#{lastLoginTime},</if>-->
+<!--            <if test="lastLoginIp != null">#{lastLoginIp},</if>-->
+<!--            <if test="createTime != null">#{createTime},</if>-->
+<!--            <if test="updateTime != null">#{updateTime},</if>-->
+<!--            <if test="delFlag != null">#{delFlag},</if>-->
+<!--            <if test="createBy != null">#{createBy},</if>-->
+<!--            <if test="updateBy != null">#{updateBy},</if>-->
+<!--            <if test="version != null">#{version},</if>-->
+<!--            <if test="reserved1 != null">#{reserved1},</if>-->
+<!--            <if test="reserved2 != null">#{reserved2},</if>-->
+<!--            <if test="reserved3 != null">#{reserved3},</if>-->
+<!--            <if test="reserved4 != null">#{reserved4},</if>-->
+<!--            <if test="reserved5 != null">#{reserved5},</if>-->
+<!--            <if test="reserved6 != null">#{reserved6},</if>-->
+<!--            <if test="reserved7 != null">#{reserved7},</if>-->
+<!--            <if test="reserved8 != null">#{reserved8},</if>-->
+<!--        </trim>-->
+<!--        )-->
+<!--    </insert>-->
 
     <!-- 批量插入用户 -->
     <insert id="insertBatch" parameterType="java.util.List">
         INSERT INTO aide_user (
         id, account, username, password, description, introduce, role, status, sex, avatar,
-        email, mobile, birthday, income, occupation, integral, money, login_count,
+        email, mobile, birthday, income, occupation, integral, login_count,
         last_login_time, last_login_ip, create_time, update_time, del_flag,
         create_by, update_by, version
         ) VALUES
@@ -212,7 +209,7 @@
             #{item.description}, #{item.introduce}, #{item.role}, #{item.status},
             #{item.sex}, #{item.avatar}, #{item.email}, #{item.mobile},
             #{item.birthday}, #{item.income}, #{item.occupation}, #{item.integral},
-            #{item.money}, #{item.loginCount}, #{item.lastLoginTime}, #{item.lastLoginIp},
+            #{item.loginCount}, #{item.lastLoginTime}, #{item.lastLoginIp},
             #{item.createTime}, #{item.updateTime}, #{item.delFlag},
             #{item.createBy}, #{item.updateBy}, #{item.version}
             )
@@ -238,7 +235,6 @@
             <if test="user.income != null">income = #{user.income},</if>
             <if test="user.occupation != null">occupation = #{user.occupation},</if>
             <if test="user.integral != null">integral = #{user.integral},</if>
-            <if test="user.money != null">money = #{user.money},</if>
             <if test="user.loginCount != null">login_count = #{user.loginCount},</if>
             <if test="user.lastLoginTime != null">last_login_time = #{user.lastLoginTime},</if>
             <if test="user.lastLoginIp != null">last_login_ip = #{user.lastLoginIp},</if>

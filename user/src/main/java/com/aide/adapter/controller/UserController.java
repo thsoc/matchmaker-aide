@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/user") // 类级别映射，所有方法路径都会加上 /user 前缀
+@RequestMapping("/user")
 public class UserController {
 
     private final UserService userService;
