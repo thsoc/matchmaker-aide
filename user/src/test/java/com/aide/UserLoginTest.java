@@ -32,11 +32,12 @@ public class UserLoginTest {
      **/
     @Test
     public void testLogin() {
-        LoginResponse loginResponse = userService.login("admin", "123456", "1121");
+        String testuserName = "testuser001";
+        LoginResponse loginResponse = userService.login(testuserName, "password123", "1121");
 
         assertNotNull(loginResponse, "登录响应不应为空");
         assertNotNull(loginResponse.getUserId(), "用户ID不应为空");
-        assertEquals("admin", loginResponse.getAccount(), "账号应匹配");
+        assertEquals(testuserName, loginResponse.getAccount(), "账号应匹配");
         assertNotNull(loginResponse.getUsername(), "用户名不应为空");
         assertNotNull(loginResponse.getToken(), "Token不应为空");
         assertFalse(loginResponse.getToken().isEmpty(), "Token不应为空字符串");
@@ -60,7 +61,7 @@ public class UserLoginTest {
     @Test
     public void testLoginWithWrongPassword() {
         Exception exception = assertThrows(Exception.class, () -> {
-            userService.login("admin", "wrongpassword", null);
+            userService.login("testuser001", "ssss", null);
         });
 
         assertNotNull(exception.getMessage(), "异常消息不应为空");

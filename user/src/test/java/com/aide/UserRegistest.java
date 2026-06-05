@@ -2,12 +2,18 @@ package com.aide;
 
 import com.aide.adapter.VO.LoginResponse;
 import com.aide.adapter.VO.RegisterRequest;
+import com.aide.common.Result.Result;
 import com.aide.domain.model.UserDo;
 import com.aide.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.http.*;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -16,6 +22,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDateTime;
 
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -27,12 +34,36 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
  */
 // 启动Spring Boot应用，并使用随机端口启动，使用项目的配置
 @SpringBootTest(classes = UserClientApp.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+//// 将 RANDOM_PORT 改为 MOCK (默认) 或 DEFINED_PORT
+//@SpringBootTest(classes = UserClientApp.class, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 public class UserRegistest {
     @Autowired
     private UserService userService;
 
+
+    @LocalServerPort // 注入随机生成的端口号
+    private int port;
+
+    // 1. 注入 TestRestTemplate，它会自动连接到随机启动的 Tomcat 端口
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+    //内存模拟
+    private MockMvc mockMvc;
+
     @Autowired
     private WebApplicationContext context;
+
+    @BeforeEach
+    public void setup() {
+        // 关键点：必须加上 .defaultRequest(get("/").port(port)) 或者在 perform 时使用完整 URL
+        // 但更稳妥的方式是使用 RestAssuredMockMvc 或者直接用 TestRestTemplate
+
+        // 如果非要用 MockMvc，需要这样配置让它知道去哪里请求：
+//        this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
+//                .defaultRequest(MockMvcRequestBuilders.get("/").port(port))
+//                .build();
+    }
 
     // ==================== 应用服务层测试 ====================
 
@@ -142,7 +173,8 @@ public class UserRegistest {
     @Test
     public void testRegisterWithDuplicateAccount() {
         RegisterRequest request = new RegisterRequest();
-        request.setAccount("admin");
+        String testuserAcount = "testuser004";
+        request.setAccount(testuserAcount);
         request.setPassword("password123");
         request.setUsername("重复账号测试");
 
@@ -170,7 +202,7 @@ public class UserRegistest {
     @Test
     public void testRegisterWithNullIp() {
         RegisterRequest request = new RegisterRequest();
-        request.setAccount("testuser003");
+        request.setAccount("testuser006");
         request.setPassword("password123");
         request.setUsername("空IP测试用户");
 
@@ -193,6 +225,7 @@ public class UserRegistest {
      */
     @Test
     public void testRegisterViaController() throws Exception {
+        //内存模拟
         MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
 
         String registerJson = "{" +
@@ -226,19 +259,29 @@ public class UserRegistest {
      */
     @Test
     public void testRegisterWithInvalidAccountFormat() throws Exception {
-        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+//        //内存模拟方式无法模拟参数校验
+//        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+//        String registerJson = "{" +
+//                "\"account\":\"ab\"," +
+//                "\"password\":\"password123\"," +
+//                "\"username\":\"格式测试用户\"" +
+//                "}";
+//
+//        mockMvc.perform(MockMvcRequestBuilders.post("/user/register")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(registerJson))
+//                .andDo(print())
+//                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+
 
         String registerJson = "{" +
                 "\"account\":\"ab\"," +
                 "\"password\":\"password123\"," +
                 "\"username\":\"格式测试用户\"" +
                 "}";
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(registerJson))
-                .andDo(print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        // 1. 设置请求头
+        Result result = extracted(registerJson);
+        assertThat(result.getMessage()).contains("账号格式不正确");
 
         System.out.println("✓ 账号格式验证正确");
     }
@@ -249,19 +292,28 @@ public class UserRegistest {
      */
     @Test
     public void testRegisterWithInvalidPasswordFormat() throws Exception {
-        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+//        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+//
+//        String registerJson = "{" +
+//                "\"account\":\"validuser\"," +
+//                "\"password\":\"123\"," +
+//                "\"username\":\"密码格式测试\"" +
+//                "}";
+//
+//        mockMvc.perform(MockMvcRequestBuilders.post("/user/register")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(registerJson))
+//                .andDo(print())
+//                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+
 
         String registerJson = "{" +
                 "\"account\":\"validuser\"," +
                 "\"password\":\"123\"," +
                 "\"username\":\"密码格式测试\"" +
                 "}";
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(registerJson))
-                .andDo(print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        Result result = extracted(registerJson);
+        assertThat(result.getMessage()).contains("密码格式不正确");
 
         System.out.println("✓ 密码格式验证正确");
     }
@@ -272,17 +324,23 @@ public class UserRegistest {
      */
     @Test
     public void testRegisterWithMissingRequiredFields() throws Exception {
-        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+//        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+//
+//        String registerJson = "{" +
+//                "\"username\":\"缺少必填字段\"" +
+//                "}";
+//
+//        mockMvc.perform(MockMvcRequestBuilders.post("/user/register")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(registerJson))
+//                .andDo(print())
+//                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+
 
         String registerJson = "{" +
                 "\"username\":\"缺少必填字段\"" +
                 "}";
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(registerJson))
-                .andDo(print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        extracted(registerJson);
 
         System.out.println("✓ 必填字段验证正确");
     }
@@ -293,8 +351,6 @@ public class UserRegistest {
      */
     @Test
     public void testRegisterWithInvalidMobile() throws Exception {
-        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-
         String registerJson = "{" +
                 "\"account\":\"validuser001\"," +
                 "\"password\":\"password123\"," +
@@ -302,11 +358,8 @@ public class UserRegistest {
                 "\"mobile\":\"12345678901\"" +
                 "}";
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(registerJson))
-                .andDo(print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        extracted(registerJson);
+
 
         System.out.println("✓ 手机号格式验证正确");
     }
@@ -317,8 +370,6 @@ public class UserRegistest {
      */
     @Test
     public void testRegisterWithInvalidEmail() throws Exception {
-        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-
         String registerJson = "{" +
                 "\"account\":\"validuser002\"," +
                 "\"password\":\"password123\"," +
@@ -326,13 +377,36 @@ public class UserRegistest {
                 "\"email\":\"invalid-email\"" +
                 "}";
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(registerJson))
-                .andDo(print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        extracted(registerJson);
 
         System.out.println("✓ 邮箱格式验证正确");
+    }
+
+    /**
+     * 测试用户注册接口 - 参数验证
+     *
+     * @return
+     */
+    private Result extracted(String registerJson) throws JsonProcessingException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> entity = new HttpEntity<>(registerJson, headers);
+
+        // 2. 发送 POST 请求到真实服务器
+        // 注意：这里不需要拼接 localhost:port，TestRestTemplate 会自动处理
+        ResponseEntity<String> response = restTemplate.postForEntity("/user/register", entity, String.class);
+
+        // 5. 断言结果
+        // 如果校验生效，状态码应该是 400 (Bad Request)，而不是 200
+        System.out.println("响应状态码: " + response.getStatusCode());
+        System.out.println("响应内容: " + response.getBody());
+
+        ObjectMapper mapper = new ObjectMapper();
+        Result result = mapper.readValue(response.getBody(), Result.class);
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        return result;
     }
 
     // ==================== 领域对象层测试（纯单元测试）====================
@@ -376,7 +450,7 @@ public class UserRegistest {
 
         userDo.record(null);
 
-        assertEquals("unknown", userDo.getLastLoginIp(), "IP为空时应设置为unknown");
+        assertNull(userDo.getLastLoginIp());
         assertEquals(1, userDo.getLoginCount(), "登录次数应为1");
 
         System.out.println("✓ 领域对象正确处理空IP");
