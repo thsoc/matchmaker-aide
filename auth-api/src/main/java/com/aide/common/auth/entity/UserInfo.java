@@ -23,26 +23,6 @@ public class UserInfo {
     private Long id;
     private String account;
     private String username;
-    private String password;
-    private String description;
-    private String introduce;
     private String role;
-    private String status;
     private String sex;
-    private String avatar;
-    private String email;
-    private String mobile;
-    private String birthday;
-    private BigDecimal income;
-    private String occupation;
-    private Integer integral;
-    private Integer loginCount;
-    private LocalDateTime lastLoginTime;
-    private String lastLoginIp;
-    private LocalDateTime createTime;
-    private LocalDateTime updateTime;
-    private Integer delFlag;
-    private String createBy;
-    private String updateBy;
-    private Integer version;
 }

@@ -2,11 +2,13 @@ package com.aide.auth.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
@@ -14,6 +16,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import javax.annotation.Resource;
 import javax.crypto.SecretKey;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,30 +41,48 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
     private static final String USER_ACCOUNT_HEADER = "X-User-Account";
     private static final String USER_NAME_HEADER = "X-User-Username";
     private static final String USER_ROLE_HEADER = "X-User-Role";
+    private static final String USER_SEX_HEADER = "X-User-Sex";
+    private static final String USER_CACHE_PREFIX = "user:cache:";
 
-    public JwtAuthenticationFilter(SecretKey jwtSecretKey, ObjectMapper objectMapper) {
+    private RedisTemplate<String, Object> redisTemplate;
+
+    public JwtAuthenticationFilter(SecretKey jwtSecretKey, ObjectMapper objectMapper, RedisTemplate<String, Object> redisTemplate) {
         this.jwtSecretKey = jwtSecretKey;
         this.objectMapper = objectMapper;
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        // todo 这个过滤器要修改
+        log.info("开始进行权限认证");
+
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
+
+        // 1. 放行公开接口（如登录、注册）
+        if (path.startsWith("/auth/login") || path.startsWith("/auth/register")) {
+            return chain.filter(exchange);
+        }
 
         log.info("网关请求: {}", path);
 
         String authHeader = request.getHeaders().getFirst(AUTH_HEADER);
 
+        String token = authHeader.substring(BEARER_PREFIX.length());
+
         if (!StringUtils.hasText(authHeader) || !authHeader.startsWith(BEARER_PREFIX)) {
             log.warn("请求未携带有效的Token，路径: {}", path);
             return setUnauthorizedResponse(exchange, "未登录或登录已过期");
         }
-
-        String token = authHeader.substring(BEARER_PREFIX.length());
+        String cacheKey = USER_CACHE_PREFIX + token;
+        //先判断redis里面有没有token
+        if (redisTemplate.opsForValue().get(cacheKey) == null) {
+            log.warn("请求未携带有效的Token，路径: {}", path);
+            return setUnauthorizedResponse(exchange, "未登录或登录已过期");
+        }
 
         try {
+
             Claims claims = parseToken(token);
 
             if (claims == null) {
@@ -73,6 +94,7 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
             String account = claims.get("account", String.class);
             String username = claims.get("username", String.class);
             String role = claims.get("role", String.class);
+            String sex = claims.get("sex", String.class);
 
             log.info("Token验证成功 - 用户ID: {}, 账号: {}, 路径: {}", userId, account, path);
 
@@ -81,10 +103,15 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
                     .header(USER_ACCOUNT_HEADER, account)
                     .header(USER_NAME_HEADER, username)
                     .header(USER_ROLE_HEADER, role)
+                    .header(USER_SEX_HEADER, sex)
                     .build();
 
             return chain.filter(exchange.mutate().request(mutatedRequest).build());
 
+        }catch (ExpiredJwtException e) {
+            // 明确知道是 Token 过期了
+            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+            return exchange.getResponse().setComplete();
         } catch (Exception e) {
             log.error("Token验证异常，路径: {}", path, e);
             return setUnauthorizedResponse(exchange, "Token验证失败");
@@ -124,6 +151,6 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return -1;
+        return Ordered.HIGHEST_PRECEDENCE;
     }
 }

@@ -1,33 +1,30 @@
 package com.aide.config;
 
 
-import com.aide.common.auth.interceptor.AuthInterceptor;
+import com.aide.common.auth.interceptor.UserContextInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * @description 用户认证拦截器配置
+ * @description 用户上下文拦截器配置：只是获取信息，不进行权限校验，权限校验在网关中进行
  * @author mazg
  * @date 2026/5/18
  * @date 11:08
  */
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
-    
-    private final AuthInterceptor authInterceptor;
-    
-    public WebMvcConfig(AuthInterceptor authInterceptor) {
-        this.authInterceptor = authInterceptor;
+
+    private final UserContextInterceptor userContextInterceptor;
+
+    public WebMvcConfig(UserContextInterceptor userContextInterceptor) {
+        this.userContextInterceptor = userContextInterceptor;
     }
-    
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(authInterceptor)
+        registry.addInterceptor(userContextInterceptor)
                 .addPathPatterns("/user/**")
-                .excludePathPatterns(
-                    "/user/login",
-                    "/user/register"
-                );
+                .excludePathPatterns("/error"); // 排除错误路径
     }
 }

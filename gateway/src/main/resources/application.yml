@@ -13,6 +13,20 @@ spring:
 #        service: orderServer
         server-addr: 127.0.0.1:8848
         cluster-name: ${CLUSTER-NAME:HF}
+
+  redis:
+    host: ${REDIS_HOST:192.168.2.20}
+    port: 6379
+    password: ${REDIS_PASSWORD:123456}
+    database: 0
+    timeout: 3000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
+
     gateway:
       routes:
         - id: order-service

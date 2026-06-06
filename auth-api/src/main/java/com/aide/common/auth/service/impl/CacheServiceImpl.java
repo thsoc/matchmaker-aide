@@ -63,10 +63,12 @@ public class CacheServiceImpl implements CacheService {
         try {
             String cacheKey = USER_CACHE_PREFIX + key;
 
-            // 1. 先保存到本地缓存
-            localCache.put(cacheKey, value);
-            log.debug("用户信息已保存到本地缓存，key: {}", cacheKey);
+            //服务不做权限认证了
+//            // 1. 先保存到本地缓存
+//            localCache.put(cacheKey, value);
+//            log.debug("用户信息已保存到本地缓存，key: {}", cacheKey);
 
+            //这边是为了实现“强制下线”、“Token 黑名单”或“动态修改权限”
             // 2. 再保存到Redis（RedisTemplate会自动序列化）
             redisTemplate.opsForValue().set(cacheKey, value, expireSeconds, TimeUnit.SECONDS);
             log.debug("用户信息已保存到Redis缓存，key: {}", cacheKey);

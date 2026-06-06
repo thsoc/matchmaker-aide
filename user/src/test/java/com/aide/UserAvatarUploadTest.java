@@ -53,27 +53,8 @@ public class UserAvatarUploadTest {
                     .id(user.getId())
                     .account(user.getAccount())
                     .username(user.getUsername())
-                    .password(user.getPassword())
-                    .description(user.getDescription())
-                    .introduce(user.getIntroduce())
                     .role(user.getRole())
-                    .status(user.getStatus())
-                    .sex(user.getSex())
-                    .avatar(user.getAvatar())
-                    .email(user.getEmail())
-                    .mobile(user.getMobile())
-                    .birthday(user.getBirthday())
-                    .income(user.getIncome())
-                    .occupation(user.getOccupation())
-                    .integral(user.getIntegral())
-                    .loginCount(user.getLoginCount())
-                    .lastLoginTime(user.getLastLoginTime())
-                    .createTime(user.getCreateTime())
-                    .updateTime(user.getUpdateTime())
-                    .delFlag(user.getDelFlag())
-                    .createBy(user.getCreateBy())
-                    .updateBy(user.getUpdateBy())
-                    .version(user.getVersion()).build();
+                    .sex(user.getSex()).build();
             UserContext.setUser(userinfo);
         }
     }
