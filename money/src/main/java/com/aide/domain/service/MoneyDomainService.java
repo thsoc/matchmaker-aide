@@ -59,7 +59,6 @@ public class MoneyDomainService {
     /**
      * 为用户充值（账户层面的业务逻辑）
      */
-    @Transactional(rollbackFor = Exception.class)
     public void rechargeAccount(Long userId, BigDecimal amount) {
         MoneyDo account = getOrCreateAccount(userId);
         account.addBalance(amount);
@@ -85,9 +84,11 @@ public class MoneyDomainService {
 
     /**
      * 保存充值记录
+     *
+     * @return
      */
-    public void saveRechargeRecord(RechargeRecordDo domainObject) {
-        rechargeRecordRepository.save(domainObject);
+    public RechargeRecordDo saveRechargeRecord(RechargeRecordDo domainObject) {
+        return rechargeRecordRepository.save(domainObject);
     }
 
     /**
@@ -96,10 +97,10 @@ public class MoneyDomainService {
     public String initiatePayment(RechargeRecordDo rechargeRecord) {
         // 1. 标记充值记录为"处理中"
         rechargeRecord.markAsProcessing();
-        rechargeRecordRepository.save(rechargeRecord);
+        RechargeRecordDo save = rechargeRecordRepository.save(rechargeRecord);
 
         // 2. 调用支付上下文执行支付
-        String paymentResult = paymentContext.executePayment(rechargeRecord);
+        String paymentResult = paymentContext.executePayment(save);
 
         log.info("支付已发起，订单号: {}, 支付结果: {}",
                 rechargeRecord.getOrderNo(), paymentResult);
@@ -114,10 +115,10 @@ public class MoneyDomainService {
     public void handleRechargeSuccess(RechargeRecordDo rechargeRecord) {
         // 1. 更新充值记录状态
         rechargeRecord.markAsSuccess();
-        rechargeRecordRepository.save(rechargeRecord);
+        RechargeRecordDo save = rechargeRecordRepository.save(rechargeRecord);
 
         // 2. 更新账户余额
-        rechargeAccount(rechargeRecord.getUserId(), rechargeRecord.getAmount());
+        rechargeAccount(save.getUserId(), save.getAmount());
 
         log.info("充值完成，用户ID: {}, 金额: {}, 订单号: {}",
                 rechargeRecord.getUserId(), rechargeRecord.getAmount(), rechargeRecord.getOrderNo());

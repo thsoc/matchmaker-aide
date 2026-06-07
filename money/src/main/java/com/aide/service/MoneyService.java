@@ -2,6 +2,7 @@ package com.aide.service;
 
 import com.aide.adapter.dto.RechargeRequestDTO;
 import com.aide.adapter.dto.RechargeResponseDTO;
+import com.aide.common.exception.MoneyException;
 import com.aide.infrastructure.persistence.entity.Money;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -24,7 +25,7 @@ public interface MoneyService{
      * @param request 充值请求
      * @return 充值结果
      */
-    RechargeResponseDTO recharge(RechargeRequestDTO request);
+    RechargeResponseDTO recharge(RechargeRequestDTO request) throws MoneyException;
 
     /**
      * 查询充值记录

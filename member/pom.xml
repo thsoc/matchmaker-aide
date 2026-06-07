@@ -64,10 +64,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
+        <!-- 仅引入 Redisson 核心库，专门用于分布式锁等高级功能 -->
+        <!-- 注意：千万不要引入 redisson-spring-boot-starter，否则会自动触发装配冲突 -->
         <dependency>
             <groupId>org.redisson</groupId>
-            <artifactId>redisson-spring-boot-starter</artifactId>
-            <version>3.17.0</version>
+            <artifactId>redisson</artifactId>
+            <version>3.17.0</version> <!-- 请根据你的 Spring Boot 版本选择合适的 Redisson 版本 -->
         </dependency>
 
         <!-- 显式添加 Jackson Java 8 日期时间支持,虽然springboot自带但是未正确注入 -->

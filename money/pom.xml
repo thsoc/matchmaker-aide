@@ -91,10 +91,12 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
 
+        <!-- 仅引入 Redisson 核心库，专门用于分布式锁等高级功能 -->
+        <!-- 注意：千万不要引入 redisson-spring-boot-starter，否则会自动触发装配冲突 -->
         <dependency>
             <groupId>org.redisson</groupId>
-            <artifactId>redisson-spring-boot-starter</artifactId>
-            <version>3.17.0</version>
+            <artifactId>redisson</artifactId>
+            <version>3.17.0</version> <!-- 请根据你的 Spring Boot 版本选择合适的 Redisson 版本 -->
         </dependency>
 
         <dependency>
@@ -111,10 +113,15 @@
 
         <!-- ShardingSphere-JDBC 分库分表 -->
         <!-- ShardingSphere-JDBC Core Spring Boot Starter -->
+<!--        <dependency>-->
+<!--            <groupId>org.apache.shardingsphere</groupId>-->
+<!--            <artifactId>shardingsphere-jdbc-core-spring-boot-starter</artifactId>-->
+<!--            <version>5.1.1</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
-            <artifactId>shardingsphere-jdbc-core-spring-boot-starter</artifactId>
-            <version>5.1.0</version>
+            <artifactId>shardingsphere-jdbc-core</artifactId>
+            <version>5.3.2</version> <!-- 或 5.4.1 -->
         </dependency>
 
         <!-- HikariCP 连接池 -->

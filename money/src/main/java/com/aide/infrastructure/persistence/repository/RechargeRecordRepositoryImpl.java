@@ -31,7 +31,7 @@ public class RechargeRecordRepositoryImpl implements RechargeRecordRepository {
     private final RechargeRecordMapper rechargeRecordMapper;
 
     @Override
-    public void save(RechargeRecordDo rechargeRecord) {
+    public RechargeRecordDo save(RechargeRecordDo rechargeRecord) {
         RechargeRecord entity = convertToEntity(rechargeRecord);
 
         if (rechargeRecord.getId() == null) {
@@ -43,6 +43,7 @@ public class RechargeRecordRepositoryImpl implements RechargeRecordRepository {
             log.debug("更新充值记录，用户ID: {}, 状态: {}",
                     rechargeRecord.getUserId(), rechargeRecord.getStatus());
         }
+        return convertToDomainObject(entity);
     }
 
     @Override

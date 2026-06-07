@@ -182,11 +182,6 @@ public class BucketShardingAlgorithm implements StandardShardingAlgorithm<Long> 
     }
 
     @Override
-    public void init() {
-
-    }
-
-    @Override
     public String getType() {
         return "Cluster";
     }

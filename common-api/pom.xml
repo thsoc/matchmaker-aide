@@ -37,5 +37,11 @@
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <!-- 建议与你的 Spring Framework 或 Spring Boot 版本保持一致 -->
+        </dependency>
     </dependencies>
 </project>

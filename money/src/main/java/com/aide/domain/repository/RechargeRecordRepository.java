@@ -18,8 +18,9 @@ public interface RechargeRecordRepository {
      * 保存充值记录（新增或更新）
      *
      * @param rechargeRecord 充值记录领域对象
+     * @return
      */
-    void save(RechargeRecordDo rechargeRecord);
+    RechargeRecordDo save(RechargeRecordDo rechargeRecord);
 
     /**
      * 根据订单号查询充值记录

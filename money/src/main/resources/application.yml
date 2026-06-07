@@ -82,9 +82,31 @@ spring:
       ds0:
         type: com.zaxxer.hikari.HikariDataSource
         driver-class-name: com.mysql.cj.jdbc.Driver
-        jdbc-url: jdbc:mysql://${MYSQL_HOST_0:192.168.2.20}:3306/matchmaker?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+        jdbc-url: jdbc:mysql://${MYSQL_HOST_0:192.168.2.20}:3306/matchmaker?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&autocommit=false
         username: root
         password: 123456
+        hikari: #不生效
+          auto-commit: false  # 关闭自动提交
+          connection-timeout: 30000
+          maximum-pool-size: 20
+          minimum-idle: 5
+          idle-timeout: 600000
+          max-lifetime: 1800000
+          connection-init-sql: |
+            SET autocommit=0;
+            SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED;
+          transaction-isolation: TRANSACTION_READ_COMMITTED
+          pool-name: HikariPool-Sharding
+          leak-detection-threshold: 60000
+          data-source-properties:
+            cachePrepStmts: true
+            prepStmtCacheSize: 250
+            prepStmtCacheSqlLimit: 2048
+            useServerPrepStmts: true
+            useLocalSessionState: true
+            rewriteBatchedStatements: true
+            maintainTimeStats: false
+            useLocalTransactionState: true
 
 #      # 数据源1
 #      ds1:
@@ -223,3 +245,8 @@ mybatis-plus:
 jwt:
   secret: myVerySecureSecretKeyForMatchmakerAideApplicationThatIsAtLeast256BitsLong
   expiration: 7200  # 令牌过期时间（秒），默认2小时
+
+logging:
+  level:
+#    org.springframework.transaction: DEBUG
+    org.apache.shardingsphere: DEBUG

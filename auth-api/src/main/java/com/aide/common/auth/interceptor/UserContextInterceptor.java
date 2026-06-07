@@ -2,6 +2,8 @@ package com.aide.common.auth.interceptor;
 
 import com.aide.common.auth.context.UserContext;
 import com.aide.common.auth.entity.UserInfo;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +17,8 @@ import java.util.Arrays;
  * @date 2026/6/6
  * @date 19:25
  */
+@Slf4j
+@Configuration
 public class UserContextInterceptor implements HandlerInterceptor {
     /**
      * 在请求处理之前进行调用（Controller方法调用之前）

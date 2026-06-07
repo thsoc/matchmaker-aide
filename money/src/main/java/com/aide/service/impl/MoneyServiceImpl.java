@@ -4,6 +4,7 @@ package com.aide.service.impl;
 import com.aide.adapter.converter.RechargeRecordConverter;
 import com.aide.adapter.dto.RechargeRequestDTO;
 import com.aide.adapter.dto.RechargeResponseDTO;
+import com.aide.common.exception.MoneyException;
 import com.aide.domain.event.PaymentFailureEvent;
 import com.aide.domain.event.PaymentSuccessEvent;
 import com.aide.domain.model.MoneyDo;
@@ -64,7 +65,9 @@ public class MoneyServiceImpl implements MoneyService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public RechargeResponseDTO recharge(RechargeRequestDTO request) {
+    public RechargeResponseDTO recharge(RechargeRequestDTO request) throws MoneyException {
+        // 检查事务状态
+        log.info("事务是否活跃: {}", TransactionSynchronizationManager.isActualTransactionActive());
         log.info("开始处理充值请求，用户ID: {}, 金额: {}", request.getUserId(), request.getAmount());
 
         try {
@@ -77,10 +80,12 @@ public class MoneyServiceImpl implements MoneyService {
             );
 
             // 2. 保存充值记录
-            moneyDomainService.saveRechargeRecord(rechargeRecord);
+            RechargeRecordDo rechargeRecordDo = moneyDomainService.saveRechargeRecord(rechargeRecord);
 
             // 3. 发起第三方支付（调用微信/支付宝）
-            String paymentResult = moneyDomainService.initiatePayment(rechargeRecord);
+            String paymentResult = moneyDomainService.initiatePayment(rechargeRecordDo);
+
+            int a = 1/0;
 
             // 4. 通过 Converter 转换为响应DTO
             RechargeResponseDTO response = rechargeRecordConverter.toResponseDTO(rechargeRecord);
@@ -93,7 +98,7 @@ public class MoneyServiceImpl implements MoneyService {
         } catch (Exception e) {
             log.error("充值处理异常，用户ID: {}, 金额: {}",
                     request.getUserId(), request.getAmount(), e);
-            throw new RuntimeException("充值失败: " + e.getMessage(), e);
+            throw MoneyException.moneyRechargeError(request.getUserId());
         }
     }
 
