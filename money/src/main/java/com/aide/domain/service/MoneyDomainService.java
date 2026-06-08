@@ -342,7 +342,6 @@ public class MoneyDomainService {
      * @param amount      扣款金额
      * @param description 扣款描述
      */
-    @Transactional(rollbackFor = Exception.class)
     public void deductAccount(Long userId, BigDecimal amount, String description) {
         log.info("开始处理扣款，用户ID: {}, 金额: {}, 描述: {}", userId, amount, description);
 

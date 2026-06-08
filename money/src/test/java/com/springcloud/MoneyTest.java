@@ -5,7 +5,7 @@ import com.aide.common.Result.Result;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import junit.framework.TestCase;
-import org.assertj.core.api.AssertionsForClassTypes;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
@@ -16,7 +16,7 @@ import org.springframework.http.*;
 
 import java.util.Arrays;
 
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 /**
  * Unit test for simple App.
@@ -54,7 +54,7 @@ public class MoneyTest extends TestCase {
     }
 
     /**
-     * 正常测试用户充值，参数校验
+     * 测试用户发起充值，参数校验
      */
     @Test
     public void testFailRecharge() throws JsonProcessingException {
@@ -67,17 +67,39 @@ public class MoneyTest extends TestCase {
         System.out.println(result.getMessage());
     }
 
+    /**
+     * 发起充值
+     * @throws JsonProcessingException
+     */
     @Test
-    public void testSuccessRecharge() throws JsonProcessingException {
+    public void testSendSuccessRecharge() throws JsonProcessingException {
 
         String registerJson = "{\"userId\":100,\"amount\":100,\"payType\":1}";
         String url = "/money/recharge";
         Result result = extracted(registerJson, url);
-        assertThat(result.getCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        System.out.println("参数错误");
+        assertThat(result.getCode()).isEqualTo(HttpStatus.OK.value());
+        System.out.println("成功发起支付，返回支付二维码或页面");
         System.out.println(result.getMessage());
     }
 
+
+    /**
+     * @author mazg
+     * @description 测试扫码支付之后的操作
+     * @date 19:56 2026/6/8
+     * @return 
+     **/
+    @Test
+    public void testWchatRecharge() throws JsonProcessingException {
+
+        String registerJson = "{\"out_trade_no\":\"out_trade_no_100\",\"transaction_id\":\"transaction_id_100\",\"result_code\":\"SUCCESS\"}";
+        String url = "/notify/wechat";
+        ResponseEntity<String> stringResponseEntity = extractedRtnRep(registerJson, url);
+        assertThat(stringResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK.value());
+        Assertions.assertTrue(stringResponseEntity.getStatusCode().equals(HttpStatus.OK.value()), "支付成功");
+        System.out.println("支付成功");
+        System.out.println(stringResponseEntity.getBody().toString());
+    }
 
     private Result extracted(String registerJson, String url) throws JsonProcessingException {
         HttpEntity<String> entity = new HttpEntity<>(registerJson, headers);
@@ -95,8 +117,22 @@ public class MoneyTest extends TestCase {
         Result result = mapper.readValue(response.getBody(), Result.class);
 //        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        AssertionsForClassTypes.assertThat(result.getCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
         return result;
+    }
+
+    private ResponseEntity<String> extractedRtnRep(String registerJson, String url){
+        HttpEntity<String> entity = new HttpEntity<>(registerJson, headers);
+
+        // 2. 发送 POST 请求到真实服务器
+        // 注意：这里不需要拼接 localhost:port，TestRestTemplate 会自动处理
+        ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
+
+        // 5. 断言结果
+        // 如果校验生效，状态码应该是 400 (Bad Request)，而不是 200
+        System.out.println("响应状态码: " + response.getStatusCode());
+        System.out.println("响应内容: " + response.getBody());
+
+        return response;
     }
 
 }

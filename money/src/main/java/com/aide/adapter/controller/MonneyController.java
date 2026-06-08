@@ -38,7 +38,7 @@ public class MonneyController {
     }
 
     /**
-     * 用户充值
+     * 用户充值：发起支付-返回充值二维码（模拟）
      */
     @PostMapping("/recharge")
     public Result<RechargeResponseDTO> recharge(@Valid @RequestBody RechargeRequestDTO request) throws MoneyException {
