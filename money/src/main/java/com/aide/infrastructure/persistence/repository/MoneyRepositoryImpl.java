@@ -30,7 +30,7 @@ public class MoneyRepositoryImpl implements MoneyRepository {
     @Override
     public MoneyDo findByUserId(Long userId) {
         LambdaQueryWrapper<Money> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Money::getAccount, userId);
+        queryWrapper.eq(Money::getUserId, userId);
         Money money = moneyMapper.selectOne(queryWrapper);
 
         if (money == null) {
@@ -42,7 +42,7 @@ public class MoneyRepositoryImpl implements MoneyRepository {
     }
 
     @Override
-    public void save(MoneyDo moneyDo) {
+    public MoneyDo save(MoneyDo moneyDo) {
         Money money = convertToEntity(moneyDo);
 
         if (moneyDo.getId() == null) {
@@ -52,6 +52,7 @@ public class MoneyRepositoryImpl implements MoneyRepository {
             moneyMapper.updateById(money);
             log.debug("更新账户，用户ID: {}, 余额: {}", moneyDo.getUserId(), moneyDo.getMoney());
         }
+        return convertToDomainObject(money);
     }
 
     /**
@@ -60,7 +61,7 @@ public class MoneyRepositoryImpl implements MoneyRepository {
     private MoneyDo convertToDomainObject(Money entity) {
         return MoneyDo.builder()
                 .id(entity.getId())
-                .userId(entity.getAccount())
+                .userId(entity.getUserId())
                 .money(entity.getMoney())
                 .build();
     }
@@ -71,7 +72,7 @@ public class MoneyRepositoryImpl implements MoneyRepository {
     private Money convertToEntity(MoneyDo domainObject) {
         return Money.builder()
                 .id(domainObject.getId())
-                .account(domainObject.getUserId())
+                .userId(domainObject.getUserId())
                 .money(domainObject.getMoney())
                 .build();
     }

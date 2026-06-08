@@ -28,6 +28,7 @@ public interface MoneyRepository {
      * 保存账户（新增或更新）
      *
      * @param moneyDo 账户领域对象
+     * @return
      */
-    void save(MoneyDo moneyDo);
+    MoneyDo save(MoneyDo moneyDo);
 }

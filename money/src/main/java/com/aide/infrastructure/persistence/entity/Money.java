@@ -26,8 +26,8 @@ public class Money {
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
 
-    @TableField("account")
-    private Long account;
+    @TableField("user_id")
+    private Long userId;
 
     @TableField("money")
     private BigDecimal money;

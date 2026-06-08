@@ -69,6 +69,7 @@ public class MoneyTest extends TestCase {
 
     /**
      * 发起充值
+     *
      * @throws JsonProcessingException
      */
     @Test
@@ -84,19 +85,19 @@ public class MoneyTest extends TestCase {
 
 
     /**
+     * @return
      * @author mazg
      * @description 测试扫码支付之后的操作
      * @date 19:56 2026/6/8
-     * @return 
      **/
     @Test
     public void testWchatRecharge() throws JsonProcessingException {
 
-        String registerJson = "{\"out_trade_no\":\"out_trade_no_100\",\"transaction_id\":\"transaction_id_100\",\"result_code\":\"SUCCESS\"}";
-        String url = "/notify/wechat";
+        String registerJson = "{\"out_trade_no\":\"RC202606082134499B5E8D62\",\"transaction_id\":\"transaction_id_100\",\"result_code\":\"SUCCESS\"}";
+        String url = "/money/notify/wechat";
         ResponseEntity<String> stringResponseEntity = extractedRtnRep(registerJson, url);
         assertThat(stringResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK.value());
-        Assertions.assertTrue(stringResponseEntity.getStatusCode().equals(HttpStatus.OK.value()), "支付成功");
+        Assertions.assertTrue(stringResponseEntity.getStatusCode().value() == HttpStatus.OK.value(), "支付成功");
         System.out.println("支付成功");
         System.out.println(stringResponseEntity.getBody().toString());
     }
@@ -120,7 +121,7 @@ public class MoneyTest extends TestCase {
         return result;
     }
 
-    private ResponseEntity<String> extractedRtnRep(String registerJson, String url){
+    private ResponseEntity<String> extractedRtnRep(String registerJson, String url) {
         HttpEntity<String> entity = new HttpEntity<>(registerJson, headers);
 
         // 2. 发送 POST 请求到真实服务器

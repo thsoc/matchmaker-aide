@@ -48,9 +48,9 @@ public class MoneyDomainService {
         if (account == null) {
             // 创建新账户
             MoneyDo newAccount = MoneyDo.createNewAccount(userId);
-            moneyRepository.save(newAccount);
+            MoneyDo save = moneyRepository.save(newAccount);
             log.info("为用户创建新账户，用户ID: {}", userId);
-            return newAccount;
+            return save;
         } else {
             return account;
         }
@@ -164,7 +164,6 @@ public class MoneyDomainService {
      *
      * @return
      */
-    @Transactional(rollbackFor = Exception.class)
     public PaymentCallbackResult handlePaymentSuccess(String orderNo, String transactionId) {
         log.info("开始处理支付回调，订单号: {}, 交易号: {}", orderNo, transactionId);
 
