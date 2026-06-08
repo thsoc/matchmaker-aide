@@ -81,11 +81,10 @@ public class MoneyServiceImpl implements MoneyService {
 
             // 2. 保存充值记录
             RechargeRecordDo rechargeRecordDo = moneyDomainService.saveRechargeRecord(rechargeRecord);
+            int x = 1/0;
 
             // 3. 发起第三方支付（调用微信/支付宝）
             String paymentResult = moneyDomainService.initiatePayment(rechargeRecordDo);
-
-            int a = 1/0;
 
             // 4. 通过 Converter 转换为响应DTO
             RechargeResponseDTO response = rechargeRecordConverter.toResponseDTO(rechargeRecord);

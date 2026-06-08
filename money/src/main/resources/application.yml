@@ -60,175 +60,19 @@ spring:
 
 
 
-  # ShardingSphere 配置
-  shardingsphere:
-    mode:
-      type: Memory
-#      repository:
-#        type: Nacos
-#        props:
-#          namespace:  # Nacos 命名空间，默认为 public
-#          serverList: ${NACOS_ADDR:192.168.2.20:8848}
-#          group: SHARDING_SPHERE_DEFAULT_GROUP
-#          username: nacos
-#          password: nacos
-#          timeout: 3000
-    # 数据源配置
-    datasource:
-      names: ds0
-#      names: ds0,ds1,ds2
+  # 数据源配置
+  datasource:
+    # 关键：使用 ShardingSphere 驱动
+    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
+    # 关键：URL 指向独立的规则文件
+    url: jdbc:shardingsphere:classpath:sharding.yaml
 
-      # 数据源0
-      ds0:
-        type: com.zaxxer.hikari.HikariDataSource
-        driver-class-name: com.mysql.cj.jdbc.Driver
-        jdbc-url: jdbc:mysql://${MYSQL_HOST_0:192.168.2.20}:3306/matchmaker?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&autocommit=false
-        username: root
-        password: 123456
-        hikari: #不生效
-          auto-commit: false  # 关闭自动提交
-          connection-timeout: 30000
-          maximum-pool-size: 20
-          minimum-idle: 5
-          idle-timeout: 600000
-          max-lifetime: 1800000
-          connection-init-sql: |
-            SET autocommit=0;
-            SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED;
-          transaction-isolation: TRANSACTION_READ_COMMITTED
-          pool-name: HikariPool-Sharding
-          leak-detection-threshold: 60000
-          data-source-properties:
-            cachePrepStmts: true
-            prepStmtCacheSize: 250
-            prepStmtCacheSqlLimit: 2048
-            useServerPrepStmts: true
-            useLocalSessionState: true
-            rewriteBatchedStatements: true
-            maintainTimeStats: false
-            useLocalTransactionState: true
 
-#      # 数据源1
-#      ds1:
-#        type: com.zaxxer.hikari.HikariDataSource
-#        driver-class-name: com.mysql.cj.jdbc.Driver
-#        jdbc-url: jdbc:mysql://${MYSQL_HOST_1:192.168.2.21}:3306/matchmaker_db1?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
-#        username: root
-#        password: 123456
-#
-#      # 数据源2（预留，后续扩容启用）
-#      ds2:
-#        type: com.zaxxer.hikari.HikariDataSource
-#        driver-class-name: com.mysql.cj.jdbc.Driver
-#        jdbc-url: jdbc:mysql://${MYSQL_HOST_2:192.168.2.22}:3306/matchmaker_db2?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
-#        username: root
-#        password: 123456
 
-    # 分片规则配置
-    rules:
-      sharding:
-        tables:
-          aide_money:
-            # 实际数据节点
-#              actual-data-nodes: ds$->{0..1}.aide_money
-            actual-data-nodes: ds$->{0}.aide_money
-
-            # 分库策略
-            database-strategy:
-              standard:
-                sharding-column: user_id  # 分片键
-                sharding-algorithm-name: database-bucket
-
-        # 分片算法配置
-        sharding-algorithms:
-          # 自定义哈希桶算法
-          database-bucket:
-            type: CLASS_BASED
-            props:
-              strategy: standard
-              algorithmClassName: com.aide.sharding.algorithm.BucketShardingAlgorithm
-
-    # 其他属性
-    props:
-      sql-show: true  # 打印实际执行的 SQL
-      check-table-metadata-enabled: true  # 检查表元数据
 sharding:
   bucket:
     enabled: true
-  
-  
-#  # ShardingSphere 配置
-#  shardingsphere:
-#    mode:
-#      type: Cluster
-#    #      repository:
-#    #        type: Nacos
-#    #        props:
-#    #          namespace:  # Nacos 命名空间，默认为 public
-#    #          serverList: ${NACOS_ADDR:192.168.2.20:8848}
-#    #          group: SHARDING_SPHERE_DEFAULT_GROUP
-#    #          username: nacos
-#    #          password: nacos
-#    #          timeout: 3000
-#    # 数据源配置
-#    datasource:
-#      names: ds0,ds1,ds2
-#
-#      # 数据源0
-#      ds0:
-#        type: com.zaxxer.hikari.HikariDataSource
-#        driver-class-name: com.mysql.cj.jdbc.Driver
-#        jdbc-url: jdbc:mysql://${MYSQL_HOST_0:192.168.2.20}:3306/matchmaker?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
-#        username: root
-#        password: 123456
-#
-#      # 数据源1
-#      ds1:
-#        type: com.zaxxer.hikari.HikariDataSource
-#        driver-class-name: com.mysql.cj.jdbc.Driver
-#        jdbc-url: jdbc:mysql://${MYSQL_HOST_1:192.168.2.21}:3306/matchmaker_db1?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
-#        username: root
-#        password: 123456
-#
-#      # 数据源2（预留，后续扩容启用）
-#      ds2:
-#        type: com.zaxxer.hikari.HikariDataSource
-#        driver-class-name: com.mysql.cj.jdbc.Driver
-#        jdbc-url: jdbc:mysql://${MYSQL_HOST_2:192.168.2.22}:3306/matchmaker_db2?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
-#        username: root
-#        password: 123456
-#
-#    # 分片规则配置
-#    rules:
-#      sharding:
-#        tables:
-#          aide_money:
-#            # 实际数据节点
-#            #              actual-data-nodes: ds$->{0..1}.aide_money
-#            actual-data-nodes: ds$->{0}.aide_money
-#
-#            # 分库策略
-#            database-strategy:
-#              standard:
-#                sharding-column: user_id  # 分片键
-#                sharding-algorithm-name: database-bucket
-#
-#        # 分片算法配置
-#        sharding-algorithms:
-#          # 自定义哈希桶算法
-#          database-bucket:
-#            type: CLASS_BASED
-#            props:
-#              strategy: standard
-#              algorithmClassName: com.aide.sharding.algorithm.BucketShardingAlgorithm
-#
-#    # 其他属性
-#    props:
-#      sql-show: true  # 打印实际执行的 SQL
-#      check-table-metadata-enabled: true  # 检查表元数据
-#sharding:
-#  bucket:
-#    enabled: true
+
 
 mybatis-plus:
   configuration:
@@ -248,5 +92,10 @@ jwt:
 
 logging:
   level:
-#    org.springframework.transaction: DEBUG
-    org.apache.shardingsphere: DEBUG
+    # 观察事务是否创建以及是否正确触发回滚
+    org.springframework.transaction: DEBUG
+    org.springframework.jdbc.datasource.DataSourceTransactionManager: DEBUG
+
+    # 观察 ShardingSphere 的分片路由和实际执行引擎
+    org.apache.shardingsphere.core.route: DEBUG
+    org.apache.shardingsphere.core.execute.sql.execute.engine: DEBUG

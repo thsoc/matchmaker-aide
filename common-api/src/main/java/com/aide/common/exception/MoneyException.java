@@ -15,6 +15,6 @@ public class MoneyException extends BusinessException {
 
     // 静态工厂方法：快速创建常见异常
     public static MoneyException moneyRechargeError(Long userId) {
-        return new MoneyException(MONEY_RECHARGE_ERROR, "金额充值异常: " + userId);
+        return new MoneyException(MONEY_RECHARGE_ERROR, "充值金额异常: " + userId);
     }
 }

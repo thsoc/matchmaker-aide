@@ -35,6 +35,8 @@
         <!--    <spring-cloud-alibaba.version>2.2.5.RELEASE</spring-cloud-alibaba.version>-->
         <spring-cloud.version>2021.0.1</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.0.1.0</spring-cloud-alibaba.version>
+        <snakeyaml.version>1.33</snakeyaml.version>
+        <shardingsphere.jdbc.version>5.3.2</shardingsphere.jdbc.version>
     </properties>
 
     <dependencyManagement>
@@ -52,6 +54,19 @@
                 <version>${spring-cloud-alibaba.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <!-- 统一管理 snakeyaml 版本 -->
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml.version}</version>
+<!--                <scope>compile</scope>-->
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shardingsphere</groupId>
+                <artifactId>shardingsphere-jdbc-core</artifactId>
+                <version>${shardingsphere.jdbc.version}</version> <!-- 或 5.4.1 -->
             </dependency>
         </dependencies>
     </dependencyManagement>

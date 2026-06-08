@@ -121,7 +121,12 @@
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
             <artifactId>shardingsphere-jdbc-core</artifactId>
-            <version>5.3.2</version> <!-- 或 5.4.1 -->
+        </dependency>
+        <!-- YAML 配置支持（ShardingSphere 需要） -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+<!--            <scope>compile</scope>-->
         </dependency>
 
         <!-- HikariCP 连接池 -->
