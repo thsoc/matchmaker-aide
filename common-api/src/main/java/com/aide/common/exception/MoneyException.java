@@ -8,6 +8,7 @@ package com.aide.common.exception;
  */
 public class MoneyException extends BusinessException {
     public static final int MONEY_RECHARGE_ERROR = 50001;//todo，后面需要定义统一枚举
+    public static final int MONEY_DEDUCE_ERROR = 50002;//todo，后面需要定义统一枚举
 
     public MoneyException(int code, String message) {
         super(code, message);
@@ -16,5 +17,10 @@ public class MoneyException extends BusinessException {
     // 静态工厂方法：快速创建常见异常
     public static MoneyException moneyRechargeError(Long userId) {
         return new MoneyException(MONEY_RECHARGE_ERROR, "充值金额异常: " + userId);
+    }
+
+    // 静态工厂方法：快速创建常见异常
+    public static MoneyException moneyDeduceError(Long userId) {
+        return new MoneyException(MONEY_DEDUCE_ERROR, "余额不足或用户不存在: " + userId);
     }
 }

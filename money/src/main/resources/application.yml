@@ -99,3 +99,17 @@ logging:
     # 观察 ShardingSphere 的分片路由和实际执行引擎
     org.apache.shardingsphere.core.route: DEBUG
     org.apache.shardingsphere.core.execute.sql.execute.engine: DEBUG
+
+seata:
+  enabled: true
+  # 【极其重要】必须显式关闭 Seata 原生的自动数据源代理！
+  # 否则会和 ShardingSphere-JDBC 产生冲突，导致分片路由失败或事务不生效
+  enable-auto-data-source-proxy: false
+  tcc:
+    fence:
+      logTableName: tcc_fence_log
+
+  tx-service-group: your-tx-group-name
+  service:
+    vgroup-mapping:
+      your-tx-group-name: default

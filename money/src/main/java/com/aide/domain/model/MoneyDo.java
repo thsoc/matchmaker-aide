@@ -20,7 +20,8 @@ import java.math.BigDecimal;
 public class MoneyDo {
     private Long id;
     private Long userId;
-    private BigDecimal money;
+    private BigDecimal availableMoney;
+    private BigDecimal frozenMoney;
 
 
     // ==================== 业务规则方法 ====================
@@ -35,7 +36,7 @@ public class MoneyDo {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("充值金额必须大于0");
         }
-        this.money = this.money.add(amount);
+        this.availableMoney = this.availableMoney.add(amount);
     }
 
     /**
@@ -49,25 +50,26 @@ public class MoneyDo {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("扣款金额必须大于0");
         }
-        if (this.money.compareTo(amount) < 0) {
+        if (this.availableMoney.compareTo(amount) < 0) {
             throw new IllegalStateException("余额不足");
         }
-        this.money = this.money.subtract(amount);
+        this.availableMoney = this.availableMoney.subtract(amount);
     }
+
 
     /**
      * 验证余额是否充足
      */
     public boolean hasSufficientBalance(BigDecimal amount) {
         return amount != null && amount.compareTo(BigDecimal.ZERO) > 0
-                && this.money.compareTo(amount) >= 0;
+                && this.availableMoney.compareTo(amount) >= 0;
     }
 
     /**
      * 获取可用余额
      */
     public BigDecimal getAvailableBalance() {
-        return this.money;
+        return this.availableMoney;
     }
 
     /**
@@ -78,7 +80,47 @@ public class MoneyDo {
     public static MoneyDo createNewAccount(Long userId) {
         return MoneyDo.builder()
                 .userId(userId)
-                .money(BigDecimal.ZERO)
+                .availableMoney(BigDecimal.ZERO)
+                .frozenMoney(BigDecimal.ZERO)
                 .build();
+    }
+
+    public void freezeMoney(BigDecimal amount) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("扣款金额必须大于0");
+        }
+        if (this.availableMoney.compareTo(amount) < 0) {
+            throw new IllegalStateException("余额不足");
+        }
+        this.availableMoney = this.availableMoney.subtract(amount);
+        this.frozenMoney = this.frozenMoney.add(amount);
+    }
+
+
+    public void confirmFreeze(BigDecimal amount) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("扣款金额必须大于0");
+        }
+        if (this.frozenMoney.compareTo(amount) < 0) {
+            throw new IllegalStateException("锁定金额不足");
+        }
+        this.frozenMoney = this.frozenMoney.subtract(amount);
+    }
+
+    /**
+     * @author mazg
+     * @description Cancel 阶段：解冻资金，恢复可用余额
+     * @date 20:30 2026/6/9
+     * @return
+     **/
+    public void unfreezeMoney(BigDecimal amount) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("扣款金额必须大于0");
+        }
+        if (this.frozenMoney.compareTo(amount) < 0) {
+            throw new IllegalStateException("锁定金额不足");
+        }
+        this.availableMoney = this.availableMoney.add(amount);
+        this.frozenMoney = this.frozenMoney.subtract(amount);
     }
 }

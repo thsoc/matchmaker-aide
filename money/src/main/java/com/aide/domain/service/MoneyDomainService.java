@@ -65,7 +65,7 @@ public class MoneyDomainService {
         moneyRepository.save(account);
 
         log.info("账户充值成功，用户ID: {}, 充值金额: {}, 新余额: {}",
-                userId, amount, account.getMoney());
+                userId, amount, account.getAvailableMoney());
     }
 
     // ==================== 充值记录相关的方法 ====================
@@ -354,7 +354,41 @@ public class MoneyDomainService {
         moneyRepository.save(account);
 
         log.info("账户扣款成功，用户ID: {}, 扣款金额: {}, 新余额: {}, 描述: {}",
-                userId, amount, account.getMoney(), description);
+                userId, amount, account.getAvailableMoney(), description);
+    }
+
+    public int freezeMoney(Long userId, BigDecimal amount) {
+        // 1. 查询账户（不存在则创建）
+        MoneyDo account = getOrCreateAccount(userId);
+
+        // 2. 执行扣款业务规则（封装在领域对象中）
+        account.freezeMoney(amount);
+
+        // 3. 冻结金额
+        return moneyRepository.freezeOrunfreezeMoney(account);
+    }
+
+    public void confirmFreeze(Long userId, BigDecimal amount) {
+        // 1. 查询账户（不存在则创建）
+        MoneyDo account = getOrCreateAccount(userId);
+
+        // 2. 执行扣款业务规则（封装在领域对象中）
+        account.confirmFreeze(amount);
+
+        // 3. 清除冻结金额
+        moneyRepository.confirmFreeze(account);
+    }
+
+    public void unfreezeMoney(Long userId, BigDecimal amount) {
+        // 1. 查询账户（不存在则创建）
+        MoneyDo account = getOrCreateAccount(userId);
+
+        // 2. 执行扣款业务规则（封装在领域对象中）
+        account.unfreezeMoney(amount);
+
+        // 3. Cancel 阶段：解冻资金，恢复可用余额
+        moneyRepository.freezeOrunfreezeMoney(account);
+
     }
 }
 

@@ -5,6 +5,8 @@ import com.aide.domain.repository.MoneyRepository;
 import com.aide.infrastructure.persistence.entity.Money;
 import com.aide.infrastructure.persistence.mapper.MoneyMapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -12,7 +14,7 @@ import org.springframework.stereotype.Component;
 /**
  * @author mazg
  * @description 资金仓储实现 - 负责领域对象与持久化实体的转换
- *
+ * <p>
  * 职责：
  * 1. 实现领域层定义的 Repository 接口
  * 2. 处理 MoneyDo ↔ Money 的转换
@@ -50,9 +52,25 @@ public class MoneyRepositoryImpl implements MoneyRepository {
             log.debug("新增账户，用户ID: {}", moneyDo.getUserId());
         } else {
             moneyMapper.updateById(money);
-            log.debug("更新账户，用户ID: {}, 余额: {}", moneyDo.getUserId(), moneyDo.getMoney());
+            log.debug("更新账户，用户ID: {}, 余额: {}", moneyDo.getUserId(), moneyDo.getAvailableMoney());
         }
         return convertToDomainObject(money);
+    }
+
+    public int freezeOrunfreezeMoney(MoneyDo account) {
+        LambdaUpdateWrapper<Money> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(Money::getId, account.getId())
+                .set(Money::getAvailableMoney, account.getAvailableBalance())
+                .set(Money::getFrozenMoney, account.getFrozenMoney());
+        int update = moneyMapper.update(null, wrapper);
+        return update;
+    }
+
+    @Override
+    public void confirmFreeze(MoneyDo account) {
+        new LambdaUpdateChainWrapper<>(moneyMapper)
+                .eq(Money::getId, account.getId())
+                .set(Money::getFrozenMoney, account.getFrozenMoney()).update();
     }
 
     /**
@@ -62,7 +80,8 @@ public class MoneyRepositoryImpl implements MoneyRepository {
         return MoneyDo.builder()
                 .id(entity.getId())
                 .userId(entity.getUserId())
-                .money(entity.getMoney())
+                .availableMoney(entity.getAvailableMoney())
+                .frozenMoney(entity.getFrozenMoney())
                 .build();
     }
 
@@ -73,7 +92,8 @@ public class MoneyRepositoryImpl implements MoneyRepository {
         return Money.builder()
                 .id(domainObject.getId())
                 .userId(domainObject.getUserId())
-                .money(domainObject.getMoney())
+                .availableMoney(domainObject.getAvailableMoney())
+                .frozenMoney(domainObject.getFrozenMoney())
                 .build();
     }
 }

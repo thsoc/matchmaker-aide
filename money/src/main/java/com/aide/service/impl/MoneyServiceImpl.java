@@ -60,7 +60,7 @@ public class MoneyServiceImpl implements MoneyService {
             return 0L;
         }
 
-        return accountInfo.getMoney().longValue();
+        return accountInfo.getAvailableMoney().longValue();
     }
 
     @Override

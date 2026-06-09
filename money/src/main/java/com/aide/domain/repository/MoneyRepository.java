@@ -31,4 +31,18 @@ public interface MoneyRepository {
      * @return
      */
     MoneyDo save(MoneyDo moneyDo);
+
+    /**
+     * Try 阶段：可用余额转入冻结金额 第三阶段共用
+     * @param account
+     * @return
+     */
+    int freezeOrunfreezeMoney(MoneyDo account);
+
+    /**
+     *  Confirm 阶段：清除冻结金额
+     * @param account
+     */
+    void confirmFreeze(MoneyDo account);
+
 }

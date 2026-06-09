@@ -148,15 +148,7 @@ public class MonneyController {
     public Result deduct(@RequestParam("userId") Long userId,
                          @RequestParam("amount") BigDecimal amount,
                          @RequestParam("description") String description) {
-        try {
-            moneyService.deduct(userId, amount, description);
-            return Result.success("扣款成功");
-        } catch (Exception e) {
-            log.error("扣款失败，用户ID: {}, 金额: {}", userId, amount, e);
-            return Result.error("扣款失败: " + e.getMessage());
-        }
+        moneyService.deduct(userId, amount, description);
+        return Result.success("扣款成功");
     }
-
-
-
 }

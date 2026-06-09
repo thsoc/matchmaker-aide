@@ -29,6 +29,9 @@ public class Money {
     @TableField("user_id")
     private Long userId;
 
-    @TableField("money")
-    private BigDecimal money;
+    @TableField("available_money")
+    private BigDecimal availableMoney;
+
+    @TableField("frozen_money")
+    private BigDecimal frozenMoney;
 }
