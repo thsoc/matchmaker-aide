@@ -5,7 +5,7 @@ import com.aide.domain.model.MemberDo;
 import com.aide.domain.model.MemberTypeConfig;
 import com.aide.domain.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
  * @author mazg
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
  * @date 2026/5/29
  * @date 13:10
  */
-@Component
+@Service
 @RequiredArgsConstructor
 public class MemberDomainService {
 

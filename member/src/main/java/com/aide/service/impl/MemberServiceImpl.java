@@ -5,6 +5,8 @@ import com.aide.domain.factory.MemberTypeFactory;
 import com.aide.domain.model.MemberDo;
 import com.aide.domain.model.MemberTypeConfig;
 import com.aide.domain.service.MemberDomainService;
+import com.aide.domain.service.MoneyDomainService;
+import com.aide.domain.service.OrderDomainService;
 import com.aide.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,8 @@ public class MemberServiceImpl implements MemberService {
     private final MemberDomainService memberDomainService;
     private final MemberTypeFactory memberTypeFactory;
     private final ApplicationEventPublisher eventPublisher;
+    private final MoneyDomainService moneyDomainService;
+    private final OrderDomainService orderDomainService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -33,7 +37,16 @@ public class MemberServiceImpl implements MemberService {
         MemberDo member = memberDomainService.purchaseMembership(userId, memberType);
         log.info("会员信息更新成功，会员ID: {}", member.getId());
 
-        // 3. 发布领域事件（异步处理跨服务调用）
+        //3.扣款
+        moneyDomainService.dudeceMoney(userId, config.getPrice(), "购买会员");
+
+        //4.保存订单
+        orderDomainService.createOrder(userId,
+                1, // 订单类型：1-会员购买
+                config.getPrice(),
+                "购买" + config.getName());
+
+        // 5. 发布领域事件，发放积分
         MemberPurchasedEvent event = new MemberPurchasedEvent(
                 this,
                 userId,

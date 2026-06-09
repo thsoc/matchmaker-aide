@@ -1,4 +1,4 @@
-package com.aide.adapter.feign;
+package com.aide.infrastructure.remote.feign;
 
 
 
