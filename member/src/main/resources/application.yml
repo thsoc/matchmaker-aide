@@ -14,11 +14,19 @@ spring:
     generator:
       write_numbers_as_strings: true
 
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://${MYSQL_HOST:192.168.2.20}:3306/matchmaker?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+#    username: root
+#    password: 123456
+
+
+  # 数据源配置
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${MYSQL_HOST:192.168.2.20}:3306/matchmaker?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
-    username: root
-    password: 123456
+    # 关键：使用 ShardingSphere 驱动
+    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
+    # 关键：URL 指向独立的规则文件
+    url: jdbc:shardingsphere:classpath:sharding.yaml
 
   redis:
     host: ${REDIS_HOST:192.168.2.20}
@@ -50,3 +58,16 @@ jwt:
   secret: myVerySecureSecretKeyForMatchmakerAideApplicationThatIsAtLeast256BitsLong
   expiration: 7200  # 令牌过期时间（秒），默认2小时
 
+seata:
+  enabled: true
+  # 【极其重要】必须显式关闭 Seata 原生的自动数据源代理！
+  # 否则会和 ShardingSphere-JDBC 产生冲突，导致分片路由失败或事务不生效
+  enable-auto-data-source-proxy: false
+  tcc:
+    fence:
+      logTableName: tcc_fence_log
+
+  tx-service-group: your-tx-group-name
+  service:
+    vgroup-mapping:
+      your-tx-group-name: default

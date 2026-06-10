@@ -14,11 +14,11 @@ spring:
     generator:
       write_numbers_as_strings: true
 
-#  datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://${MYSQL_HOST:192.168.2.20}:3306/matchmaker?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
-#    username: root
-#    password: 123456
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST:192.168.2.20}:3306/matchmaker?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
 
   redis:
     host: ${REDIS_HOST:192.168.2.20}
@@ -59,21 +59,6 @@ spring:
   #          timeout: ${spring.redis.timeout}
 
 
-
-  # 数据源配置
-  datasource:
-    # 关键：使用 ShardingSphere 驱动
-    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
-    # 关键：URL 指向独立的规则文件
-    url: jdbc:shardingsphere:classpath:sharding.yaml
-
-
-
-sharding:
-  bucket:
-    enabled: true
-
-
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
@@ -100,16 +85,57 @@ logging:
     org.apache.shardingsphere.core.route: DEBUG
     org.apache.shardingsphere.core.execute.sql.execute.engine: DEBUG
 
+
+## 分片配置
+#sharding:
+#  shard-key: userId
+#  virtual-nodes: 160
+#  nodes:
+#    - id: db_0
+#      url: jdbc:mysql://192.168.2.20:3306/matchmaker?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&autocommit=false&useLocalSessionState=false&useLocalTransactionState=false&rewriteBatchedStatements=true
+#      username: ${DB_USER:root}
+#      password: ${DB_PASSWORD:123456}
+#      active: true
+#      weight: 1
+#    - id: db_1
+#      url: jdbc:mysql://192.168.2.20:3306/matchmaker?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&autocommit=false&useLocalSessionState=false&useLocalTransactionState=false&rewriteBatchedStatements=true
+#      username: ${DB_USER:root}
+#      password: ${DB_PASSWORD:123456}
+#      active: false
+#      weight: 1
+#    - id: db_2
+#      url: jdbc:mysql://192.168.2.20:3306/matchmaker?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&autocommit=false&useLocalSessionState=false&useLocalTransactionState=false&rewriteBatchedStatements=true
+#      username: ${DB_USER:root}
+#      password: ${DB_PASSWORD:123456}
+#      active: false
+#      weight: 2  # 权重更高，承担更多负载
+#    - id: db_3
+#      url: jdbc:mysql://192.168.2.20:3306/matchmaker?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&autocommit=false&useLocalSessionState=false&useLocalTransactionState=false&rewriteBatchedStatements=true
+#      username: ${DB_USER:root}
+#      password: ${DB_PASSWORD:123456}
+#      active: false  # 备用节点
+#      weight: 1
+
+# Seata 配置
 seata:
   enabled: true
-  # 【极其重要】必须显式关闭 Seata 原生的自动数据源代理！
-  # 否则会和 ShardingSphere-JDBC 产生冲突，导致分片路由失败或事务不生效
-  enable-auto-data-source-proxy: false
-  tcc:
-    fence:
-      logTableName: tcc_fence_log
-
-  tx-service-group: your-tx-group-name
+  application-id: account-tcc-service
+  tx-service-group: default_tx_group
   service:
     vgroup-mapping:
-      your-tx-group-name: default
+      default_tx_group: default
+#  enable-auto-data-source-proxy: false  # 禁用自动代理，我们手动管理
+  config:
+    type: nacos
+    nacos:
+      server-addr: ${NACOS_ADDR:192.168.2.20:8848}
+      namespace: ${SEATA_NAMESPACE:}
+      group: SEATA_GROUP
+  registry:
+    type: nacos
+    nacos:
+      application: seata-server
+      server-addr: ${NACOS_ADDR:192.168.2.20:8848}
+      namespace: ${SEATA_NAMESPACE:}
+      group: SEATA_GROUP
+

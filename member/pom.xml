@@ -112,5 +112,47 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
+
+
+        <!-- 引入分片 SDK -->
+        <dependency>
+            <groupId>com.springcloud</groupId>
+            <artifactId>aide-sharding-sdk</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>shardingsphere-jdbc-core</artifactId>
+        </dependency>
+        <!-- YAML 配置支持（ShardingSphere 需要） -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <!--            <scope>compile</scope>-->
+        </dependency>
+
+        <!-- HikariCP 连接池 -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+        </dependency>
+
+        <!-- 显式覆盖 Seata 版本，解决 useTccFence 不可用问题 -->
+        <dependency>
+            <groupId>io.seata</groupId>
+            <artifactId>seata-spring-boot-starter</artifactId>
+            <version>1.7.1</version> <!-- 推荐使用 1.7.1 或 2.0.0 -->
+        </dependency>
+
+        <!--
+     ShardingSphere 与 Seata 整合专属依赖
+        提供对 Seata AT/TCC 模式底层的支持
+   -->
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>shardingsphere-transaction-base-seata-at</artifactId>
+            <version>${shardingsphere-transaction-base-seata-at.version}</version>
+        </dependency>
     </dependencies>
 </project>

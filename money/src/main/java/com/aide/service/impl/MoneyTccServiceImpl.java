@@ -1,15 +1,21 @@
 package com.aide.service.impl;
 
 import com.aide.common.exception.MoneyException;
+import com.aide.config.DynamicDataSourceManager;
+import com.aide.config.DynamicDataSourceRegistry;
 import com.aide.domain.service.MoneyDomainService;
 import com.aide.service.MoneyTccService;
 import io.seata.rm.tcc.api.BusinessActionContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author mazg
@@ -18,10 +24,16 @@ import java.math.BigDecimal;
  * @date 19:40
  */
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class MoneyTccServiceImpl implements MoneyTccService {
-    private final MoneyDomainService moneyDomainService;
+    @Autowired
+    private MoneyDomainService moneyDomainService;
+//    // 动态数据源管理器
+//    @Autowired
+//    private DynamicDataSourceManager dynamicDataSourceManager;
+//
+//    // 存储每个分片的数据源连接
+//    private final Map<String, DataSource> dataSourceCache = new ConcurrentHashMap<>();
 
     /**
      * @author mazg
@@ -32,7 +44,21 @@ public class MoneyTccServiceImpl implements MoneyTccService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean deductBalance(BusinessActionContext context, Long userId, BigDecimal amount) throws MoneyException {
+
         log.info("Try阶段：准备冻结资金, userId={}, amount={}", userId, amount);
+
+//        // 1. 根据用户ID计算分片键
+//        String shardKey = calculateShardKey(userId);
+//
+//        // 2. 获取对应的数据源
+//        DataSource dataSource = dynamicDataSourceManager.getDataSource(shardKey);
+//        if (dataSource == null) {
+//            throw new RuntimeException("获取数据源失败，分片键：" + shardKey);
+//        }
+//
+//        Connection conn = null;
+//        PreparedStatement pstmt = null;
+//        ResultSet rs = null;
 
         // 框架会自动在此处向 tcc_fence_log 插入一条 status=STATUS_TRIED 的记录
         // 如果发生主键冲突或 suspended 状态，框架会自动拦截并抛出异常
