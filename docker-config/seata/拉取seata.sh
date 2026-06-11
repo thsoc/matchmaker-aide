@@ -1,0 +1,1 @@
+ docker pull seataio/seata-server:1.5.2

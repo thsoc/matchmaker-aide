@@ -1,0 +1,1 @@
+docker pull redis:7.2

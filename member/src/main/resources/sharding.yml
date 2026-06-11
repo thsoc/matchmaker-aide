@@ -40,6 +40,7 @@ props:
   sql-simple: true
   kernel-executor-size: 20
   max-connections-size-per-query: 5
+  transaction-type: BASE
 
 #  # ShardingSphere 配置
 #  shardingsphere:

@@ -26,7 +26,7 @@ public class MemberServiceImpl implements MemberService {
     private final OrderDomainService orderDomainService;
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)// todo 后续修改
     public String buyMember(Long userId, Integer memberType) {
         log.info("开始购买会员，用户ID: {}, 会员类型: {}", userId, memberType);
 

@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
  * @author mazg
  * @description * 动态数据源注册中心
  * * 支持动态扩容和数据源自动发现
+ * 暂不使用
  * @date 2026/6/10
  * @date 19:05
  */

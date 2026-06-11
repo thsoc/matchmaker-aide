@@ -23,7 +23,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author mazg
- * @description TODO
+ * @description 数据源管理器：暂不使用
  * @date 2026/6/10
  * @date 18:53
  */

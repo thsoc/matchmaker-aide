@@ -9,6 +9,9 @@ spring:
       discovery:
         # 确保这里的地址是实际 Nacos 服务器的地址
         server-addr: ${NACOS_ADDR:192.168.2.20:8848}
+        username: nacos
+        password: nacos
+        namespace: ""
 
   jackson:
     generator:
@@ -26,7 +29,7 @@ spring:
     # 关键：使用 ShardingSphere 驱动
     driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
     # 关键：URL 指向独立的规则文件
-    url: jdbc:shardingsphere:classpath:sharding.yaml
+    url: jdbc:shardingsphere:classpath:sharding.yml
 
   redis:
     host: ${REDIS_HOST:192.168.2.20}
@@ -57,17 +60,3 @@ mybatis-plus:
 jwt:
   secret: myVerySecureSecretKeyForMatchmakerAideApplicationThatIsAtLeast256BitsLong
   expiration: 7200  # 令牌过期时间（秒），默认2小时
-
-seata:
-  enabled: true
-  # 【极其重要】必须显式关闭 Seata 原生的自动数据源代理！
-  # 否则会和 ShardingSphere-JDBC 产生冲突，导致分片路由失败或事务不生效
-  enable-auto-data-source-proxy: false
-  tcc:
-    fence:
-      logTableName: tcc_fence_log
-
-  tx-service-group: your-tx-group-name
-  service:
-    vgroup-mapping:
-      your-tx-group-name: default

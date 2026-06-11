@@ -1,50 +1,33 @@
+# 服务器环境配置
+[docker-config](docker-config)
+
 # 项目结构介绍
 
+## sharding公共模块
+[aide-sharding-sdk](aide-sharding-sdk)
+自定义hash桶+动态扩容
 
-# 服务器环境配置
-
-## docker-config
-
-### docker配置文件相关，目录/etc/docker
-[daemon.json(docker的镜像源文件)](docker-config/daemon.json)
-
-### docker设置网络
-docker network create mynet
+## 获取用户信息公共模块
+[auth-api](auth-api)
 
 
-### mysql
+## 公共模块
+[common-api](common-api)
+返回值和全局异常等
 
-#### docker拉取mysql
-docker pull mysql:5.7
+## 网关
+[gateway](gateway)
 
-#### 修改mysql配置
-[my.conf](docker-config/my.conf)
+## 会员模块
+[member](member)
 
-#### docker启动mysql命令
-[mysql-start.sh](docker-config/mysql-start.sh)
+## 资金模块
+[money](money)
+
+## 订单模块
+[order](order)
+
+## 用户模块
+[user](user)
 
 
-## nacos
-
-### 拉取nacos
-docker pull nacos/nacos-server:v2.3.1
-
-### 创建数据库和表
-[docker-nacos-mysql.sql](docker-config/docker-nacos-mysql.sql)
-
-### 修改配置文件
-[nacos.conf](docker-config/nacos.conf)
-
-### 启动nacos
-[nacos-start.sh](docker-config/nacos-start.sh)
-
-## redis
-
-### 拉取redis
-docker pull redis:7.2 
-
-### 修改配置文件
-[redis.conf](docker-config/redis.conf)
-
-### 启动redis
-[redis-start.sh](docker-config/redis-start.sh)

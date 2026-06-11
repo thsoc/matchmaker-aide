@@ -26,6 +26,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+<!--        对 bootstrap.yml的自动支持-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
         <!--        MyBatis-Plus 3.4.3 + Lombok @Builder 的兼容性问题：-->
         <!--        当实体类同时使用 @Builder、@NoArgsConstructor、@AllArgsConstructor 时，MyBatis-Plus 的雪花算法在某些情况下无法正确识别并生成 ID。-->
         <dependency>
@@ -142,7 +147,7 @@
         <dependency>
             <groupId>io.seata</groupId>
             <artifactId>seata-spring-boot-starter</artifactId>
-            <version>1.7.1</version> <!-- 推荐使用 1.7.1 或 2.0.0 -->
+<!--            <version>1.7.1</version> &lt;!&ndash; 推荐使用 1.7.1 或 2.0.0 &ndash;&gt;-->
         </dependency>
 
         <!--
