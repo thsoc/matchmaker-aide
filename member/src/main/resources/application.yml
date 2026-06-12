@@ -6,12 +6,21 @@ spring:
     name: member-service
   cloud:
     nacos:
+      # 确保这里的地址是实际 Nacos 服务器的地址
+      server-addr: ${NACOS_ADDR:192.168.2.20:8848}
       discovery:
-        # 确保这里的地址是实际 Nacos 服务器的地址
-        server-addr: ${NACOS_ADDR:192.168.2.20:8848}
-        username: nacos
-        password: nacos
-        namespace: ""
+        username: nacos  # 根据你的 Nacos 控制台登录账号修改
+        password: nacos  # 根据你的 Nacos 控制台登录密码修改
+      # 配置中心
+      config:
+        import-check:
+          enabled: false                # 可选：关闭强制校验
+        import:
+          # 方式一：使用默认规则拉取（自动拼接为 order-service.yaml）
+          - optional:nacos:${spring.application.name}.yaml?refreshEnabled=true
+
+          # 方式二：显式指定拉取特定的配置文件（例如 abcs.yaml）
+          # - optional:nacos:abcs.yaml?refreshEnabled=true
 
   jackson:
     generator:
@@ -60,3 +69,90 @@ mybatis-plus:
 jwt:
   secret: myVerySecureSecretKeyForMatchmakerAideApplicationThatIsAtLeast256BitsLong
   expiration: 7200  # 令牌过期时间（秒），默认2小时
+
+
+seata:
+  # 启用Seata
+  enabled: true
+
+  # 【关键】必须设置为false，避免与ShardingSphere的自动代理冲突
+  enable-auto-data-source-proxy: false
+
+  # 应用ID - 必须与seata.conf中的application.id保持一致
+  application-id: member-service
+
+  # 事务组名称
+  tx-service-group: default_tx_group
+
+  # ★ 必须在这里写，不能省略
+  service:
+    vgroup-mapping:
+      default_tx_group: default
+    grouplist:
+      default: 192.168.2.20:8091
+    disable-global-transaction: false
+
+  # 注册中心配置
+  registry:
+    type: nacos
+    nacos:
+      # Nacos地址
+      server-addr: 192.168.2.20:8848
+      # 命名空间
+      namespace: ""
+      group: SEATA_GROUP
+      cluster: default
+      #      username: nacos
+      #      password: nacos
+      # Seata Server注册的应用名
+      application: seata-server
+
+  # 配置中心配置
+  config:
+    type: nacos
+    nacos:
+      server-addr: 192.168.2.20:8848
+      namespace: ""
+      group: SEATA_GROUP
+      #      username: nacos
+      #      password: nacos
+      # 从Nacos获取配置的Data ID
+      data-id: seata-client.yml
+
+  # ★ 禁用 file 配置源
+  file:
+    enabled: false
+
+# 日志配置
+logging:
+  level:
+    io.seata: DEBUG
+    com.alibaba.nacos: INFO
+    org.apache.shardingsphere: DEBUG
+  file:
+    name: logs/member-service.log
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+  # 添加以下配置，让 ShardingSphere 能从 Spring 环境中读取
+  sharding:
+    transaction:
+      seata:
+        at:
+          enable: true
+        tx:
+          timeout: 60
+
+
+
+
+-Dlogging:
+  level:
+    org:
+      springframework:
+        boot:
+          context:
+            config: DEBUG
+
+
+
