@@ -1,10 +1,12 @@
 package com.aide.adapter.controller;
 
+import com.aide.adapter.VO.OrderRequest;
+import com.aide.common.Result.Result;
 import com.aide.service.OrderService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
 
 /**
  * @author mazg
@@ -13,17 +15,17 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 11:30
  */
 @RestController
-@RequestMapping("/member")
+@RequestMapping("/order")
 @RequiredArgsConstructor
 public class OrderController {
-    private final OrderService memberService;
+    private final OrderService orderService;
 
     /**
-     * 购买会员
+     * 创建订单
      */
-    @RequestMapping("/buyMember/{userId}")
-    public String buyMember(@PathVariable String userId) {
-//        return memberService.buyMember(userId);
-        return "购买会员成功";
+    @PostMapping("/createOder")
+    public Result<String> buyMember(@RequestBody OrderRequest request) {
+        String result = orderService.createOrder(request);
+        return Result.success(result);
     }
 }

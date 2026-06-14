@@ -1,5 +1,6 @@
 package com.aide.domain.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -62,6 +63,16 @@ public class MemberDo {
     private LocalDateTime updateTime;
 
     /**
+     * 创建人
+     */
+    private String createBy;
+
+    /**
+     * 修改人
+     */
+    private String updateBy;
+
+    /**
      * 检查是否过期
      */
     public boolean isExpired() {
@@ -94,6 +105,9 @@ public class MemberDo {
         this.status = 1;
         this.startTime = now;
         this.endTime = baseTime.plusDays(config.getValidityDays());
+        this.updateTime = now;
+        this.updateBy = this.userId.toString();
+        this.createBy = this.userId.toString();
     }
 
     /**

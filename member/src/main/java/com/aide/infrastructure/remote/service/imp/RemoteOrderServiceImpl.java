@@ -19,7 +19,7 @@ public class RemoteOrderServiceImpl implements RemoteOrderService {
     private final OrderFeignClient orderFeignClient;
 
     @Override
-    public Long createOrder(Long userId, Integer orderType, BigDecimal amount, String description) {
+    public String createOrder(Long userId, Integer orderType, BigDecimal amount, String description) {
         return orderFeignClient.createOrder(userId, orderType, amount, description);
     }
 }

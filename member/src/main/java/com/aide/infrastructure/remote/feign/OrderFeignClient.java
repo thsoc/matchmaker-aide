@@ -24,7 +24,7 @@ public interface OrderFeignClient {
      * @return 订单ID
      */
     @PostMapping("/createOrder")
-    Long createOrder(@RequestParam("userId") Long userId,
+    String createOrder(@RequestParam("userId") Long userId,
                      @RequestParam("orderType") Integer orderType,
                      @RequestParam("amount") BigDecimal amount,
                      @RequestParam("description") String description);

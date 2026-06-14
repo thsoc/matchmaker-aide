@@ -1,63 +1,70 @@
 package com.aide.infrastructure.persistence.entity;
 
-/**
- * @author mazg
- * @description TODO
- * @date 2026/5/28
- * @date 10:19
- */
 import com.baomidou.mybatisplus.annotation.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import org.springframework.data.annotation.Id;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
  * @author mazg
- * @description 充值记录表
- * @date 2026/5/25
+ * @description 订单实体类
+ * @date 2026/6/14
+ * @date 16:05
  */
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@TableName("aide_recharge_record")
-public class RechargeRecord {
-
+@Getter
+@TableName("aide_order")
+public class Order {
+    /**
+     * 订单ID
+     */
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
-
+    /**
+     * 用户ID
+     */
     @TableField("user_id")
     private Long userId;
-
+    /**
+     * 订单类型：1-会员购买
+     */
+    @TableField("order_type")
+    private Integer orderType;
+    /**
+     * 金额
+     */
     @TableField("amount")
     private BigDecimal amount;
-
-    @TableField("status")
-    private Integer status;
-
-    @TableField("order_no")
-    private String orderNo;
-
-    @TableField("pay_type")
-    private Integer payType;
-
     /**
-     * 支付结果（预支付ID或支付表单）
+     * 描述
      */
-    private String paymentResult;
-
-    @TableField("recharge_time")
-    private LocalDateTime rechargeTime;
-
-    @TableField("create_time")
+    @TableField("description")
+    private String description;
+    /**
+     * 订单状态：1-待支付 2-支付成功 3-支付失败 4-取消订单 5-订单完成 6-订单关闭
+     */
+     @TableField("status")
+    private String status;
+     /**
+     * 创建时间
+     */
+     @TableField("create_time")
     private LocalDateTime createTime;
-
-    @TableField("update_time")
+     /**
+     * 更新时间
+     */
+     @TableField("update_time")
     private LocalDateTime updateTime;
+     /**
+     * 删除时间
+     */
+     @TableField("delete_time")
+    private LocalDateTime deleteTime;
 
     /**
      * 创建人
@@ -71,15 +78,15 @@ public class RechargeRecord {
     @TableField("update_by")
     private String updateBy;
 
-    /**
+     /**
      * 备注
      */
-    @TableField("remark")
+     @TableField("remark")
     private String remark;
-    /**
+     /**
      * 版本号
      */
-    @Version
+     @Version
     private String version;
 
 
@@ -110,4 +117,3 @@ public class RechargeRecord {
     @TableField("reserved8")
     private Integer reserved8;
 }
-

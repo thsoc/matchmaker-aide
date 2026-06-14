@@ -23,7 +23,7 @@ public class OrderDomainService {
      * @date 18:08 2026/6/9
      * @return 
      **/
-    public Long createOrder(Long userId, Integer orderType, BigDecimal amount, String description) {
+    public String createOrder(Long userId, Integer orderType, BigDecimal amount, String description) {
         return remoteOrderService.createOrder(userId, orderType, amount, description);
     }
 }

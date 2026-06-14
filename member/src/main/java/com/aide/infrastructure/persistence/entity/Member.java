@@ -1,9 +1,6 @@
 package com.aide.infrastructure.persistence.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -51,4 +48,55 @@ public class Member {
 
     @TableField("update_time")
     private LocalDateTime updateTime;
+
+    /**
+     * 创建人
+     */
+    @TableField("create_by")
+    private String createBy;
+
+    /**
+     * 修改人
+     */
+    @TableField("update_by")
+    private String updateBy;
+
+    /**
+     * 备注
+     */
+    @TableField("remark")
+    private String remark;
+    /**
+     * 版本号
+     */
+    @Version
+    private String version;
+
+
+    /**
+     * 预留字段
+     */
+    @TableField("reserved1")
+    private String reserved1;
+
+    @TableField("reserved2")
+    private String reserved2;
+
+    @TableField("reserved3")
+    private String reserved3;
+
+    @TableField("reserved4")
+    private String reserved4;
+
+    @TableField("reserved5")
+    private Integer reserved5;
+
+    @TableField("reserved6")
+    private Integer reserved6;
+
+    @TableField("reserved7")
+    private Integer reserved7;
+
+    @TableField("reserved8")
+    private Integer reserved8;
 }
