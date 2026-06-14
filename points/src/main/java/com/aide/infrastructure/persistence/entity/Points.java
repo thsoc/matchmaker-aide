@@ -4,24 +4,22 @@ import com.baomidou.mybatisplus.annotation.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
-import org.springframework.data.annotation.Id;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
  * @author mazg
- * @description 订单实体类
+ * @description 积分实体类
  * @date 2026/6/14
- * @date 16:05
+ * @date 20:49
  */
 @Data
-@Builder
 @Getter
-@TableName("aide_order")
-public class Order {
+@Builder
+@TableName("aide_points")
+public class Points {
     /**
-     * 订单ID
+     * 主键
      */
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
@@ -31,46 +29,37 @@ public class Order {
     @TableField("user_id")
     private Long userId;
     /**
-     * 订单类型：1-会员购买
-     */
-    @TableField("order_type")
-    private Integer orderType;
-    /**
      * 订单编号
      */
     @TableField("order_no")
     private String orderNo;
+    /**
+     * 积分类型，1-会员购买
+     */
+    @TableField("points_type")
+    private Integer pointsType;
+    /**
+     * 积分
+     */
+    @TableField("points")
+    private Integer points;
+    /**
+     * 备注
+     */
+    @TableField("remark")
+    private String remark;
 
     /**
-     * 金额
-     */
-    @TableField("amount")
-    private BigDecimal amount;
-    /**
-     * 描述
-     */
-    @TableField("description")
-    private String description;
-    /**
-     * 订单状态：1-待支付 2-支付成功 3-支付失败 4-取消订单 5-订单完成 6-订单关闭
-     */
-     @TableField("status")
-    private String status;
-     /**
      * 创建时间
      */
-     @TableField("create_time")
+    @TableField("create_time")
     private LocalDateTime createTime;
-     /**
-     * 更新时间
+
+    /**
+     * 修改时间
      */
-     @TableField("update_time")
+    @TableField("update_time")
     private LocalDateTime updateTime;
-     /**
-     * 删除时间
-     */
-     @TableField("delete_time")
-    private LocalDateTime deleteTime;
 
     /**
      * 创建人
@@ -84,17 +73,12 @@ public class Order {
     @TableField("update_by")
     private String updateBy;
 
-     /**
-     * 备注
-     */
-     @TableField("remark")
-    private String remark;
-     /**
+    /**
      * 版本号
      */
-     @Version
-    private String version;
-
+    @Version
+    @TableField("version")
+    private Integer version;
 
     /**
      * 预留字段

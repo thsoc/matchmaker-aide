@@ -6,6 +6,7 @@ import com.aide.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.math.BigDecimal;
 
 /**
@@ -24,7 +25,7 @@ public class OrderController {
      * 创建订单
      */
     @PostMapping("/createOder")
-    public Result<String> buyMember(@RequestBody OrderRequest request) {
+    public Result<String> buyMember(@Valid @RequestBody OrderRequest request) {
         String result = orderService.createOrder(request);
         return Result.success(result);
     }

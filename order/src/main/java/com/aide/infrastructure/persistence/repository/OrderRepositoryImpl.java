@@ -34,6 +34,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         return Order.builder()
                 .id(orderDo.getId())
                 .userId(orderDo.getUserId())
+                .orderNo(orderDo.getOrderNo())
                 .orderType(orderDo.getOrderType())
                 .amount(orderDo.getAmount())
                 .description(orderDo.getDescription())

@@ -31,6 +31,11 @@ public class OrderDo {
      */
     private Integer orderType;
     /**
+     * 订单编号
+     */
+    private String orderNo;
+
+    /**
      * 金额
      */
     private BigDecimal amount;
@@ -93,6 +98,9 @@ public class OrderDo {
         }
         if (this.orderType == null || this.orderType < 1 || this.orderType > 3) {
             throw new IllegalArgumentException("会员类型无效，请选择1-3");
+        }
+        if (this.orderNo == null || this.orderNo.isEmpty()) {
+            throw new IllegalArgumentException("订单编号无效");
         }
         if (this.amount == null || this.amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("金额无效");

@@ -1,19 +1,16 @@
 -- ============================================
--- 用户表 - aide_order
+-- 用户表 - aide_points
 -- ID生成策略：雪花算法（MyBatis-Plus ASSIGN_ID）
 -- ============================================
 
-DROP TABLE IF EXISTS `aide_order`;
+DROP TABLE IF EXISTS `aide_points`;
 
-CREATE TABLE `aide_order` (
+CREATE TABLE `aide_points` (
   `id` BIGINT NOT NULL COMMENT '主键ID（雪花算法生成）',
   `user_id` BIGINT NOT NULL COMMENT '用户id',
+  `points_type` TINYINT NOT NULL COMMENT '积分类型',
   `order_no` VARCHAR(50) NOT NULL COMMENT '订单编号',
-  `order_type` TINYINT NOT NULL COMMENT '订单类型',
-  `amount` DECIMAL(10,2) NOT NULL COMMENT '订单金额',
-  `description` VARCHAR(200) DEFAULT NULL COMMENT '描述',
-  `status` TINYINT NOT NULL,
-  `delete_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '取消时间',
+  `points` INT NOT NULL DEFAULT 0 COMMENT '积分数量',
   `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `create_by` VARCHAR(50) DEFAULT NULL COMMENT '创建人',
@@ -30,5 +27,5 @@ CREATE TABLE `aide_order` (
   `reserved8` INT DEFAULT NULL COMMENT '预留字段8',
   PRIMARY KEY (`id`),
   KEY `idx_create_time` (`create_time`),
-  KEY `idx_delete_time` (`delete_time`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单表';
+  UNIQUE KEY `idx_orderNo_time` (`order_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='积分表';
