@@ -5,15 +5,14 @@ import com.aide.adapter.VO.LoginResponse;
 import com.aide.adapter.VO.RegisterRequest;
 import com.aide.adapter.converter.UserVoConverter;
 import com.aide.common.auth.context.UserContext;
+import com.aide.common.auth.entity.UserInfo;
 import com.aide.common.auth.service.CacheService;
 import com.aide.domain.model.UserDo;
 import com.aide.domain.service.UserDomainService;
 import com.aide.infrastructure.persistence.entity.User;
 import com.aide.infrastructure.storage.FileStorageService;
 import com.aide.service.UserService;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -23,12 +22,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Slf4j
@@ -43,7 +40,7 @@ public class UserServiceImpl implements UserService {
     private final FileStorageService fileStorageService;
     private final UserVoConverter userVoConverter;
 
-    @Value("${server.port:8081}")
+    @Value("${server.port:8084}")
     private String serverPort;
 
 
@@ -60,9 +57,17 @@ public class UserServiceImpl implements UserService {
 
         // 3. 生成token
         String token = generateToken(userDo);
+        System.out.println("token: " + token);
+        UserInfo userInfo = UserInfo.builder()
+                .id(userDo.getId())
+                .account(userDo.getAccount())
+                .username(userDo.getUsername())
+                .role(userDo.getRole())
+                .sex(userDo.getSex())
+                .build();
 
         // 4. 将用户信息保存到缓存（使用token作为key）
-        saveUserToCache(token, userDo);
+        saveUserToCache(token, userInfo);
 
         // 5. 使用Converter构建响应VO
         return userVoConverter.toLoginResponse(userDo, token);
@@ -81,9 +86,16 @@ public class UserServiceImpl implements UserService {
 
         // 3. 生成token
         String token = generateToken(createdUser);
+        UserInfo userInfo = UserInfo.builder()
+                .id(createdUser.getId())
+                .account(createdUser.getAccount())
+                .username(createdUser.getUsername())
+                .role(createdUser.getRole())
+                .sex(createdUser.getSex())
+                .build();
 
         // 4. 将用户信息保存到缓存
-        saveUserToCache(token, createdUser);
+        saveUserToCache(token, userInfo);
 
         // 5. 使用Converter构建响应VO
         return userVoConverter.toLoginResponse(createdUser, token);
@@ -198,10 +210,10 @@ public class UserServiceImpl implements UserService {
         return result;
     }
 
-    private void saveUserToCache(String token, UserDo userDo) {
+    private void saveUserToCache(String token, UserInfo userInfo) {
         try {
             // 直接传递对象，由RedisTemplate自动序列化
-            cacheService.setUserCache(token, userDo, 7200);
+            cacheService.setUserCache(token, userInfo, 7200);
             log.info("用户信息已保存到缓存，token: {}", token);
         } catch (Exception e) {
             log.error("保存用户信息到缓存失败", e);

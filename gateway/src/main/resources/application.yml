@@ -23,42 +23,67 @@ spring:
 
           # 方式二：显式指定拉取特定的配置文件（例如 abcs.yaml）
           # - optional:nacos:abcs.yaml?refreshEnabled=true
-
-  redis:
-    host: ${REDIS_HOST:192.168.2.20}
-    port: 6379
-    password: ${REDIS_PASSWORD:123456}
-    database: 0
-    timeout: 3000ms
-    lettuce:
-      pool:
-        max-active: 8
-        max-wait: -1ms
-        max-idle: 8
-        min-idle: 0
-
     gateway:
       routes:
-        - id: order-service
-#          uri: 127.0.0.1:8080
-          uri: lb://order-service
-#          断言
+        - id: user-service
+          uri: lb://user-service
+#          uri: http://localhost:8084
           predicates:
-            - Path=/order/**
-
-#过滤器的值一样按照 默认过滤器>路由过滤器>全局过滤器
-#          过滤器 过滤器过滤器之内按照声明顺序从1递增
+            - Path=/api/user/**
           filters:
-            - AddRequestHeader=Truth,test1 #1
-            - AddRequestHeader=Truth,test2 #2
-            - AddRequestHeader=Truth,test3 #3
-            - AddRequestHeader=Truth,test4 #4
-#          默认过滤器，默认过滤器之内按照声明顺序从1递增
-      default-filters:
-        - AddRequestHeader=Truth,test1 #1
-        - AddRequestHeader=Truth,test2 #2
-        - AddRequestHeader=Truth,test3 #3
-        - AddRequestHeader=Truth,test4 #4
+            - StripPrefix=1
+        - id: user-sms
+          uri: lb://user-service
+          predicates:
+            - Path=/api/sms/**
+          filters:
+            - StripPrefix=1
+
+
+        - id: points-service
+          uri: lb://points-service
+          predicates:
+            - Path=/api/points/**
+          filters:
+            - StripPrefix=1
+
+
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/order/**
+          filters:
+            - StripPrefix=1
+
+
+        - id: money-service
+          uri: lb://money-service
+          predicates:
+            - Path=/api/money/**
+          filters:
+            - StripPrefix=1
+
+
+        - id: member-service
+          uri: lb://member-service
+          predicates:
+            - Path=/api/member/**
+          filters:
+            - StripPrefix=1
+
+      #          #过滤器的值一样按照 默认过滤器>路由过滤器>全局过滤器
+      ##          过滤器 过滤器过滤器之内按照声明顺序从1递增
+      #          filters:
+      #            - AddRequestHeader=Truth,test1 #1
+      #            - AddRequestHeader=Truth,test2 #2
+      #            - AddRequestHeader=Truth,test3 #3
+      #            - AddRequestHeader=Truth,test4 #4
+      ##          默认过滤器，默认过滤器之内按照声明顺序从1递增
+      #      default-filters:
+      #        - AddRequestHeader=Truth,test1 #1
+      #        - AddRequestHeader=Truth,test2 #2
+      #        - AddRequestHeader=Truth,test3 #3
+      #        - AddRequestHeader=Truth,test4 #4
 
       # 全局的跨域处理
       globalcors: # 全局的跨域处理
@@ -78,9 +103,29 @@ spring:
             allowCredentials: true # 是否允许携带cookie
             maxAge: 360000 # 这次跨域检测的有效期
 
+  redis:
+    host: ${REDIS_HOST:192.168.2.20}
+    port: 6379
+    password: ${REDIS_PASSWORD:123456}
+    database: 0
+    timeout: 3000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
+
+
+
 jwt:
   secret: myVerySecureSecretKeyForMatchmakerAideApplicationThatIsAtLeast256BitsLong
   expiration: 7200
+
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    reactor.netty.http.client: TRACE
 
 
 

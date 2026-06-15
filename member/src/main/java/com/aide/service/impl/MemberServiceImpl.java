@@ -8,6 +8,7 @@ import com.aide.domain.service.MemberDomainService;
 import com.aide.domain.service.MoneyDomainService;
 import com.aide.domain.service.OrderDomainService;
 import com.aide.service.MemberService;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -26,7 +27,7 @@ public class MemberServiceImpl implements MemberService {
     private final OrderDomainService orderDomainService;
 
     @Override
-    @Transactional(rollbackFor = Exception.class)// todo 后续修改
+    @GlobalTransactional(rollbackFor = Exception.class)
     public String buyMember(Long userId, Integer memberType) {
         log.info("开始购买会员，用户ID: {}, 会员类型: {}", userId, memberType);
 

@@ -61,7 +61,7 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         String path = request.getURI().getPath();
 
         // 1. 放行公开接口（如登录、注册）
-        if (path.startsWith("/auth/login") || path.startsWith("/auth/register")) {
+        if (path.startsWith("/api/user/register") || path.startsWith("/api/user/login")) {
             return chain.filter(exchange);
         }
 

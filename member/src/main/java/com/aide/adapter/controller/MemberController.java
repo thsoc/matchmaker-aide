@@ -25,20 +25,14 @@ public class MemberController {
     @PostMapping("/buyMember")
     public Result<String> buyMember(@RequestParam("userId") Long userId,
                                     @RequestParam("memberType") Integer memberType) {
-        try {
-            if (userId == null || userId <= 0) {
-                return Result.error("用户ID无效");
-            }
-            if (memberType == null || memberType < 1 || memberType > 3) {
-                return Result.error("会员类型无效，请选择1-3");
-            }
-
-            String result = memberService.buyMember(userId, memberType);
-            return Result.success(result);
-        } catch (IllegalArgumentException e) {
-            return Result.error(e.getMessage());
-        } catch (Exception e) {
-            return Result.error("购买会员失败: " + e.getMessage());
+        if (userId == null || userId <= 0) {
+            return Result.error("用户ID无效");
         }
+        if (memberType == null || memberType < 1 || memberType > 3) {
+            return Result.error("会员类型无效，请选择1-3");
+        }
+
+        String result = memberService.buyMember(userId, memberType);
+        return Result.success(result);
     }
 }

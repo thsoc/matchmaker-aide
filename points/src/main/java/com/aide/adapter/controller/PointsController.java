@@ -18,7 +18,7 @@ import javax.validation.Valid;
  * @date 11:30
  */
 @RestController
-@RequestMapping("/point")
+@RequestMapping("/points")
 @RequiredArgsConstructor
 public class PointsController {
     private final PointsService pointsService;
