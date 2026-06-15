@@ -20,6 +20,7 @@
     <modules>
         <module>gateway</module>
         <module>user</module>
+        <module>order</module>
         <module>money</module>
         <module>common-api</module>
         <module>member</module>

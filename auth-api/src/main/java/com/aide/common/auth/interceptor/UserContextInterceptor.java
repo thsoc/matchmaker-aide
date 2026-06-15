@@ -3,6 +3,8 @@ package com.aide.common.auth.interceptor;
 import com.aide.common.auth.context.UserContext;
 import com.aide.common.auth.entity.UserInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -19,6 +21,8 @@ import java.util.Arrays;
  */
 @Slf4j
 @Configuration
+//@Conditional(JwtAuthenticationFilter.class)
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET) //web应用下才生效, 非web应用下不生效,gateway下不生效
 public class UserContextInterceptor implements HandlerInterceptor {
     /**
      * 在请求处理之前进行调用（Controller方法调用之前）

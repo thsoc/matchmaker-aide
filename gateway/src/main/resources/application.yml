@@ -8,11 +8,21 @@ spring:
     name: gateway-service
   cloud:
     nacos:
+      # 确保这里的地址是实际 Nacos 服务器的地址
+      server-addr: ${NACOS_ADDR:192.168.2.20:8848}
       discovery:
-#        enabled: true
-#        service: orderServer
-        server-addr: 127.0.0.1:8848
-        cluster-name: ${CLUSTER-NAME:HF}
+#        username: nacos  # 根据你的 Nacos 控制台登录账号修改
+#        password: nacos  # 根据你的 Nacos 控制台登录密码修改
+      # 配置中心
+      config:
+        import-check:
+          enabled: false                # 可选：关闭强制校验
+        import:
+          # 方式一：使用默认规则拉取（自动拼接为 order-service.yaml）
+          - optional:nacos:${spring.application.name}.yaml?refreshEnabled=true
+
+          # 方式二：显式指定拉取特定的配置文件（例如 abcs.yaml）
+          # - optional:nacos:abcs.yaml?refreshEnabled=true
 
   redis:
     host: ${REDIS_HOST:192.168.2.20}
