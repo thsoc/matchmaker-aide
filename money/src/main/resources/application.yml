@@ -6,9 +6,21 @@ spring:
     name: money-service
   cloud:
     nacos:
+      # 确保这里的地址是实际 Nacos 服务器的地址
+      server-addr: ${NACOS_ADDR:192.168.2.20:8848}
       discovery:
-        # 确保这里的地址是实际 Nacos 服务器的地址
-        server-addr: ${NACOS_ADDR:192.168.2.20:8848}
+        username: nacos  # 根据你的 Nacos 控制台登录账号修改
+        password: nacos  # 根据你的 Nacos 控制台登录密码修改
+      # 配置中心
+      config:
+        import-check:
+          enabled: false                # 可选：关闭强制校验
+        import:
+          # 方式一：使用默认规则拉取（自动拼接为 order-service.yaml）
+          - optional:nacos:${spring.application.name}.yaml?refreshEnabled=true
+
+          # 方式二：显式指定拉取特定的配置文件（例如 abcs.yaml）
+          # - optional:nacos:abcs.yaml?refreshEnabled=true
 
   jackson:
     generator:
@@ -75,6 +87,50 @@ jwt:
   secret: myVerySecureSecretKeyForMatchmakerAideApplicationThatIsAtLeast256BitsLong
   expiration: 7200  # 令牌过期时间（秒），默认2小时
 
+
+# Seata 配置
+seata:
+  enabled: true
+  application-id: money-service
+  tx-service-group: default_tx_group
+#  tcc:
+#    fence:
+#      logTableName: tcc_fence_log
+  service:
+    vgroup-mapping:
+      default_tx_group: default
+    grouplist:
+      default: 192.168.2.20:8091
+    disable-global-transaction: false
+#  enable-auto-data-source-proxy: false  # 禁用自动代理，我们手动管理
+  # 注册中心配置
+  registry:
+    type: nacos
+    nacos:
+      # Nacos地址
+      server-addr: 192.168.2.20:8848
+      # 命名空间
+      namespace: ""
+      group: SEATA_GROUP
+      cluster: default
+      # Seata Server注册的应用名
+      application: seata-server
+
+  # 配置中心配置
+  config:
+    type: nacos
+    nacos:
+      server-addr: 192.168.2.20:8848
+      namespace: ""
+      group: SEATA_GROUP
+      # 从Nacos获取配置的Data ID
+      data-id: seata-client.yml
+  # ★ 禁用 file 配置源
+  file:
+    enabled: false
+
+
+# 日志配置
 logging:
   level:
     # 观察事务是否创建以及是否正确触发回滚
@@ -84,58 +140,17 @@ logging:
     # 观察 ShardingSphere 的分片路由和实际执行引擎
     org.apache.shardingsphere.core.route: DEBUG
     org.apache.shardingsphere.core.execute.sql.execute.engine: DEBUG
+    #    io.seata: DEBUG
+    io.seata: INFO                 # 基本信息
+    #    io.seata.core.rpc.netty: DEBUG # 心跳详情
+    io.seata.rm: DEBUG             # 资源管理器细节
+    io.seata.tm: DEBUG             # 事务管理器细节
+    com.alibaba.nacos: INFO
+  #    org.apache.shardingsphere: DEBUG
+  file:
+    name: logs/money-service.log
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
 
-## 分片配置
-#sharding:
-#  shard-key: userId
-#  virtual-nodes: 160
-#  nodes:
-#    - id: db_0
-#      url: jdbc:mysql://192.168.2.20:3306/matchmaker?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&autocommit=false&useLocalSessionState=false&useLocalTransactionState=false&rewriteBatchedStatements=true
-#      username: ${DB_USER:root}
-#      password: ${DB_PASSWORD:123456}
-#      active: true
-#      weight: 1
-#    - id: db_1
-#      url: jdbc:mysql://192.168.2.20:3306/matchmaker?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&autocommit=false&useLocalSessionState=false&useLocalTransactionState=false&rewriteBatchedStatements=true
-#      username: ${DB_USER:root}
-#      password: ${DB_PASSWORD:123456}
-#      active: false
-#      weight: 1
-#    - id: db_2
-#      url: jdbc:mysql://192.168.2.20:3306/matchmaker?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&autocommit=false&useLocalSessionState=false&useLocalTransactionState=false&rewriteBatchedStatements=true
-#      username: ${DB_USER:root}
-#      password: ${DB_PASSWORD:123456}
-#      active: false
-#      weight: 2  # 权重更高，承担更多负载
-#    - id: db_3
-#      url: jdbc:mysql://192.168.2.20:3306/matchmaker?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&autocommit=false&useLocalSessionState=false&useLocalTransactionState=false&rewriteBatchedStatements=true
-#      username: ${DB_USER:root}
-#      password: ${DB_PASSWORD:123456}
-#      active: false  # 备用节点
-#      weight: 1
-
-# Seata 配置
-seata:
-  enabled: true
-  application-id: account-tcc-service
-  tx-service-group: default_tx_group
-  service:
-    vgroup-mapping:
-      default_tx_group: default
-#  enable-auto-data-source-proxy: false  # 禁用自动代理，我们手动管理
-  config:
-    type: nacos
-    nacos:
-      server-addr: ${NACOS_ADDR:192.168.2.20:8848}
-      namespace: ${SEATA_NAMESPACE:}
-      group: SEATA_GROUP
-  registry:
-    type: nacos
-    nacos:
-      application: seata-server
-      server-addr: ${NACOS_ADDR:192.168.2.20:8848}
-      namespace: ${SEATA_NAMESPACE:}
-      group: SEATA_GROUP
 

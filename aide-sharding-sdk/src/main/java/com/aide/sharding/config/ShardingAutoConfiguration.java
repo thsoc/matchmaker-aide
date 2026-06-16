@@ -74,11 +74,14 @@ public class ShardingAutoConfiguration {
 
         // 默认配置：256个桶，均匀分布到 ds0 和 ds1
         for (int i = 0; i < 256; i++) {
-            if (i < 128) {
-                mapping.put(i, "ds0");
-            } else {
-                mapping.put(i, "ds1");
-            }
+//            if (i < 128) {
+//                mapping.put(i, "ds0");
+//            } else {
+//                mapping.put(i, "ds1");
+//            }
+            //方便测试
+            mapping.put(i, "ds0");
+
         }
 
         return mapping;

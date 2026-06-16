@@ -6,9 +6,9 @@ import com.aide.common.Result.Result;
 import com.aide.common.exception.MoneyException;
 import com.aide.domain.service.PaymentContext;
 import com.aide.service.MoneyService;
+import io.seata.core.context.RootContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -23,6 +23,7 @@ import java.util.Map;
 public class MonneyController {
 
     private final MoneyService moneyService;
+//    private final MoneyTccService moneyTccService;
     private final PaymentContext paymentContext;
 
 
@@ -147,8 +148,10 @@ public class MonneyController {
     @PostMapping("/deduct")
     public Result deduct(@RequestParam("userId") Long userId,
                          @RequestParam("amount") BigDecimal amount,
-                         @RequestParam("description") String description) {
+                         @RequestParam("description") String description) throws Exception {
+        System.err.println(">>> Current XID: " + RootContext.getXID());
         moneyService.deduct(userId, amount, description);
+//        moneyTccService.deductBalance(null, userId, amount, description); //经过实验，TCC+feign模式不能用
         return Result.success("扣款成功");
     }
 }

@@ -24,7 +24,7 @@ public class OrderController {
     /**
      * 创建订单
      */
-    @PostMapping("/createOder")
+    @PostMapping("/createOrder")
     public Result<String> buyMember(@Valid @RequestBody OrderRequest request) {
         String result = orderService.createOrder(request);
         return Result.success(result);

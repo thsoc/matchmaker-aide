@@ -126,6 +126,14 @@ logging:
   level:
     org.springframework.cloud.gateway: TRACE
     reactor.netty.http.client: TRACE
+#    #生产开启下面的，减少IO
+#    org.springframework.cloud.gateway: WARN
+#    reactor.netty.http.client: WARN
+    com.alibaba.nacos: INFO
+  file:
+    name: logs/gateway-service.log
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
 
 

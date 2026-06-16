@@ -13,6 +13,7 @@ import com.aide.domain.repository.MoneyRepository;
 import com.aide.domain.repository.RechargeRecordRepository;
 import com.aide.domain.service.MoneyDomainService;
 import com.aide.service.MoneyService;
+import io.seata.core.context.RootContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
@@ -174,6 +175,7 @@ public class MoneyServiceImpl implements MoneyService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deduct(Long userId, BigDecimal amount, String description) {
+        log.info(">>> deduct START xid={}", RootContext.getXID());
 //        // 强制走主库（避免主从延迟）
 //        DataSourceContextHolder.setMaster();
 //        // ========== 第一层防护：设置数据源路由 ==========
@@ -198,6 +200,7 @@ public class MoneyServiceImpl implements MoneyService {
             moneyDomainService.deductAccount(userId, amount, description);
 
             log.info("扣款处理成功，用户ID: {}, 金额: {}", userId, amount);
+            log.info(">>> deduct end xid={}", RootContext.getXID());
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

@@ -9,29 +9,51 @@ dataSources:
     autoCommit: false  # 关闭自动提交
     connectionTimeout: 30000
 
-## 分片规则配置
-#rules:
-#  sharding:
-#    tables:
+# 分片规则配置
+rules:
+  - !SHARDING
+    tables:
 #      aide_money:
 #        # 实际数据节点
-#        #              actual-data-nodes: ds$->{0..1}.aide_money
-#        actual-data-nodes: ds$->{0}.aide_money
+#        #              actualDataNodes: ds$->{0..1}.aide_money
+#        actualDataNodes: ds$->{0}.aide_money
 #
 #        # 分库策略
-#        database-strategy:
+#        databaseStrategy:
 #          standard:
-#            sharding-column: user_id  # 分片键
-#            sharding-algorithm-name: database-bucket
-#
-#    # 分片算法配置
-#    sharding-algorithms:
+#            shardingColumn: user_id  # 分片键
+#            shardingAlgorithmName: database-bucket1
+      aide_member:
+        # 实际数据节点
+        #              actualDataNodes: ds$->{0..1}.aide_member
+        actualDataNodes: ds$->{0}.aide_member
+
+        # 分库策略
+        databaseStrategy:
+          standard:
+            shardingColumn: user_id  # 分片键
+            shardingAlgorithmName: database-bucket
+
+    # 分片算法配置
+    shardingAlgorithms:
+      # 自定义哈希桶算法
+      database-bucket:
+        type: CLASS_BASED
+        props:
+          strategy: standard
+          algorithmClassName: com.aide.sharding.algorithm.BucketShardingAlgorithm
+
 #      # 自定义哈希桶算法
-#      database-bucket:
+#      database-bucket1:
 #        type: CLASS_BASED
 #        props:
 #          strategy: standard
 #          algorithmClassName: com.aide.sharding.algorithm.BucketShardingAlgorithm
+
+    # 其他表配置...
+  - !BROADCAST
+    tables:
+      - undo_log
 
 # 其他属性
 props:

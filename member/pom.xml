@@ -149,10 +149,15 @@
         </dependency>
 
         <!-- 显式覆盖 Seata 版本，解决 useTccFence 不可用问题 -->
+<!--        <dependency>-->
+<!--            <groupId>io.seata</groupId>-->
+<!--            <artifactId>seata-spring-boot-starter</artifactId>-->
+<!--&lt;!&ndash;            <version>${seata.version}</version>&ndash;&gt;-->
+<!--        </dependency>-->
+
         <dependency>
-            <groupId>io.seata</groupId>
-            <artifactId>seata-spring-boot-starter</artifactId>
-            <version>${seata.version}</version>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
         </dependency>
 
         <!--

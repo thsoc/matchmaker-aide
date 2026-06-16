@@ -75,12 +75,13 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
             log.warn("请求未携带有效的Token，路径: {}", path);
             return setUnauthorizedResponse(exchange, "未登录或登录已过期");
         }
-        String cacheKey = USER_CACHE_PREFIX + token;
-        //先判断redis里面有没有token
-        if (redisTemplate.opsForValue().get(cacheKey) == null) {
-            log.warn("请求未携带有效的Token，路径: {}", path);
-            return setUnauthorizedResponse(exchange, "未登录或登录已过期");
-        }
+//        // todo 方便测试，先注释掉
+//        String cacheKey = USER_CACHE_PREFIX + token;
+//        //先判断redis里面有没有token
+//        if (redisTemplate.opsForValue().get(cacheKey) == null) {
+//            log.warn("请求未携带有效的Token，路径: {}", path);
+//            return setUnauthorizedResponse(exchange, "未登录或登录已过期");
+//        }
 
         try {
 

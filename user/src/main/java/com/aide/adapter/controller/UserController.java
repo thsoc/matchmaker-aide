@@ -27,16 +27,8 @@ public class UserController {
      */
     @PostMapping("/login")
     public Result<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletRequest request) {
-        try {
-            LoginResponse response = userService.login(loginRequest.getAccount(), loginRequest.getPassword(), IpUtils.getIpAddress(request));
-            return Result.success("登录成功", response);
-        } catch (IllegalArgumentException e) {
-            return Result.error(e.getMessage());
-        } catch (IllegalStateException e) {
-            return Result.error(403, e.getMessage());
-        } catch (Exception e) {
-            return Result.error("登录失败: " + e.getMessage());
-        }
+        LoginResponse response = userService.login(loginRequest.getAccount(), loginRequest.getPassword(), IpUtils.getIpAddress(request));
+        return Result.success("登录成功", response);
     }
 
     /**
@@ -44,16 +36,8 @@ public class UserController {
      */
     @PostMapping("/register")
     public Result<LoginResponse> register(@Valid @RequestBody RegisterRequest registerRequest, HttpServletRequest request) {
-        try {
-            LoginResponse response = userService.register(registerRequest, IpUtils.getIpAddress(request));
-            return Result.success("注册成功", response);
-        } catch (IllegalArgumentException e) {
-            return Result.error(e.getMessage());
-        } catch (IllegalStateException e) {
-            return Result.error(403, e.getMessage());
-        } catch (Exception e) {
-            return Result.error("注册失败: " + e.getMessage());
-        }
+        LoginResponse response = userService.register(registerRequest, IpUtils.getIpAddress(request));
+        return Result.success("注册成功", response);
     }
 
     /**

@@ -75,7 +75,7 @@ seata:
   # 启用Seata
   enabled: true
 
-  # 【关键】必须设置为false，避免与ShardingSphere的自动代理冲突
+#  # 【关键】必须设置为false，避免与ShardingSphere的自动代理冲突
   enable-auto-data-source-proxy: false
 
   # 应用ID - 必须与seata.conf中的application.id保持一致
@@ -123,17 +123,6 @@ seata:
   file:
     enabled: false
 
-# 日志配置
-logging:
-  level:
-    io.seata: DEBUG
-    com.alibaba.nacos: INFO
-    org.apache.shardingsphere: DEBUG
-  file:
-    name: logs/member-service.log
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
-
   # 添加以下配置，让 ShardingSphere 能从 Spring 环境中读取
   sharding:
     transaction:
@@ -142,6 +131,26 @@ logging:
           enable: true
         tx:
           timeout: 60
+
+# 日志配置
+logging:
+  level:
+#    io.seata: DEBUG
+    io.seata: INFO                 # 基本信息
+#    io.seata.core.rpc.netty: DEBUG # 心跳详情
+    io.seata.rm: DEBUG             # 资源管理器细节
+    io.seata.tm: DEBUG             # 事务管理器细节
+    com.alibaba.nacos: INFO
+    org.apache.shardingsphere: DEBUG
+  file:
+    name: logs/member-service.log
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+
+sharding:
+  bucket:
+    enabled: true
 
 
 

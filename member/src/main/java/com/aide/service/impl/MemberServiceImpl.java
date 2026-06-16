@@ -8,6 +8,7 @@ import com.aide.domain.service.MemberDomainService;
 import com.aide.domain.service.MoneyDomainService;
 import com.aide.domain.service.OrderDomainService;
 import com.aide.service.MemberService;
+import io.seata.core.context.RootContext;
 import io.seata.spring.annotation.GlobalTransactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @GlobalTransactional(rollbackFor = Exception.class)
     public String buyMember(Long userId, Integer memberType) {
+        log.info(">>> buyMember START xid={}", RootContext.getXID());
         log.info("开始购买会员，用户ID: {}, 会员类型: {}", userId, memberType);
 
         // 1. 通过工厂获取会员配置（值对象）
@@ -36,7 +38,7 @@ public class MemberServiceImpl implements MemberService {
 
         // 2. 调用领域服务执行核心业务逻辑
         MemberDo member = memberDomainService.purchaseMembership(userId, memberType);
-        log.info("会员信息更新成功，会员ID: {}", member.getId());
+        log.info("会员信息更新成功，会员ID: {}", userId);
 
         //3.扣款
         moneyDomainService.dudeceMoney(userId, config.getPrice(), "购买会员");

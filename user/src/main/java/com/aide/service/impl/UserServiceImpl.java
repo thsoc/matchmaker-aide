@@ -96,6 +96,7 @@ public class UserServiceImpl implements UserService {
 
         // 4. 将用户信息保存到缓存
         saveUserToCache(token, userInfo);
+        System.out.println("token: " + token);
 
         // 5. 使用Converter构建响应VO
         return userVoConverter.toLoginResponse(createdUser, token);
