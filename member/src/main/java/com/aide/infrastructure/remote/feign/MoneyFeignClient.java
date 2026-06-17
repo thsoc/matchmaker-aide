@@ -1,11 +1,11 @@
 package com.aide.infrastructure.remote.feign;
 
 
+import com.aide.common.Result.Result;
+import com.aide.common.dto.money.DeductRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.math.BigDecimal;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * 资金服务Feign客户端
@@ -15,12 +15,7 @@ public interface MoneyFeignClient {
 
     /**
      * 扣款
-     * @param userId 用户ID
-     * @param amount 金额
-     * @param description 描述
      */
     @PostMapping("/deduct")
-    void deduct(@RequestParam("userId") Long userId,
-                @RequestParam("amount") BigDecimal amount,
-                @RequestParam("description") String description);
+    Result deduct(@RequestBody DeductRequest build);
 }

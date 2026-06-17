@@ -1,5 +1,6 @@
 package com.aide.infrastructure.listener;
 
+import com.aide.common.dto.points.AddPointsRequest;
 import com.aide.infrastructure.remote.feign.MoneyFeignClient;
 import com.aide.infrastructure.remote.feign.OrderFeignClient;
 import com.aide.infrastructure.remote.feign.PointsFeignClient;
@@ -48,7 +49,8 @@ public class MemberPurchasedEventListener {
     private void sendMqPoints(MemberTypeConfig config, MemberPurchasedEvent event) {
         // 4. 赠送积分
         String remark = String.format("购买%s赠送%d积分", config.getName(), event.getGiftPoints());
-        pointsFeignClient.addPoints(event.getUserId(), event.getGiftPoints(), remark);
+        AddPointsRequest build = AddPointsRequest.builder().userId(event.getUserId()).points(event.getGiftPoints()).remark(remark).build();
+        pointsFeignClient.addPoints(build);
         log.info("积分赠送成功，用户ID: {}, 积分: {}", event.getUserId(), event.getGiftPoints());
     }
 }

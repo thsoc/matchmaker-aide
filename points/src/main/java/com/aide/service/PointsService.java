@@ -1,8 +1,6 @@
 package com.aide.service;
 
-import com.aide.adapter.VO.AddPointsRequest;
-
-import javax.validation.Valid;
+import com.aide.common.dto.points.AddPointsRequest;
 
 public interface PointsService {
     void addPoints(AddPointsRequest addPointsRequest);

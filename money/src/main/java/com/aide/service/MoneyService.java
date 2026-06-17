@@ -2,11 +2,8 @@ package com.aide.service;
 
 import com.aide.adapter.dto.RechargeRequestDTO;
 import com.aide.adapter.dto.RechargeResponseDTO;
+import com.aide.common.dto.money.DeductRequest;
 import com.aide.common.exception.MoneyException;
-import com.aide.infrastructure.persistence.entity.Money;
-import com.baomidou.mybatisplus.extension.service.IService;
-
-import java.math.BigDecimal;
 
 /**
  * @author mazg
@@ -53,10 +50,6 @@ public interface MoneyService{
 
     /**
      * 扣款
-     *
-     * @param userId      用户ID
-     * @param amount      扣款金额
-     * @param description 扣款描述
      */
-    void deduct(Long userId, BigDecimal amount, String description);
+    void deduct(DeductRequest request);
 }

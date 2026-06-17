@@ -1,9 +1,13 @@
-package com.aide.adapter.VO;
+package com.aide.common.dto.points;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author mazg
@@ -12,16 +16,19 @@ import javax.validation.constraints.NotBlank;
  * @date 20:34
  */
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class AddPointsRequest {
     /**
      * 用户ID
      */
-    @NotBlank(message = "用户ID不能为空")
+    @NotNull(message = "用户ID不能为空")
     private Long userId;
     /**
      * 积分数
      */
-    @NotBlank(message = "积分数不能为空")
+    @NotNull(message = "积分数不能为空")
     @Min(value = 0, message = "积分数不能小于0")
     private Integer points;
     /**

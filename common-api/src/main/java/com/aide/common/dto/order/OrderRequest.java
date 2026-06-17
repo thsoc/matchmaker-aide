@@ -1,9 +1,13 @@
-package com.aide.adapter.VO;
+package com.aide.common.dto.order;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 /**
@@ -12,17 +16,23 @@ import java.math.BigDecimal;
  * @date 2026/6/14
  * @date 13:16
  */
+@Builder
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class OrderRequest {
-    @NotBlank(message = "用户ID不能为空")
+    @NotNull(message = "用户ID不能为空")
     private Long userId;
 
-    @NotBlank(message = "订单类型不能为空")
+    /**
+     * 订单类型：1-会员购买
+     */
+    @NotNull(message = "订单类型不能为空")
     @Min(value = 1, message = "订单类型不能小于1")
 //    @Max(value = 3, message = "订单类型不能大于2")
     private Integer orderType;
 
-    @NotBlank(message = "金额不能为空")
+    @NotNull(message = "金额不能为空")
     @Min(value = 0, message = "金额不能小于0")
     private BigDecimal amount;
 

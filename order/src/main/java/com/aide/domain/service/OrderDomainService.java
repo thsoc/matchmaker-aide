@@ -33,6 +33,8 @@ public class OrderDomainService {
         log.info("创建订单，用户ID: {}, 订单类型: {}, 金额: {}, 描述: {}", userId, orderType, amount, description);
         //将订单转换为领域对象
         OrderDo orderDo = orderVoConverter.fromOrderRequest(userId, orderType, amount, description);
+        //随机生成订单编号
+        orderDo.createOrderNo();
         //校验订单
         orderDo.validateFromBuyMenber();
         //初始化订单信息

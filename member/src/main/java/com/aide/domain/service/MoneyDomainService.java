@@ -1,5 +1,6 @@
 package com.aide.domain.service;
 
+import com.aide.common.Result.Result;
 import com.aide.infrastructure.remote.service.RemoteMoneyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class MoneyDomainService {
      * @date 17:52 2026/6/9
      * @return
      **/
-    public void dudeceMoney(Long userId, BigDecimal amount, String description){
-        remoteMoneyService.deduct(userId, amount, description);
+    public Result dudeceMoney(Long userId, BigDecimal amount, String description){
+        return remoteMoneyService.deduct(userId, amount, description);
     }
 }

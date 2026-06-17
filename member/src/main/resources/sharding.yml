@@ -8,6 +8,13 @@ dataSources:
     password: 123456
     autoCommit: false  # 关闭自动提交
     connectionTimeout: 30000
+    idleTimeout: 600000           # 10 分钟
+    maxLifetime: 1800000          # 30 分钟（必须小于 MySQL 的 wait_timeout）
+    validationTimeout: 5000       # 5 秒
+    leakDetectionThreshold: 60000 # 60 秒
+    minimumIdle: 5
+    maximumPoolSize: 20
+    connectionTestQuery: SELECT 1  # 验证连接是否有效
 
 # 分片规则配置
 rules:

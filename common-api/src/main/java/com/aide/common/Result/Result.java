@@ -1,6 +1,7 @@
 package com.aide.common.Result;
 
 import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Data
 public class Result<T> {
@@ -12,6 +13,7 @@ public class Result<T> {
         Result<T> result = new Result<>();
         result.setCode(200);
         result.setMessage("操作成功");
+        result.setData(null);
         return result;
     }
 
@@ -35,6 +37,7 @@ public class Result<T> {
         Result<T> result = new Result<>();
         result.setCode(500);
         result.setMessage(message);
+        result.setData(null);
         return result;
     }
 
@@ -42,6 +45,12 @@ public class Result<T> {
         Result<T> result = new Result<>();
         result.setCode(code);
         result.setMessage(message);
+        result.setData(null);
         return result;
+    }
+
+    @JsonIgnore
+    public boolean isSuccess() {
+        return this.code == 200;
     }
 }

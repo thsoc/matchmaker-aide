@@ -1,6 +1,6 @@
 package com.aide.service.impl;
 
-import com.aide.adapter.VO.AddPointsRequest;
+import com.aide.common.dto.points.AddPointsRequest;
 import com.aide.adapter.converter.PointsVoConverter;
 import com.aide.domain.model.PointsDo;
 import com.aide.domain.service.PointsDomainService;

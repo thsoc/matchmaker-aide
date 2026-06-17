@@ -1,13 +1,12 @@
 package com.aide.adapter.controller;
 
-import com.aide.adapter.VO.OrderRequest;
+import com.aide.common.dto.order.OrderRequest;
 import com.aide.common.Result.Result;
 import com.aide.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.math.BigDecimal;
 
 /**
  * @author mazg

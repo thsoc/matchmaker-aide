@@ -7,6 +7,8 @@ import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 /**
  * @author mazg
@@ -105,5 +107,16 @@ public class OrderDo {
         if (this.amount == null || this.amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("金额无效");
         }
+    }
+
+    /**
+     * @description 生成订单编号
+     * @date 2026/6/14
+     * @date 16:23
+     */
+    public void createOrderNo() {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        String uuid = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+        this.orderNo = "RC" + timestamp + uuid.toUpperCase();
     }
 }

@@ -75,8 +75,9 @@ seata:
   # 启用Seata
   enabled: true
 
-#  # 【关键】必须设置为false，避免与ShardingSphere的自动代理冲突
-  enable-auto-data-source-proxy: false
+##  # 【关键】必须设置为false，避免与ShardingSphere的自动代理冲突
+#  enable-auto-data-source-proxy: false
+  enable-auto-data-source-proxy: true
 
   # 应用ID - 必须与seata.conf中的application.id保持一致
   application-id: member-service

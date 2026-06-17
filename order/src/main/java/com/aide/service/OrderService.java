@@ -1,6 +1,6 @@
 package com.aide.service;
 
-import com.aide.adapter.VO.OrderRequest;
+import com.aide.common.dto.order.OrderRequest;
 
 public interface OrderService {
     /**

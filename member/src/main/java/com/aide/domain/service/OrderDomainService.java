@@ -1,5 +1,6 @@
 package com.aide.domain.service;
 
+import com.aide.common.Result.Result;
 import com.aide.infrastructure.remote.service.RemoteOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class OrderDomainService {
      * @date 18:08 2026/6/9
      * @return 
      **/
-    public String createOrder(Long userId, Integer orderType, BigDecimal amount, String description) {
+    public Result createOrder(Long userId, Integer orderType, BigDecimal amount, String description) {
         return remoteOrderService.createOrder(userId, orderType, amount, description);
     }
 }

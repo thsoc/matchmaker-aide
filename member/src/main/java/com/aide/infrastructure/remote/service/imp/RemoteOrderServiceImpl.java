@@ -1,5 +1,7 @@
 package com.aide.infrastructure.remote.service.imp;
 
+import com.aide.common.Result.Result;
+import com.aide.common.dto.order.OrderRequest;
 import com.aide.infrastructure.remote.feign.OrderFeignClient;
 import com.aide.infrastructure.remote.service.RemoteOrderService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +21,8 @@ public class RemoteOrderServiceImpl implements RemoteOrderService {
     private final OrderFeignClient orderFeignClient;
 
     @Override
-    public String createOrder(Long userId, Integer orderType, BigDecimal amount, String description) {
-        return orderFeignClient.createOrder(userId, orderType, amount, description);
+    public Result createOrder(Long userId, Integer orderType, BigDecimal amount, String description) {
+        OrderRequest build = OrderRequest.builder().userId(userId).orderType(orderType).amount(amount).description(description).build();
+        return orderFeignClient.createOrder(build);
     }
 }

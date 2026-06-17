@@ -1,6 +1,6 @@
 package com.aide.adapter.converter;
 
-import com.aide.adapter.VO.AddPointsRequest;
+import com.aide.common.dto.points.AddPointsRequest;
 import com.aide.domain.model.PointsDo;
 import org.springframework.stereotype.Component;
 

@@ -3,16 +3,17 @@ package com.aide.adapter.controller;
 import com.aide.adapter.dto.RechargeRequestDTO;
 import com.aide.adapter.dto.RechargeResponseDTO;
 import com.aide.common.Result.Result;
+import com.aide.common.dto.money.DeductRequest;
 import com.aide.common.exception.MoneyException;
 import com.aide.domain.service.PaymentContext;
 import com.aide.service.MoneyService;
+import com.aide.service.MoneyTccService;
 import io.seata.core.context.RootContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ import java.util.Map;
 public class MonneyController {
 
     private final MoneyService moneyService;
-//    private final MoneyTccService moneyTccService;
+    private final MoneyTccService moneyTccService;
     private final PaymentContext paymentContext;
 
 
@@ -146,12 +147,10 @@ public class MonneyController {
      * 扣款
      */
     @PostMapping("/deduct")
-    public Result deduct(@RequestParam("userId") Long userId,
-                         @RequestParam("amount") BigDecimal amount,
-                         @RequestParam("description") String description) throws Exception {
+    public Result deduct(@Valid @RequestBody DeductRequest request) throws Exception {
         System.err.println(">>> Current XID: " + RootContext.getXID());
-        moneyService.deduct(userId, amount, description);
-//        moneyTccService.deductBalance(null, userId, amount, description); //经过实验，TCC+feign模式不能用
+//        moneyService.deduct(request);
+        moneyTccService.deductBalance(null, request.getUserId(), request.getAmount(), request.getDescription());
         return Result.success("扣款成功");
     }
 }

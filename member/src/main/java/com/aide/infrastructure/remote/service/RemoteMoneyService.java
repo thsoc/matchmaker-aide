@@ -1,5 +1,6 @@
 package com.aide.infrastructure.remote.service;
 
+import com.aide.common.Result.Result;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
@@ -11,5 +12,5 @@ import java.math.BigDecimal;
  * @date 17:43
  */
 public interface RemoteMoneyService {
-    void deduct(Long userId,BigDecimal amount,String description);
+    Result deduct(Long userId, BigDecimal amount, String description);
 }

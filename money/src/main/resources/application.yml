@@ -102,7 +102,7 @@ seata:
     grouplist:
       default: 192.168.2.20:8091
     disable-global-transaction: false
-#  enable-auto-data-source-proxy: false  # 禁用自动代理，我们手动管理
+  enable-auto-data-source-proxy: true
   # 注册中心配置
   registry:
     type: nacos

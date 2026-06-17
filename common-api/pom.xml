@@ -66,5 +66,12 @@
             <artifactId>spring-tx</artifactId>
             <!-- 建议与你的 Spring Framework 或 Spring Boot 版本保持一致 -->
         </dependency>
+
+        <!-- Jackson -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 </project>

@@ -1,5 +1,6 @@
 package com.aide.service.impl;
 
+import com.aide.common.Result.Result;
 import com.aide.domain.event.MemberPurchasedEvent;
 import com.aide.domain.factory.MemberTypeFactory;
 import com.aide.domain.model.MemberDo;
@@ -41,13 +42,22 @@ public class MemberServiceImpl implements MemberService {
         log.info("会员信息更新成功，会员ID: {}", userId);
 
         //3.扣款
-        moneyDomainService.dudeceMoney(userId, config.getPrice(), "购买会员");
+        Result result = moneyDomainService.dudeceMoney(userId, config.getPrice(), "购买会员");
+        if (!result.isSuccess()) {
+            log.error("扣款失败，用户ID: {}, 金额: {}", userId, config.getPrice());
+            throw new RuntimeException("扣款失败");
+        }
+//        int x = 1/0;
 
         //4.保存订单
-        orderDomainService.createOrder(userId,
+        Result order = orderDomainService.createOrder(userId,
                 1, // 订单类型：1-会员购买
                 config.getPrice(),
                 "购买" + config.getName());
+        if (!order.isSuccess()) {
+            log.error("保存订单失败，用户ID: {}, 订单类型: {}", userId, 1);
+            throw new RuntimeException("保存订单失败");
+        }
 
         // 5. 发布领域事件，发放积分
         MemberPurchasedEvent event = new MemberPurchasedEvent(

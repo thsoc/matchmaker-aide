@@ -1,7 +1,6 @@
 package com.aide.service.impl;
 
-import com.aide.adapter.VO.OrderRequest;
-import com.aide.common.auth.context.UserContext;
+import com.aide.common.dto.order.OrderRequest;
 import com.aide.domain.service.OrderDomainService;
 import com.aide.service.OrderService;
 import io.seata.core.context.RootContext;
