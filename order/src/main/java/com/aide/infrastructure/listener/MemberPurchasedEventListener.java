@@ -40,11 +40,17 @@ public class MemberPurchasedEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleMemberPurchased(MemberPurchasedEvent event) {
         log.info("处理会员购买赠送积分事件，用户ID: {}, 订单编号: {}", event.getUserId(), event.getOrderNo());
-        //假设发送mq，更改订单状态
-        sendMqOrder(event);
+        try {
+            //假设发送mq，更改订单状态
+            sendMqOrder(event);
 
-        //假设发送mq，赠送积分
-        sendMqPoints(event);
+            //假设发送mq，赠送积分
+            sendMqPoints(event);
+        } catch (Exception e) {
+            log.error("MQ发送失败，用户ID: {}, 订单编号: {}", event.getUserId(), event.getOrderNo(), e);
+            // 兜底补偿：写入本地消息表（outbox_event），由定时任务重新发送
+//            saveToLocalMessageTable(event);
+        }
     }
 
     private void sendMqOrder(MemberPurchasedEvent event) {

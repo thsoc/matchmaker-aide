@@ -57,7 +57,7 @@ public class OrderServiceImpl implements OrderService {
             throw new RuntimeException("扣款失败");
         }
 
-        //创建会员，这一步可以发MQ，使用orderNo保证幂等性
+        //创建会员，//todo 这一步可以发MQ，使用orderNo保证幂等性(要在会员服务中新增会员购买记录表)
         log.info("创建会员，用户ID: {}, 金额: {}", request.getUserId(), memberInfo.getPrice());
         Result memberResult = memberDomainService.createMember(request.getUserId(), request.getMemberType(), memberInfo.getPrice());
         log.info("创建会员成功，用户ID: {}", request.getUserId());
