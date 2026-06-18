@@ -28,4 +28,5 @@ public class CouponServiceImpl implements CouponService {
         log.info(">>> createCoupon START userid={}, request={}", userId, request);
         return couponDomainService.createCoupon(userId, request.getCouponType(), request.getAmount(), request.getDescription());
     }
+
 }

@@ -31,4 +31,34 @@ public class CouponController {
         String result = couponService.createCoupon(request);
         return Result.success(result);
     }
+
+    /**
+     * //todo 获取用户优惠券
+     */
+    @PostMapping("/getUserCoupon")
+    public Result<String> getUserCoupon() {
+        return Result.success("获取用户优惠券成功");
+    }
+    /**
+     * //todo 优惠券列表（未生效，待抢购）
+     */
+    @PostMapping("/getCouponList")
+    public Result<String> getCouponList() {
+        return Result.success("获取优惠券列表成功");
+    }
+
+    /**
+     * //todo 定时任务，预热快生效的优惠券，保存到redis
+     */
+    @PostMapping("/preheatCoupon")
+    public Result<String> preheatCoupon() {
+        return Result.success("预热快生效的优惠券成功");
+    }
+    /**
+     * //todo 优惠券详情
+     */
+    @PostMapping("/getCouponDetail")
+    public Result<String> getCouponDetail() {
+        return Result.success("获取优惠券详情成功");
+    }
 }
