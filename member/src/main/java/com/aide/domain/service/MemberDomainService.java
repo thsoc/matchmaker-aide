@@ -2,7 +2,7 @@ package com.aide.domain.service;
 
 import com.aide.domain.factory.MemberTypeFactory;
 import com.aide.domain.model.MemberDo;
-import com.aide.domain.model.MemberTypeConfig;
+import com.aide.common.dto.member.MemberTypeConfig;
 import com.aide.domain.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

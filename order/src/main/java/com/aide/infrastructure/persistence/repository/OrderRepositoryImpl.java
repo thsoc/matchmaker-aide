@@ -4,6 +4,8 @@ import com.aide.domain.model.OrderDo;
 import com.aide.domain.repository.OrderRepository;
 import com.aide.infrastructure.persistence.entity.Order;
 import com.aide.infrastructure.persistence.mapper.OrderMapper;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,48 @@ public class OrderRepositoryImpl implements OrderRepository {
         Order order = fromOrderDo(orderDo);
         orderMapper.insert(order);
         return order.getId().toString();
+    }
+
+    @Override
+    public OrderDo getOrderByOrderNo(String orderNo) {
+        log.info("查询订单，订单编号: {}", orderNo);
+        Order one = new LambdaQueryChainWrapper<>(orderMapper)
+                .eq(Order::getOrderNo, orderNo).one();
+        if (one == null) {
+            log.info("查询订单失败，订单编号: {}", orderNo);
+            return null;
+        }
+        OrderDo orderDo = fromOrder(one);
+        return orderDo;
+    }
+
+    @Override
+    public int changeOrderStatus(Long userId, String orderNo) {
+        LambdaUpdateChainWrapper<Order> set = new LambdaUpdateChainWrapper<>(orderMapper)
+                .eq(Order::getOrderNo, orderNo)
+                .eq(Order::getUserId, userId)
+                .set(Order::getStatus, "2");
+        int update = orderMapper.update(null, set);
+        return update;
+    }
+
+    private OrderDo fromOrder(Order one) {
+        return OrderDo.builder()
+                .id(one.getId())
+                .userId(one.getUserId())
+                .orderNo(one.getOrderNo())
+                .orderType(one.getOrderType())
+                .amount(one.getAmount())
+                .description(one.getDescription())
+                .status(one.getStatus())
+                .createTime(one.getCreateTime())
+                .updateTime(one.getUpdateTime())
+                .deleteTime(one.getDeleteTime())
+                .remark(one.getRemark())
+                .version(one.getVersion())
+                .createBy(one.getCreateBy())
+                .updateBy(one.getUpdateBy())
+                .build();
     }
 
     private Order fromOrderDo(OrderDo orderDo) {

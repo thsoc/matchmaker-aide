@@ -19,4 +19,8 @@ public interface OrderRepository {
      * @return 订单ID
      */
     String createOrder(OrderDo orderDo);
+
+    OrderDo getOrderByOrderNo(String orderNo);
+
+    int changeOrderStatus(Long userId, String orderNo);
 }

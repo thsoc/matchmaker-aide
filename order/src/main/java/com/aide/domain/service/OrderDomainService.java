@@ -39,6 +39,32 @@ public class OrderDomainService {
         orderDo.validateFromBuyMenber();
         //初始化订单信息
         orderDo.initFromBuyMenber();
-        return orderRepository.createOrder(orderDo);
+        orderRepository.createOrder(orderDo);
+        return orderDo.getOrderNo();
+    }
+
+    public void changeOrderStatus(Long userId, String orderNo) {
+        //查询订单是否存在
+        OrderDo orderDo = orderRepository.getOrderByOrderNo(orderNo);
+        //判断订单状态
+        checkOrderStatus(orderDo);
+        orderDo.setStatus("2");
+        //修改订单状态
+        int update = orderRepository.changeOrderStatus(userId, orderNo);
+        if (update <= 0){
+            log.error("修改订单状态失败，用户ID: {}, 订单编号: {}", userId, orderNo);
+            throw new RuntimeException("修改订单状态失败");
+        }
+    }
+
+    private void checkOrderStatus(OrderDo orderDo) {
+        if (orderDo == null) {
+            log.error("订单不存在，订单编号: {}", orderDo.getOrderNo());
+            throw new RuntimeException("订单不存在");
+        }
+        if (!orderDo.getStatus().equals("1")) {
+            log.error("订单状态错误，订单编号: {}, 订单状态: {}", orderDo.getOrderNo(), orderDo.getStatus());
+            throw new RuntimeException("订单状态错误");
+        }
     }
 }

@@ -9,4 +9,12 @@ public interface OrderService {
      * @return 订单ID
      */
     String createOrder(OrderRequest request);
+
+    /**
+     * 更新订单状态
+     *
+     * @param userId  用户ID
+     * @param orderNo 订单编号
+     */
+    void changeOrderStatus(Long userId, String orderNo);
 }

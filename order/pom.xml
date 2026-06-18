@@ -31,6 +31,11 @@
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
+        <!-- 添加OpenFeign支持 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
         <!--        MyBatis-Plus 3.4.3 + Lombok @Builder 的兼容性问题：-->
         <!--        当实体类同时使用 @Builder、@NoArgsConstructor、@AllArgsConstructor 时，MyBatis-Plus 的雪花算法在某些情况下无法正确识别并生成 ID。-->
         <dependency>

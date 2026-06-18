@@ -1,4 +1,4 @@
-package com.aide.domain.model;
+package com.aide.common.dto.member;
 
 
 import lombok.AllArgsConstructor;
@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 
 /**

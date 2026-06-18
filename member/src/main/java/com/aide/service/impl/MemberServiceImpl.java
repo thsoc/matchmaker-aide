@@ -1,21 +1,17 @@
 package com.aide.service.impl;
 
-import com.aide.common.Result.Result;
-import com.aide.domain.event.MemberPurchasedEvent;
+import com.aide.common.dto.member.MemberTypeConfig;
 import com.aide.domain.factory.MemberTypeFactory;
 import com.aide.domain.model.MemberDo;
-import com.aide.domain.model.MemberTypeConfig;
 import com.aide.domain.service.MemberDomainService;
-import com.aide.domain.service.MoneyDomainService;
-import com.aide.domain.service.OrderDomainService;
 import com.aide.service.MemberService;
 import io.seata.core.context.RootContext;
-import io.seata.spring.annotation.GlobalTransactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
 
 @Slf4j
 @Service
@@ -24,12 +20,12 @@ public class MemberServiceImpl implements MemberService {
 
     private final MemberDomainService memberDomainService;
     private final MemberTypeFactory memberTypeFactory;
-    private final ApplicationEventPublisher eventPublisher;
-    private final MoneyDomainService moneyDomainService;
-    private final OrderDomainService orderDomainService;
+//    private final MoneyDomainService moneyDomainService;
+//    private final OrderDomainService orderDomainService;
 
     @Override
-    @GlobalTransactional(rollbackFor = Exception.class)
+//    @GlobalTransactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public String buyMember(Long userId, Integer memberType) {
         log.info(">>> buyMember START xid={}", RootContext.getXID());
         log.info("开始购买会员，用户ID: {}, 会员类型: {}", userId, memberType);
@@ -41,40 +37,47 @@ public class MemberServiceImpl implements MemberService {
         MemberDo member = memberDomainService.purchaseMembership(userId, memberType);
         log.info("会员信息更新成功，会员ID: {}", userId);
 
-        //3.扣款
-        Result result = moneyDomainService.dudeceMoney(userId, config.getPrice(), "购买会员");
-        if (!result.isSuccess()) {
-            log.error("扣款失败，用户ID: {}, 金额: {}", userId, config.getPrice());
-            throw new RuntimeException("扣款失败");
-        }
+//        //3.扣款
+//        Result result = moneyDomainService.dudeceMoney(userId, config.getPrice(), "购买会员");
+//        if (!result.isSuccess()) {
+//            log.error("扣款失败，用户ID: {}, 金额: {}", userId, config.getPrice());
+//            throw new RuntimeException("扣款失败");
+//        }
 //        int x = 1/0;
 
-        //4.保存订单
-        Result order = orderDomainService.createOrder(userId,
-                1, // 订单类型：1-会员购买
-                config.getPrice(),
-                "购买" + config.getName());
-        if (!order.isSuccess()) {
-            log.error("保存订单失败，用户ID: {}, 订单类型: {}", userId, 1);
-            throw new RuntimeException("保存订单失败");
-        }
+//        //4.保存订单
+//        Result order = orderDomainService.createOrder(userId,
+//                1, // 订单类型：1-会员购买
+//                config.getPrice(),
+//                "购买" + config.getName());
+//        if (!order.isSuccess()) {
+//            log.error("保存订单失败，用户ID: {}, 订单类型: {}", userId, 1);
+//            throw new RuntimeException("保存订单失败");
+//        }
 
-        // 5. 发布领域事件，发放积分
-        MemberPurchasedEvent event = new MemberPurchasedEvent(
-                this,
-                userId,
-                member.getId(),
-                memberType,
-                config.getPrice(),
-                member.calculateGiftPoints()
-        );
-        eventPublisher.publishEvent(event);
+//        // 5. 发布领域事件，发放积分
+//        MemberPurchasedEvent event = new MemberPurchasedEvent(
+//                this,
+//                userId,
+//                member.getId(),
+//                memberType,
+//                config.getPrice(),
+//                member.calculateGiftPoints()
+//        );
+//        eventPublisher.publishEvent(event);
 
         String message = String.format("购买%s成功，有效期至%s",
                 config.getName(), member.getEndTime().toLocalDate());
         log.info(message);
 
         return message;
+    }
+
+    @Override
+    public BigDecimal getMemberPrice(Integer memberType) {
+        // 1. 通过工厂获取会员配置（值对象）
+        MemberTypeConfig config = memberTypeFactory.getConfig(memberType);
+        return config.getPrice();
     }
 }
 

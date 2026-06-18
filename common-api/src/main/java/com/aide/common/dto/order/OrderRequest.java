@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -32,9 +33,17 @@ public class OrderRequest {
 //    @Max(value = 3, message = "订单类型不能大于2")
     private Integer orderType;
 
-    @NotNull(message = "金额不能为空")
-    @Min(value = 0, message = "金额不能小于0")
-    private BigDecimal amount;
+    /**
+     * 会员类型
+     */
+    @NotNull(message = "会员类型不能为空")
+    @Min(value = 1, message = "会员类型不能小于1")
+    @Max(value = 3, message = "会员类型不能大于3")
+    private Integer memberType;
+
+//    @NotNull(message = "金额不能为空")
+//    @Min(value = 0, message = "金额不能小于0")
+//    private BigDecimal amount;
 
     private String description;
 }

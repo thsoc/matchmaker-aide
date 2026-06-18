@@ -1,6 +1,6 @@
 package com.aide.domain.model;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.aide.common.dto.member.MemberTypeConfig;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

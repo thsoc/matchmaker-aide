@@ -1,28 +1,28 @@
-package com.aide.infrastructure.remote.service.imp;
-
-import com.aide.common.Result.Result;
-import com.aide.common.dto.order.OrderRequest;
-import com.aide.infrastructure.remote.feign.OrderFeignClient;
-import com.aide.infrastructure.remote.service.RemoteOrderService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-
-/**
- * @author mazg
- * @description 远程订单服务实现类
- * @date 2026/6/9
- * @date 18:02
- */
-@Service
-@RequiredArgsConstructor
-public class RemoteOrderServiceImpl implements RemoteOrderService {
-    private final OrderFeignClient orderFeignClient;
-
-    @Override
-    public Result createOrder(Long userId, Integer orderType, BigDecimal amount, String description) {
-        OrderRequest build = OrderRequest.builder().userId(userId).orderType(orderType).amount(amount).description(description).build();
-        return orderFeignClient.createOrder(build);
-    }
-}
+//package com.aide.infrastructure.remote.service.imp;
+//
+//import com.aide.common.Result.Result;
+//import com.aide.common.dto.order.OrderRequest;
+//import com.aide.infrastructure.remote.feign.OrderFeignClient;
+//import com.aide.infrastructure.remote.service.RemoteOrderService;
+//import lombok.RequiredArgsConstructor;
+//import org.springframework.stereotype.Service;
+//
+//import java.math.BigDecimal;
+//
+///**
+// * @author mazg
+// * @description 远程订单服务实现类
+// * @date 2026/6/9
+// * @date 18:02
+// */
+//@Service
+//@RequiredArgsConstructor
+//public class RemoteOrderServiceImpl implements RemoteOrderService {
+//    private final OrderFeignClient orderFeignClient;
+//
+//    @Override
+//    public Result createOrder(Long userId, Integer orderType, BigDecimal amount, String description) {
+//        OrderRequest build = OrderRequest.builder().userId(userId).orderType(orderType).amount(amount).description(description).build();
+//        return orderFeignClient.createOrder(build);
+//    }
+//}

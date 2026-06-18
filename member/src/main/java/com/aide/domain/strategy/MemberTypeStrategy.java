@@ -1,7 +1,7 @@
 package com.aide.domain.strategy;
 
 
-import com.aide.domain.model.MemberTypeConfig;
+import com.aide.common.dto.member.MemberTypeConfig;
 
 /**
  * 会员类型策略接口

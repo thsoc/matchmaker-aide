@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import com.aide.common.Result.Result;
 
+import java.math.BigDecimal;
+
 /**
  * @author mazg
  * @description 会员控制器
@@ -35,4 +37,14 @@ public class MemberController {
         String result = memberService.buyMember(userId, memberType);
         return Result.success(result);
     }
+
+    /**
+     * 获取会员不同类型的价格信息
+     */
+    @GetMapping("/getMemberPrice/{memberType}")
+    public Result<BigDecimal> getMemberPrice(@PathVariable("memberType") Integer memberType) {
+        BigDecimal result = memberService.getMemberPrice(memberType);
+        return Result.success(result);
+    }
+
 }
