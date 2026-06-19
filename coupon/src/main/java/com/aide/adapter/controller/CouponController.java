@@ -61,4 +61,18 @@ public class CouponController {
     public Result<String> getCouponDetail() {
         return Result.success("获取优惠券详情成功");
     }
+
+    /**
+     * //todo 领取优惠券，
+     * 1.一人一单，
+     * 2.库存-1
+     * 3.异步下单待支付
+     * 4.取消支付，更新redis中的库存,异步MQ删除订单，
+     * 5.余额支付：确认支付，更新redis中的库存 ,异步MQ更新订单状态+扣款
+     * 6.支付宝等支付：异步回调确认支付，更新redis中的库存 ,异步MQ更新订单状态
+     */
+    @PostMapping("/receiveCoupon")
+    public Result<String> receiveCoupon() {
+        return Result.success("领取优惠券成功");
+    }
 }
