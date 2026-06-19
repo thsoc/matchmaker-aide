@@ -57,11 +57,12 @@ public class MoneyRepositoryImpl implements MoneyRepository {
         return convertToDomainObject(money);
     }
 
-    public int freezeOrunfreezeMoney(MoneyDo account) {
+    public int freezeMoney(MoneyDo account) {
         LambdaUpdateWrapper<Money> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(Money::getId, account.getId())
-                .set(Money::getAvailableMoney, account.getAvailableBalance())
-                .set(Money::getFrozenMoney, account.getFrozenMoney());
+                .apply("available_money >= {0}", account.getFrozenMoney())
+                .setSql("available_money = available_money - " + account.getFrozenMoney()
+                        + ", frozen_money = frozen_money + " + account.getFrozenMoney());
         int update = moneyMapper.update(null, wrapper);
         return update;
     }
@@ -70,7 +71,23 @@ public class MoneyRepositoryImpl implements MoneyRepository {
     public void confirmFreeze(MoneyDo account) {
         new LambdaUpdateChainWrapper<>(moneyMapper)
                 .eq(Money::getId, account.getId())
-                .set(Money::getFrozenMoney, account.getFrozenMoney()).update();
+                .apply("frozen_money >= {0}", account.getFrozenMoney())
+                .setSql("frozen_money = frozen_money - " + account.getFrozenMoney())
+                .update();
+    }
+
+    /**
+     * Cancel 阶段：冻结金额转入可用余额
+     * @param account
+     */
+    @Override
+    public void unfreezeMoney(MoneyDo account) {
+        LambdaUpdateWrapper<Money> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(Money::getId, account.getId())
+                .apply("frozen_money >= {0}", account.getFrozenMoney())
+                .setSql("available_money = available_money + " + account.getFrozenMoney()
+                        + ", frozen_money = frozen_money - " + account.getFrozenMoney());
+        moneyMapper.update(null, wrapper);
     }
 
     /**

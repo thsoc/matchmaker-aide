@@ -153,4 +153,13 @@ public class MonneyController {
         moneyTccService.deductBalance(null, request.getUserId(), request.getAmount(), request.getDescription());
         return Result.success("扣款成功");
     }
+
+    /**
+     * 创建账户
+     */
+    @GetMapping("/createAccount")
+    public Result createAccount() {
+        moneyService.createAccount();
+        return Result.success();
+    }
 }

@@ -42,25 +42,36 @@ public class MoneyDomainService {
     /**
      * 查询或创建用户账户
      */
-    public MoneyDo getOrCreateAccount(Long userId) {
+    public MoneyDo getAccount(Long userId) {
         MoneyDo account = moneyRepository.findByUserId(userId);
 
         if (account == null) {
-            // 创建新账户
-            MoneyDo newAccount = MoneyDo.createNewAccount(userId);
-            MoneyDo save = moneyRepository.save(newAccount);
-            log.info("为用户创建新账户，用户ID: {}", userId);
-            return save;
-        } else {
-            return account;
+            log.info("用户不存在，创建新账户，用户ID: {}", userId);
+            throw new RuntimeException("用户不存在，请先创建用户");
         }
+        return account;
+    }
+
+    /**
+     * 创建账户
+     */
+    public MoneyDo createAccount(Long userId) {
+        MoneyDo account = moneyRepository.findByUserId(userId);
+        if (account != null) {
+            throw new RuntimeException("用户已存在");
+        }
+        // 创建新账户
+        MoneyDo newAccount = MoneyDo.createNewAccount(userId);
+        MoneyDo save = moneyRepository.save(newAccount);
+        log.info("为用户创建新账户，用户ID: {}", userId);
+        return save;
     }
 
     /**
      * 为用户充值（账户层面的业务逻辑）
      */
     public void rechargeAccount(Long userId, BigDecimal amount) {
-        MoneyDo account = getOrCreateAccount(userId);
+        MoneyDo account = getAccount(userId);
         account.addBalance(amount);
         moneyRepository.save(account);
 
@@ -344,8 +355,8 @@ public class MoneyDomainService {
     public void deductAccount(Long userId, BigDecimal amount, String description) {
         log.info("开始处理扣款，用户ID: {}, 金额: {}, 描述: {}", userId, amount, description);
 
-        // 1. 查询账户（不存在则创建）
-        MoneyDo account = getOrCreateAccount(userId);
+        // 1. 查询账户（ps:不存在则创建,这边不做创建，改用预先创建，防止回滚逻辑）
+        MoneyDo account = getAccount(userId);
 
         // 2. 执行扣款业务规则（封装在领域对象中）
         account.deductBalance(amount);
@@ -358,21 +369,21 @@ public class MoneyDomainService {
     }
 
     public int freezeMoney(Long userId, BigDecimal amount) {
-        // 1. 查询账户（不存在则创建）
-        MoneyDo account = getOrCreateAccount(userId);
+        // 1. 查询账户（ps:不存在则创建,这边不做创建，改用预先创建，防止回滚逻辑）
+        MoneyDo account = getAccount(userId);
 
-        // 2. 执行扣款业务规则（封装在领域对象中）
+        // 2. 执行扣款业务规则（封装在领域对象中）,ps:扣款直接在mysql，保证原子性，这边只做提前判断
         account.freezeMoney(amount);
 
         // 3. 冻结金额
-        return moneyRepository.freezeOrunfreezeMoney(account);
+        return moneyRepository.freezeMoney(account);
     }
 
     public void confirmFreeze(Long userId, BigDecimal amount) {
-        // 1. 查询账户（不存在则创建）
-        MoneyDo account = getOrCreateAccount(userId);
+        // 1. 查询账户（ps:不存在则创建,这边不做创建，改用预先创建，防止回滚逻辑）
+        MoneyDo account = getAccount(userId);
 
-        // 2. 执行扣款业务规则（封装在领域对象中）
+        // 2. 执行扣款业务规则（封装在领域对象中）,ps:操作直接在mysql，保证原子性，这边只做提前判断
         account.confirmFreeze(amount);
 
         // 3. 清除冻结金额
@@ -380,14 +391,14 @@ public class MoneyDomainService {
     }
 
     public void unfreezeMoney(Long userId, BigDecimal amount) {
-        // 1. 查询账户（不存在则创建）
-        MoneyDo account = getOrCreateAccount(userId);
+        // 1. 查询账户（ps:不存在则创建,这边不做创建，改用预先创建，防止回滚逻辑），这边只做提前判断
+        MoneyDo account = getAccount(userId);
 
-        // 2. 执行扣款业务规则（封装在领域对象中）
+        // 2. 执行扣款业务规则（封装在领域对象中）,ps:操作直接在mysql，保证原子性
         account.unfreezeMoney(amount);
 
         // 3. Cancel 阶段：解冻资金，恢复可用余额
-        moneyRepository.freezeOrunfreezeMoney(account);
+        moneyRepository.unfreezeMoney(account);
 
     }
 }

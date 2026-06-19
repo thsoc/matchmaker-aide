@@ -52,4 +52,9 @@ public interface MoneyService{
      * 扣款
      */
     void deduct(DeductRequest request);
+
+    /**
+     * 创建账户
+     */
+    void createAccount();
 }

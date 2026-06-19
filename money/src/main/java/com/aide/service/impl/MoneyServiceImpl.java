@@ -4,6 +4,7 @@ package com.aide.service.impl;
 import com.aide.adapter.converter.RechargeRecordConverter;
 import com.aide.adapter.dto.RechargeRequestDTO;
 import com.aide.adapter.dto.RechargeResponseDTO;
+import com.aide.common.auth.context.UserContext;
 import com.aide.common.dto.money.DeductRequest;
 import com.aide.common.exception.MoneyException;
 import com.aide.domain.event.PaymentFailureEvent;
@@ -214,5 +215,13 @@ public class MoneyServiceImpl implements MoneyService {
                 log.debug("释放分布式锁，用户ID: {}", request.getUserId());
             }
         }
+    }
+
+    @Override
+    public void createAccount() {
+        log.info("创建账户，用户ID: {}", UserContext.getUserId());
+        Long userId = UserContext.getUserId();
+        moneyDomainService.createAccount(userId);
+        log.info("创建账户成功，用户ID: {}", userId);
     }
 }

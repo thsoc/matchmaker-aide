@@ -7,6 +7,7 @@ import com.aide.adapter.converter.UserVoConverter;
 import com.aide.common.auth.context.UserContext;
 import com.aide.common.auth.entity.UserInfo;
 import com.aide.common.auth.service.CacheService;
+import com.aide.domain.event.UserRegistedEvent;
 import com.aide.domain.model.UserDo;
 import com.aide.domain.service.UserDomainService;
 import com.aide.infrastructure.persistence.entity.User;
@@ -20,8 +21,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.crypto.SecretKey;
@@ -39,6 +43,7 @@ public class UserServiceImpl implements UserService {
     private final Long jwtExpiration;
     private final FileStorageService fileStorageService;
     private final UserVoConverter userVoConverter;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Value("${server.port:8084}")
     private String serverPort;
@@ -97,6 +102,20 @@ public class UserServiceImpl implements UserService {
         // 4. 将用户信息保存到缓存
         saveUserToCache(token, userInfo);
         System.out.println("token: " + token);
+
+        // 5.发布领域事件，预先创建账户
+        // 2. 在应用层发布事件（注册事务同步回调）
+        TransactionSynchronizationManager.registerSynchronization(
+                new TransactionSynchronizationAdapter() {
+                    @Override
+                    public void afterCommit() {
+                        eventPublisher.publishEvent(
+                                new UserRegistedEvent(createdUser.getId())
+                        );
+                        log.info("用户注册领域事件发布，用户ID: {}", createdUser.getId());
+                    }
+                }
+        );
 
         // 5. 使用Converter构建响应VO
         return userVoConverter.toLoginResponse(createdUser, token);

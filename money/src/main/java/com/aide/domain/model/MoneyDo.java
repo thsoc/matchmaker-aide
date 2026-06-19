@@ -86,14 +86,16 @@ public class MoneyDo {
     }
 
     public void freezeMoney(BigDecimal amount) {
+        //提前判断
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("扣款金额必须大于0");
         }
         if (this.availableMoney.compareTo(amount) < 0) {
             throw new IllegalStateException("余额不足");
         }
-        this.availableMoney = this.availableMoney.subtract(amount);
-        this.frozenMoney = this.frozenMoney.add(amount);
+//        this.availableMoney = this.availableMoney.subtract(amount);
+//        this.frozenMoney = this.frozenMoney.add(amount);
+        this.frozenMoney = amount;
     }
 
 
@@ -104,7 +106,8 @@ public class MoneyDo {
         if (this.frozenMoney.compareTo(amount) < 0) {
             throw new IllegalStateException("锁定金额不足");
         }
-        this.frozenMoney = this.frozenMoney.subtract(amount);
+//        this.frozenMoney = this.frozenMoney.subtract(amount);
+        this.frozenMoney = amount;
     }
 
     /**
@@ -120,7 +123,9 @@ public class MoneyDo {
         if (this.frozenMoney.compareTo(amount) < 0) {
             throw new IllegalStateException("锁定金额不足");
         }
-        this.availableMoney = this.availableMoney.add(amount);
-        this.frozenMoney = this.frozenMoney.subtract(amount);
+//        this.availableMoney = this.availableMoney.add(amount);
+//        this.frozenMoney = this.frozenMoney.subtract(amount);
+        this.frozenMoney = amount;
+
     }
 }

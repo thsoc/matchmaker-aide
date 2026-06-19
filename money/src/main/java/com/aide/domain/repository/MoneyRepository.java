@@ -37,7 +37,7 @@ public interface MoneyRepository {
      * @param account
      * @return
      */
-    int freezeOrunfreezeMoney(MoneyDo account);
+    int freezeMoney(MoneyDo account);
 
     /**
      *  Confirm 阶段：清除冻结金额
@@ -45,4 +45,9 @@ public interface MoneyRepository {
      */
     void confirmFreeze(MoneyDo account);
 
+    /**
+     *  Cancel 阶段：冻结金额转入可用余额
+     * @param account
+     */
+    void unfreezeMoney(MoneyDo account);
 }
