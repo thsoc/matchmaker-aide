@@ -1,5 +1,6 @@
 package com.aide.adapter.controller;
 
+import com.aide.common.aspect.Idempotent;
 import com.aide.common.dto.order.OrderRequest;
 import com.aide.common.Result.Result;
 import com.aide.service.OrderService;
@@ -23,6 +24,8 @@ public class OrderController {
     /**
      * 创建订单
      */
+    // 使用前端传来的幂等键作为防重标识
+    @Idempotent(key = "#createOrderReq.userId + '_' + createOrderReq.orderType + '_' + createOrderReq.memberType", expire = 30)
     @PostMapping("/createOrder")
     public Result<String> buyMember(@Valid @RequestBody OrderRequest request) {
         String result = orderService.createOrder(request);

@@ -114,9 +114,10 @@ public class OrderDo {
      * @date 2026/6/14
      * @date 16:23
      */
-    public void createOrderNo() {
-        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        String uuid = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
-        this.orderNo = "RC" + timestamp + uuid.toUpperCase();
+    public void createOrderNo(String orderNo) {
+        if (orderNo == null){
+            throw new IllegalArgumentException("订单编号无效");
+        }
+        this.orderNo = orderNo;
     }
 }

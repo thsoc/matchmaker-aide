@@ -33,4 +33,9 @@ public class BusinessException extends Exception{
         this.httpStatus = httpStatus;
     }
 
+    public BusinessException(String message) {
+        super(message);
+        this.code = 400;
+        this.httpStatus = 400;
+    }
 }

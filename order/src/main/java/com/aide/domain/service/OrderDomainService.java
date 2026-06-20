@@ -3,6 +3,7 @@ package com.aide.domain.service;
 import com.aide.adapter.converter.OrderVoConverter;
 import com.aide.domain.model.OrderDo;
 import com.aide.domain.repository.OrderRepository;
+import com.aide.util.ImprovedSnowflakeGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.math.BigDecimal;
 public class OrderDomainService {
     private final OrderRepository orderRepository;
     private final OrderVoConverter orderVoConverter;
+    private final ImprovedSnowflakeGenerator idGenerator;
 
     /**
      * @author mazg
@@ -34,7 +36,7 @@ public class OrderDomainService {
         //将订单转换为领域对象
         OrderDo orderDo = orderVoConverter.fromOrderRequest(userId, orderType, amount, description);
         //随机生成订单编号
-        orderDo.createOrderNo();
+        orderDo.createOrderNo(idGenerator.generateOrderNo("RC"));
         //校验订单
         orderDo.validateFromBuyMenber();
         //初始化订单信息
