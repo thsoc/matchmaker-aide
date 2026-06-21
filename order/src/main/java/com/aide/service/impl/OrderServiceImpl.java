@@ -57,6 +57,7 @@ public class OrderServiceImpl implements OrderService {
             throw new RuntimeException("扣款失败");
         }
 
+        // todo 这边是使用余额扣款，如果是支付宝等方式扣款，后续步骤是回调函数回调，这里就不做处理了
         //创建会员，//todo 这一步可以发MQ，使用orderNo保证幂等性(要在会员服务中新增会员购买记录表)
         log.info("创建会员，用户ID: {}, 金额: {}", request.getUserId(), memberInfo.getPrice());
         Result memberResult = memberDomainService.createMember(request.getUserId(), request.getMemberType(), memberInfo.getPrice());
