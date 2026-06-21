@@ -20,22 +20,19 @@ import java.math.BigDecimal;
 @Slf4j
 public class CouponDomainService {
     private final CouponRepository couponRepository;
-    private final CouponVoConverter couponVoConverter;
+
 
     /**
      * @author mazg
-     * @description 创建订单
+     * @description 创建优惠券
      * @date 18:08 2026/6/9
      * @return 
      **/
-    public String createCoupon(Long userId, Integer orderType, BigDecimal amount, String description) {
-
-        //将订单转换为领域对象
-        CouponDo orderDo = couponVoConverter.fromOrderRequest(userId, orderType, amount, description);
-        //校验订单
-        orderDo.validateFromBuyMenber();
-        //初始化订单信息
-        orderDo.initFromBuyMenber();
-        return couponRepository.createOrder(orderDo);
+    public String createCoupon(CouponDo couponDo) {
+        //校验优惠券信息
+        couponDo.validateCoupon();
+        //初始化优惠券信息
+        couponDo.initCoupon();
+        return couponRepository.createOrder(couponDo);
     }
 }

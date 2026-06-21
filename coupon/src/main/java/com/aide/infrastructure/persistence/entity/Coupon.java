@@ -10,48 +10,88 @@ import java.time.LocalDateTime;
 
 /**
  * @author mazg
- * @description 订单实体类
+ * @description 优惠券实体类
  * @date 2026/6/14
  * @date 16:05
  */
 @Data
 @Builder
 @Getter
-@TableName("aide_order")
+@TableName("aide_coupon")
 public class Coupon {
     /**
-     * 订单ID
+     * 优惠券ID
      */
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
-    /**
-     * 用户ID
-     */
-    @TableField("user_id")
-    private Long userId;
-    /**
-     * 订单类型：1-会员购买
-     */
-    @TableField("order_type")
-    private Integer orderType;
-    /**
-     * 订单编号
-     */
-    @TableField("order_no")
-    private String orderNo;
+
 
     /**
-     * 金额
+     * 优惠券名称
+     */
+    @TableField("coupon_name")
+    private String couponName;
+
+    /**
+     * 优惠券生效时间
+     */
+    @TableField("effective_time")
+    private LocalDateTime effectiveTime;
+
+    /**
+     * 优惠券失效时间
+     */
+    @TableField("expire_time")
+    private LocalDateTime expireTime;
+
+
+    /**
+     * 优惠券折扣方式 0-折扣券 1-满减券 2-代金券
+     */
+    @TableField("coupon_discount_type")
+    private Integer couponDiscountType;
+    /**
+     * 发行总量
+     */
+    @TableField("total_count")
+    private Integer totalCount;
+
+    @TableField("available_stock")
+    private Integer availableStock;
+
+    /**
+     * 对于代金券，直接存储固定抵扣金额（如 20 元）；对于折扣券，存储折扣比例（如 0.85 代表 85 折）
      */
     @TableField("amount")
     private BigDecimal amount;
+
+    /**
+     * 使用门槛。满减券和折扣券需要填写（如满 100 可用），代金券如果无门槛则填 0。
+     */
+    @TableField("condition_amount")
+    private BigDecimal conditionAmount ;
+
+    /**
+     * 折扣上限
+     */
+    @TableField("max_discount")
+    private BigDecimal maxDiscount;
+
+    /**
+     * 规则json,用于存储更复杂的扩展规则,暂时不用
+     */
+    @TableField("rule_json")
+    private String ruleJson;
+
+
+
     /**
      * 描述
      */
     @TableField("description")
     private String description;
     /**
-     * 订单状态：1-待支付 2-支付成功 3-支付失败 4-取消订单 5-订单完成 6-订单关闭
+     *
      */
      @TableField("status")
     private String status;

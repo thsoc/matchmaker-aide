@@ -1,6 +1,9 @@
 package com.aide.domain.model;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.Version;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -12,7 +15,7 @@ import java.util.UUID;
 
 /**
  * @author mazg
- * @description 订单领域对象
+ * @description 优惠券领域对象
  * @date 2026/6/14
  * @date 16:20
  */
@@ -21,38 +24,76 @@ import java.util.UUID;
 @Getter
 public class CouponDo {
     /**
-     * 订单ID
+     * 优惠券ID
      */
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
-    /**
-     * 用户ID
-     */
-    private Long userId;
-    /**
-     * 订单类型：1-会员购买
-     */
-    private Integer orderType;
-    /**
-     * 订单编号
-     */
-    private String orderNo;
+
 
     /**
-     * 金额
+     * 优惠券名称
+     */
+    private String couponName;
+
+    /**
+     * 优惠券生效时间
+     */
+    private LocalDateTime effectiveTime;
+
+    /**
+     * 优惠券失效时间
+     */
+    private LocalDateTime expireTime;
+
+
+    /**
+     * 优惠券折扣方式 0-折扣券 1-满减券 2-代金券
+     */
+    private Integer couponDiscountType;
+    /**
+     * 发行总量
+     */
+    private Integer totalCount;
+
+    /**
+     * 优惠券剩余数量
+     */
+    private Integer availableStock ;
+
+
+    /**
+     * 对于代金券，直接存储固定抵扣金额（如 20 元）；对于折扣券，存储折扣比例（如 0.85 代表 85 折）
      */
     private BigDecimal amount;
+
+    /**
+     * 使用门槛。满减券和折扣券需要填写（如满 100 可用），代金券如果无门槛则填 0。
+     */
+    private BigDecimal conditionAmount ;
+
+    /**
+     * 折扣上限
+     */
+    private BigDecimal maxDiscount;
+
+    /**
+     * 规则json
+     */
+    private String ruleJson;
+
+
+
     /**
      * 描述
      */
     private String description;
     /**
-     * 订单状态：1-待支付 2-支付成功 3-支付失败 4-取消订单 5-订单完成 6-订单关闭
+     *
      */
     private String status;
     /**
      * 创建时间
      */
-    @TableField("create_time")
     private LocalDateTime createTime;
     /**
      * 更新时间
@@ -67,10 +108,12 @@ public class CouponDo {
      * 创建人
      */
     private String createBy;
+
     /**
      * 修改人
      */
     private String updateBy;
+
     /**
      * 备注
      */
@@ -81,32 +124,42 @@ public class CouponDo {
     private String version;
 
     /**
-     * @description 初始化订单信息(购买会员)
-     * @date 2026/6/14
-     * @date 16:23
+     * todo 校验优惠券信息
      */
-    public void initFromBuyMenber() {
-        this.createTime = LocalDateTime.now();
-        this.updateTime = LocalDateTime.now();
-        this.status = "2";
-        this.remark = "购买会员";
-        this.createBy = this.userId.toString();
-        this.updateBy = this.userId.toString();
+    public void validateCoupon() {
+        if (couponName == null){
+            throw new RuntimeException("优惠券名称不能为空");
+        }
+        if (effectiveTime == null){
+            throw new RuntimeException("优惠券生效时间不能为空");
+        }
+        if (expireTime == null){
+            throw new RuntimeException("优惠券失效时间不能为空");
+        }
+        if (couponDiscountType == null){
+            throw new RuntimeException("优惠券折扣方式不能为空");
+        }
+        if (totalCount == null){
+            throw new RuntimeException("发行总量不能为空");
+        }
+        if (amount == null){
+            throw new RuntimeException("优惠券金额不能为空");
+        }
+        if (conditionAmount == null){
+            throw new RuntimeException("使用门槛不能为空");
+        }
+        if (maxDiscount == null){
+            throw new RuntimeException("折扣上限不能为空");
+        }
+        if (ruleJson == null){
+            throw new RuntimeException("规则json不能为空");
+        }
     }
 
-    public void validateFromBuyMenber() {
-        if (this.userId == null || this.userId <= 0) {
-            throw new IllegalArgumentException("用户ID无效");
-        }
-        if (this.orderType == null || this.orderType < 1 || this.orderType > 3) {
-            throw new IllegalArgumentException("会员类型无效，请选择1-3");
-        }
-        if (this.orderNo == null || this.orderNo.isEmpty()) {
-            throw new IllegalArgumentException("订单编号无效");
-        }
-        if (this.amount == null || this.amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("金额无效");
-        }
+    /**
+     * todo 初始化优惠券信息
+     */
+    public void initCoupon() {
+        this.createBy = "system";
     }
-
 }

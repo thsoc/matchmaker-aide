@@ -5,9 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -30,16 +28,9 @@ public class CouponRequest {
     @NotNull(message = "优惠券类型不能为空")
     @Min(value = 1, message = "优惠券类型不能小于1")
     private Integer couponType;
-    /**
-     * 优惠券折扣方式 0-折扣券 1-满减券 2-代金券
-     */
-    @NotNull(message = "优惠券折扣方式不能为空")
-    @Min(value = 0, message = "优惠券折扣方式不能小于0")
-    @Max(value = 2, message = "优惠券折扣方式不能大于2")
-    private Integer couponDiscountType;
 
     /**
-     * 优惠券状态：1-待使用 2-已使用 3-已过期
+     * 优惠券状态：1-未生效 2-已生效 3-已过期
      */
     @NotNull(message = "优惠券状态不能为空")
     @Min(value = 1, message = "优惠券状态不能小于1")
@@ -64,27 +55,57 @@ public class CouponRequest {
     private LocalDateTime expireTime;
 
     /**
-     * 优惠券金额
+     * 优惠券折扣方式 0-折扣券 1-满减券 2-代金券
      */
-//    @NotNull(message = "优惠券金额不能为空")
-    @Min(value = 0, message = "优惠券金额不能小于0")
-    private BigDecimal amount;
+    @NotNull(message = "优惠券折扣方式不能为空")
+    @Min(value = 0, message = "优惠券折扣方式不能小于0")
+    @Max(value = 2, message = "优惠券折扣方式不能大于2")
+    private Integer couponDiscountType;
 
     /**
      * 优惠券折扣
      */
 //    @NotNull(message = "优惠券折扣不能为空")
-    @Min(value = 0, message = "优惠券折扣不能小于0")
-    @Max(value = 1, message = "优惠券折扣不能大于1")
+    @DecimalMin(value = "0", message = "优惠券折扣不能小于0")
+    @DecimalMax(value = "1", message = "优惠券折扣不能大于1")
+    @Digits(integer = 10, fraction = 2, message = "优惠券折扣最多只能有2位小数")
     private BigDecimal discount;
 
     /**
-     * 优惠券使用限制：1-无使用限制 2-指定商品可用 3-指定会员可用
+     * 折扣券使用门槛
      */
-    @NotNull(message = "优惠券使用限制不能为空")
-    @Min(value = 1, message = "优惠券使用限制不能小于1")
-    @Max(value = 3, message = "优惠券使用限制不能大于3")
-    private Integer couponUseLimit;
+    @DecimalMin(value = "0", message = "折扣券使用门槛不能小于0")
+    @Digits(integer = 10, fraction = 2, message = "折扣券使用门槛最多只能有2位小数")
+    private BigDecimal fullDiscountAmount;
+
+    /**
+     * 折扣券使用上限
+     */
+    @DecimalMin(value = "0", message = "折扣券使用上限不能小于0")
+    @Digits(integer = 10, fraction = 2, message = "折扣券使用上限最多只能有2位小数")
+    private BigDecimal maxDiscount;
+
+
+    /**
+     * 满减券使用门槛
+     */
+//    @NotNull(message = "优惠券金额不能为空")
+    @DecimalMin(value = "0", message = "满减券使用门槛不能小于0")
+    private BigDecimal fullReductionAmount;
+
+    /**
+     * 满减券抵扣金额
+     */
+    @DecimalMin(value = "0", message = "满减券使用金额不能小于0")
+    @Digits(integer = 10, fraction = 2, message = "满减券使用金额最多只能有2位小数")
+    private BigDecimal reductionAmount;
+
+    /**
+     * 代金券面额
+     */
+    @DecimalMin(value = "0", message = "代金券面额不能小于0")
+    @Digits(integer = 10, fraction = 2, message = "代金券面额最多只能有2位小数")
+    private BigDecimal cashCouponAmount;
 
 
     /**

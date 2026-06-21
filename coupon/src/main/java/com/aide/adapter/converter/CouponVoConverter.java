@@ -15,12 +15,6 @@ import java.math.BigDecimal;
 public class CouponVoConverter {
 
     public CouponDo fromOrderRequest(Long userId, Integer orderType, BigDecimal amount, String description) {
-        CouponDo orderDo = CouponDo.builder()
-                .userId(userId)
-                .orderType(orderType)
-                .amount(amount)
-                .description(description)
-                .build();
-        return orderDo;
+        return null;
     }
 }

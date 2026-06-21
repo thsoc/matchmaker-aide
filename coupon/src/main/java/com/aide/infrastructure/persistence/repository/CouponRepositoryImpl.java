@@ -32,9 +32,6 @@ public class CouponRepositoryImpl implements CouponRepository {
     private Coupon fromOrderDo(CouponDo orderDo) {
         return Coupon.builder()
                 .id(orderDo.getId())
-                .userId(orderDo.getUserId())
-                .orderNo(orderDo.getOrderNo())
-                .orderType(orderDo.getOrderType())
                 .amount(orderDo.getAmount())
                 .description(orderDo.getDescription())
                 .status(orderDo.getStatus())
