@@ -1,4 +1,4 @@
-package com.aide.adapter.VO;
+package com.aide.adapter.dto;
 
 import lombok.Data;
 import javax.validation.constraints.NotBlank;

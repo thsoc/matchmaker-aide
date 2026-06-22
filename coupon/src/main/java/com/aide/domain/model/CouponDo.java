@@ -1,17 +1,13 @@
 package com.aide.domain.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.Version;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.UUID;
 
 /**
  * @author mazg
@@ -124,7 +120,7 @@ public class CouponDo {
     private String version;
 
     /**
-     * todo 校验优惠券信息
+     * 校验优惠券信息
      */
     public void validateCoupon() {
         if (couponName == null){
@@ -151,15 +147,16 @@ public class CouponDo {
         if (maxDiscount == null){
             throw new RuntimeException("折扣上限不能为空");
         }
-        if (ruleJson == null){
-            throw new RuntimeException("规则json不能为空");
-        }
     }
 
     /**
-     * todo 初始化优惠券信息
+     * 初始化优惠券信息
      */
-    public void initCoupon() {
-        this.createBy = "system";
+    public void initCoupon(Long userId) {
+        this.createBy = userId.toString();
+        this.updateBy = userId.toString();
+        this.createTime = LocalDateTime.now();
+        this.status = "1";
+        this.remark = "创建优惠券";
     }
 }

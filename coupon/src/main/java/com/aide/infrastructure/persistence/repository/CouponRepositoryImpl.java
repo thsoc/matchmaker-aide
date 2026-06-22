@@ -18,30 +18,38 @@ import org.springframework.stereotype.Component;
 @Component
 @AllArgsConstructor
 public class CouponRepositoryImpl implements CouponRepository {
-    private final CouponMapper orderMapper;
+    private final CouponMapper couponMapper;
 
     @Override
-    public String createOrder(CouponDo orderDo) {
-        log.info("保存订单，订单ID: {}", orderDo.getId());
+    public String createCoupon(CouponDo couponDo) {
+        log.info("创建优惠券");
         //将领域对象转换成持久化对象
-        Coupon order = fromOrderDo(orderDo);
-        orderMapper.insert(order);
-        return order.getId().toString();
+        Coupon coupon = fromCouponDo(couponDo);
+        couponMapper.insert(coupon);
+        return coupon.getId().toString();
     }
 
-    private Coupon fromOrderDo(CouponDo orderDo) {
+    private Coupon fromCouponDo(CouponDo orderDo) {
         return Coupon.builder()
                 .id(orderDo.getId())
+                .couponName(orderDo.getCouponName())
+                .effectiveTime(orderDo.getEffectiveTime())
+                .expireTime(orderDo.getExpireTime())
+                .couponDiscountType(orderDo.getCouponDiscountType())
+                .totalCount(orderDo.getTotalCount())
+                .availableStock(orderDo.getAvailableStock())
                 .amount(orderDo.getAmount())
+                .conditionAmount(orderDo.getConditionAmount())
+                .maxDiscount(orderDo.getMaxDiscount())
+                .ruleJson(orderDo.getRuleJson())
                 .description(orderDo.getDescription())
                 .status(orderDo.getStatus())
                 .createTime(orderDo.getCreateTime())
                 .updateTime(orderDo.getUpdateTime())
                 .deleteTime(orderDo.getDeleteTime())
-                .remark(orderDo.getRemark())
-                .version(orderDo.getVersion())
                 .createBy(orderDo.getCreateBy())
                 .updateBy(orderDo.getUpdateBy())
+                .remark(orderDo.getRemark())
                 .build();
     }
 }

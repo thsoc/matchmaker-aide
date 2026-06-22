@@ -1,13 +1,11 @@
 package com.aide.domain.service;
 
-import com.aide.adapter.converter.CouponVoConverter;
+import com.aide.common.auth.context.UserContext;
 import com.aide.domain.model.CouponDo;
 import com.aide.domain.repository.CouponRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
 
 /**
  * @author mazg
@@ -29,10 +27,12 @@ public class CouponDomainService {
      * @return 
      **/
     public String createCoupon(CouponDo couponDo) {
+
+        log.info(">>> createCoupon START userid={}, request={}",UserContext.getUser().getId(), couponDo);
         //校验优惠券信息
         couponDo.validateCoupon();
         //初始化优惠券信息
-        couponDo.initCoupon();
-        return couponRepository.createOrder(couponDo);
+        couponDo.initCoupon(UserContext.getUser().getId());
+        return couponRepository.createCoupon(couponDo);
     }
 }

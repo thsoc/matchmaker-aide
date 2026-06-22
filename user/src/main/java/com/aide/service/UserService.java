@@ -1,7 +1,7 @@
 package com.aide.service;
 
-import com.aide.adapter.VO.LoginResponse;
-import com.aide.adapter.VO.RegisterRequest;
+import com.aide.adapter.dto.LoginResponse;
+import com.aide.adapter.dto.RegisterRequest;
 import com.aide.domain.model.UserDo;
 import com.aide.infrastructure.persistence.entity.User;
 import com.baomidou.mybatisplus.core.metadata.IPage;

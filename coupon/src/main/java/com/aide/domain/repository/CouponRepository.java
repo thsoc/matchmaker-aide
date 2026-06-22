@@ -12,9 +12,9 @@ import com.aide.domain.model.CouponDo;
 public interface CouponRepository {
 
     /**
-     * 创建订单
-     * @param orderDo 订单领域对象
-     * @return 订单ID
+     * 创建优惠券
+     * @param couponDo 订单领域对象
+     * @return
      */
-    String createOrder(CouponDo orderDo);
+    String createCoupon(CouponDo couponDo);
 }

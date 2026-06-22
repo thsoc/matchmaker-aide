@@ -6,8 +6,8 @@ package com.aide.adapter.converter;
  * @date 2026/5/28
  * @date 12:25
  */
-import com.aide.adapter.VO.LoginResponse;
-import com.aide.adapter.VO.RegisterRequest;
+import com.aide.adapter.dto.LoginResponse;
+import com.aide.adapter.dto.RegisterRequest;
 import com.aide.domain.model.UserDo;
 import org.springframework.stereotype.Component;
 

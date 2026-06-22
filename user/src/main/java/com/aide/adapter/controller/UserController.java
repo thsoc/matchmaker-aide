@@ -1,8 +1,8 @@
 package com.aide.adapter.controller;
 
-import com.aide.adapter.VO.LoginRequest;
-import com.aide.adapter.VO.LoginResponse;
-import com.aide.adapter.VO.RegisterRequest;
+import com.aide.adapter.dto.LoginRequest;
+import com.aide.adapter.dto.LoginResponse;
+import com.aide.adapter.dto.RegisterRequest;
 import com.aide.common.Result.IpUtils;
 import com.aide.common.Result.Result;
 import com.aide.service.UserService;

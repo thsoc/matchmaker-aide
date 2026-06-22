@@ -2,6 +2,7 @@ package com.aide.adapter.controller;
 
 import com.aide.common.Result.Result;
 import com.aide.service.CouponService;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,10 +34,11 @@ public class CouponController {
     }
 
     /**
-     * //todo 获取用户优惠券
+     * 获取用户优惠券列表
      */
     @PostMapping("/getUserCoupon")
     public Result<String> getUserCoupon() {
+//        Page<> page = couponService.getUserCoupon();
         return Result.success("获取用户优惠券成功");
     }
     /**

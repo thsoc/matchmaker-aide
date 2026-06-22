@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 /**
  * @author mazg
- * @description 订单 MAP
+ * @description 优惠券 MAP
  * @date 2026/6/14
  * @date 16:39
  */

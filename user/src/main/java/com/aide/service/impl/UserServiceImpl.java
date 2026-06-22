@@ -1,8 +1,8 @@
 
 package com.aide.service.impl;
 
-import com.aide.adapter.VO.LoginResponse;
-import com.aide.adapter.VO.RegisterRequest;
+import com.aide.adapter.dto.LoginResponse;
+import com.aide.adapter.dto.RegisterRequest;
 import com.aide.adapter.converter.UserVoConverter;
 import com.aide.common.auth.context.UserContext;
 import com.aide.common.auth.entity.UserInfo;
