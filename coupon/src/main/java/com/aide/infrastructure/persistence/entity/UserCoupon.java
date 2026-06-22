@@ -10,20 +10,38 @@ import java.time.LocalDateTime;
 
 /**
  * @author mazg
- * @description 优惠券实体类
+ * @description 用户优惠券实体类
  * @date 2026/6/14
  * @date 16:05
  */
 @Data
 @Builder
 @Getter
-@TableName("aide_coupon")
-public class Coupon {
+@TableName("aide_user_coupon")
+public class UserCoupon {
     /**
-     * 优惠券ID
+     * 用户优惠券ID
      */
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
+
+    /**
+     * 用户ID
+     */
+    @TableField("user_id")
+    private Long userId;
+
+    /**
+     * 优惠券ID
+     */
+    @TableField("coupon_id")
+    private Long couponId;
+
+    /**
+     * 订单编号
+     */
+    @TableField("order_no")
+    private String orderNo;
 
 
     /**
@@ -31,6 +49,12 @@ public class Coupon {
      */
     @TableField("coupon_name")
     private String couponName;
+
+    /**
+     * 优惠券购买时间
+     */
+    @TableField("buy_time")
+    private LocalDateTime buyTime;
 
     /**
      * 优惠券生效时间
@@ -50,14 +74,6 @@ public class Coupon {
      */
     @TableField("coupon_discount_type")
     private Integer couponDiscountType;
-    /**
-     * 发行总量
-     */
-    @TableField("total_count")
-    private Integer totalCount;
-
-    @TableField("available_stock")
-    private Integer availableStock;
 
     /**
      * 对于代金券，直接存储固定抵扣金额（如 20 元）；对于折扣券，存储折扣比例（如 0.85 代表 85 折）
@@ -90,8 +106,9 @@ public class Coupon {
      */
     @TableField("description")
     private String description;
+
     /**
-     * 0-创建 1-已抢光 2-已删除
+     * 0-未使用 1-已使用 2-已过期
      */
      @TableField("status")
     private String status;

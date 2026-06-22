@@ -1,5 +1,6 @@
-package com.aide.adapter.VO;
+package com.aide.adapter.dto;
 
+import com.aide.common.util.BasePageQuery;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +20,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CouponRequest {
+public class CouponRequest extends BasePageQuery {
 //    @NotNull(message = "用户ID不能为空")
 //    private Long userId;
     /**

@@ -1,12 +1,12 @@
 package com.aide.domain.model;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.aide.adapter.dto.CouponRequest;
+import com.aide.common.domain.IClock;
+import com.aide.domain.model.strategy.CouponConverterFactory;
+import com.aide.domain.model.strategy.CouponConverterStrategy;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -15,148 +15,148 @@ import java.time.LocalDateTime;
  * @date 2026/6/14
  * @date 16:20
  */
-@Data
-@Builder
 @Getter
+@Builder(toBuilder = true)
 public class CouponDo {
     /**
      * 优惠券ID
      */
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private Long id;
+    private  Long id;
 
 
     /**
-     * 优惠券名称
+     * 优惠券规则
      */
-    private String couponName;
-
-    /**
-     * 优惠券生效时间
-     */
-    private LocalDateTime effectiveTime;
-
-    /**
-     * 优惠券失效时间
-     */
-    private LocalDateTime expireTime;
+    private  CouponRule couponRule;
 
 
     /**
-     * 优惠券折扣方式 0-折扣券 1-满减券 2-代金券
+     * 优惠券其他聚合根
      */
-    private Integer couponDiscountType;
-    /**
-     * 发行总量
-     */
-    private Integer totalCount;
+    private  CouponQuota couponQuota;
 
-    /**
-     * 优惠券剩余数量
-     */
-    private Integer availableStock ;
+    private CouponDo(){}
 
 
-    /**
-     * 对于代金券，直接存储固定抵扣金额（如 20 元）；对于折扣券，存储折扣比例（如 0.85 代表 85 折）
-     */
-    private BigDecimal amount;
+    private CouponDo(Long id, CouponRule couponRule, CouponQuota couponQuota) {
+        this.id = id;
+        this.couponRule = couponRule;
+        this.couponQuota = couponQuota;
+    }
 
-    /**
-     * 使用门槛。满减券和折扣券需要填写（如满 100 可用），代金券如果无门槛则填 0。
-     */
-    private BigDecimal conditionAmount ;
-
-    /**
-     * 折扣上限
-     */
-    private BigDecimal maxDiscount;
-
-    /**
-     * 规则json
-     */
-    private String ruleJson;
+    public static CouponDoBuilder rebuildBuilder() {
+        return new CouponDoBuilder();
+    }
 
 
+    // 1. 持有一个静态的工厂引用，由外部（应用层）在启动时注入
+    private static CouponConverterFactory factory;
 
-    /**
-     * 描述
-     */
-    private String description;
-    /**
-     *
-     */
-    private String status;
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
-    /**
-     * 更新时间
-     */
-    private LocalDateTime updateTime;
-    /**
-     * 删除时间
-     */
-    private LocalDateTime deleteTime;
-
-    /**
-     * 创建人
-     */
-    private String createBy;
-
-    /**
-     * 修改人
-     */
-    private String updateBy;
-
-    /**
-     * 备注
-     */
-    private String remark;
-    /**
-     * 版本号
-     */
-    private String version;
+    // 2. 提供一个静态方法，供应用层在启动时调用，完成依赖注入
+    public static void injectFactory(CouponConverterFactory couponFactory) {
+        CouponDo.factory = couponFactory;
+    }
 
     /**
      * 校验优惠券信息
      */
     public void validateCoupon() {
-        if (couponName == null){
+        if (couponQuota.getCouponName() == null) {
             throw new RuntimeException("优惠券名称不能为空");
         }
-        if (effectiveTime == null){
-            throw new RuntimeException("优惠券生效时间不能为空");
+        if (couponRule == null) {
+            throw new RuntimeException("优惠券规则不能为空");
         }
-        if (expireTime == null){
+        if (couponRule.getExpireTime() == null) {
             throw new RuntimeException("优惠券失效时间不能为空");
         }
-        if (couponDiscountType == null){
+        if (couponRule.getDiscountType() == null) {
             throw new RuntimeException("优惠券折扣方式不能为空");
         }
-        if (totalCount == null){
+        if (couponRule.getTotalCount() == null) {
             throw new RuntimeException("发行总量不能为空");
         }
-        if (amount == null){
+        if (couponRule.getAmount() == null) {
             throw new RuntimeException("优惠券金额不能为空");
         }
-        if (conditionAmount == null){
+        if (couponRule.getConditionAmount() == null) {
             throw new RuntimeException("使用门槛不能为空");
         }
-        if (maxDiscount == null){
+        if (couponRule.getMaxDiscount() == null) {
             throw new RuntimeException("折扣上限不能为空");
         }
     }
 
-    /**
-     * 初始化优惠券信息
-     */
-    public void initCoupon(Long userId) {
-        this.createBy = userId.toString();
-        this.updateBy = userId.toString();
-        this.createTime = LocalDateTime.now();
-        this.status = "1";
-        this.remark = "创建优惠券";
+    // 自定义 Builder 逻辑，确保状态计算一定会被触发
+    public static class CouponDoBuilder {
+        private  Long id;
+        private  CouponRule couponRule;
+        private  CouponQuota couponQuota;
+
+        private CouponDoBuilder() {
+
+        }
+        public CouponDoBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+        public CouponDoBuilder couponRule(CouponRule couponRule) {
+            this.couponRule = couponRule;
+            return this;
+        }
+        public CouponDoBuilder couponQuota(CouponQuota couponQuota) {
+            this.couponQuota = couponQuota;
+            return this;
+        }
+
+
+
+        public CouponDo rebuild() {
+            CouponDo coupon = new CouponDo();
+            coupon.id = this.id;
+            coupon.couponRule = this.couponRule;
+            coupon.couponQuota = this.couponQuota;
+
+            // 在对象构建完成的瞬间，自动触发内部状态推导
+            coupon.couponRule.calculateLifeCycleStatus(null);
+            return coupon;
+        }
+
+
     }
+
+
+    public static CouponDo createFromDTO(CouponRequest request, Long userId, IClock clock, String status) {
+        // 防御性编程，确保工厂已注入
+        if (factory == null) {
+            throw new IllegalStateException("CouponConverterFactory 未注入到 CouponDo 中！");
+        }
+
+        // 4. 委托给策略工厂去处理具体的创建逻辑
+        CouponConverterStrategy strategy = factory.getConverter(request.getCouponDiscountType());
+        CouponDo convert = strategy.convert(request);
+        CouponDoBuilder builder = convert.toBuilder();
+        if (userId != null) {
+            builder.couponQuota(convert.getCouponQuota().toBuilder()
+                    .createBy(userId.toString())
+                    .updateBy(userId.toString()).build());
+        }
+        if (clock != null) {
+            //将clock转为LocalDateTime
+            LocalDateTime currentTime = clock.getCurrentTime();
+            convert.getCouponQuota().toBuilder()
+                    .createTime(currentTime).build();
+        }
+        if (status != null) {
+            convert.getCouponRule().toBuilder()
+                    .status(status).build();
+        }
+        if (status == null){
+            convert.getCouponRule().toBuilder().status("0");
+        }
+        convert.getCouponQuota().toBuilder().remark("创建优惠券");
+        CouponDo couponDo = builder.build();
+        return couponDo;
+    }
+
 }

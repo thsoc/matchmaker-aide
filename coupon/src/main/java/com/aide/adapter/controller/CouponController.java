@@ -1,5 +1,8 @@
 package com.aide.adapter.controller;
 
+import com.aide.adapter.VO.CouponVo;
+import com.aide.adapter.VO.UserCouponVo;
+import com.aide.adapter.dto.UserCouponRequest;
 import com.aide.common.Result.Result;
 import com.aide.service.CouponService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -8,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.aide.adapter.VO.CouponRequest;
+import com.aide.adapter.dto.CouponRequest;
 
 import javax.validation.Valid;
 
@@ -37,16 +40,17 @@ public class CouponController {
      * 获取用户优惠券列表
      */
     @PostMapping("/getUserCoupon")
-    public Result<String> getUserCoupon() {
-//        Page<> page = couponService.getUserCoupon();
-        return Result.success("获取用户优惠券成功");
+    public Result<Page<UserCouponVo>> getPageUserCoupon(@Valid @RequestBody UserCouponRequest userCouponRequest) {
+        Page<UserCouponVo> page = couponService.getPageUserCoupon(userCouponRequest);
+        return Result.success(page);
     }
     /**
-     * //todo 优惠券列表（未生效，待抢购）
+     * //优惠券列表（未生效，待抢购）
      */
     @PostMapping("/getCouponList")
-    public Result<String> getCouponList() {
-        return Result.success("获取优惠券列表成功");
+    public Result<Page<CouponVo>> getCouponList(@Valid @RequestBody CouponRequest request) {
+        Page<CouponVo> page = couponService.getPageCoupon(request);
+        return Result.success(page);
     }
 
     /**

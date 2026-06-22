@@ -1,7 +1,8 @@
-package com.aide.adapter.converter.strategy;
+package com.aide.domain.model.strategy;
 
 
-import com.aide.adapter.VO.CouponRequest;
+import com.aide.adapter.dto.CouponRequest;
+import com.aide.domain.model.CouponDiscountType;
 import com.aide.domain.model.CouponDo;
 
 /**
@@ -21,5 +22,5 @@ public interface CouponConverterStrategy {
      * 获取优惠券类型
      * @return 优惠券类型
      */
-    Integer getCouponType();
+    CouponDiscountType getCouponType();
 }

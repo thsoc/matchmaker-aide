@@ -1,16 +1,20 @@
 package com.aide.infrastructure.persistence.repository;
 
-import com.aide.domain.model.CouponDo;
+import com.aide.domain.model.*;
 import com.aide.domain.repository.CouponRepository;
 import com.aide.infrastructure.persistence.entity.Coupon;
+import com.aide.infrastructure.persistence.entity.UserCoupon;
 import com.aide.infrastructure.persistence.mapper.CouponMapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
  * @author mazg
- * @description 订单仓储实现类，基础仓储实现类
+ * @description 优惠仓储实现类，基础仓储实现类
  * @date 2026/6/14
  * @date 16:35
  */
@@ -29,27 +33,71 @@ public class CouponRepositoryImpl implements CouponRepository {
         return coupon.getId().toString();
     }
 
-    private Coupon fromCouponDo(CouponDo orderDo) {
+    @Override
+    public IPage<CouponDo> getPageCoupon(Page<Coupon> objectPage, CouponDo couponDo) {
+        LambdaQueryWrapper<Coupon> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByAsc(Coupon::getExpireTime)
+                .orderByDesc(Coupon::getEffectiveTime);
+        if (couponDo.getCouponRule().getStatus() != null) {
+            wrapper.eq(Coupon::getStatus, couponDo.getCouponRule().getStatus());
+        }
+        if (couponDo.getCouponRule().getDiscountType() != null){
+            wrapper.eq(Coupon::getCouponDiscountType, couponDo.getCouponRule().getDiscountType().getCode());
+        }
+        //优惠券名称,前后都有%
+        if (couponDo.getCouponQuota().getCouponName() != null){
+            wrapper.like(Coupon::getCouponName, couponDo.getCouponQuota().getCouponName());
+//            //后%
+//            wrapper.likeRight(CouponDo::getCouponName, couponDo.getCouponName());
+        }
+        IPage<Coupon> page = couponMapper.selectPage(objectPage, wrapper);
+        return page.convert(entity ->
+                CouponDo.builder()
+                        .id(entity.getId())
+                        .couponRule(CouponRule.builder()
+                                .amount(entity.getAmount())
+                                .discountType(CouponDiscountType.getByCode(entity.getCouponDiscountType()))
+                                .conditionAmount(entity.getConditionAmount())
+                                .effectiveTime(entity.getEffectiveTime())
+                                .expireTime(entity.getExpireTime())
+                                .maxDiscount(entity.getMaxDiscount())
+                                .ruleJson(entity.getRuleJson())
+                                .status(entity.getStatus())
+                                .build())
+                        .couponQuota(CouponQuota.builder()
+                                .couponName(entity.getCouponName())
+                                .description(entity.getDescription())
+                                .createTime(entity.getCreateTime())
+                                .updateTime(entity.getUpdateTime())
+                                .deleteTime(entity.getDeleteTime())
+                                .createBy(entity.getCreateBy())
+                                .updateBy(entity.getUpdateBy())
+                                .remark(entity.getRemark())
+                                .build())
+                        .rebuild());
+    }
+
+    private Coupon fromCouponDo(CouponDo couponDo) {
         return Coupon.builder()
-                .id(orderDo.getId())
-                .couponName(orderDo.getCouponName())
-                .effectiveTime(orderDo.getEffectiveTime())
-                .expireTime(orderDo.getExpireTime())
-                .couponDiscountType(orderDo.getCouponDiscountType())
-                .totalCount(orderDo.getTotalCount())
-                .availableStock(orderDo.getAvailableStock())
-                .amount(orderDo.getAmount())
-                .conditionAmount(orderDo.getConditionAmount())
-                .maxDiscount(orderDo.getMaxDiscount())
-                .ruleJson(orderDo.getRuleJson())
-                .description(orderDo.getDescription())
-                .status(orderDo.getStatus())
-                .createTime(orderDo.getCreateTime())
-                .updateTime(orderDo.getUpdateTime())
-                .deleteTime(orderDo.getDeleteTime())
-                .createBy(orderDo.getCreateBy())
-                .updateBy(orderDo.getUpdateBy())
-                .remark(orderDo.getRemark())
+                .id(couponDo.getId())
+                .couponName(couponDo.getCouponQuota().getCouponName())
+                .effectiveTime(couponDo.getCouponRule().getEffectiveTime())
+                .expireTime(couponDo.getCouponRule().getExpireTime())
+                .couponDiscountType(couponDo.getCouponRule().getDiscountType().getCode())
+                .totalCount(couponDo.getCouponRule().getTotalCount())
+                .availableStock(couponDo.getCouponRule().getAvailableStock())
+                .amount(couponDo.getCouponRule().getAmount())
+                .conditionAmount(couponDo.getCouponRule().getConditionAmount())
+                .maxDiscount(couponDo.getCouponRule().getMaxDiscount())
+                .ruleJson(couponDo.getCouponRule().getRuleJson())
+                .description(couponDo.getCouponQuota().getDescription())
+                .status(couponDo.getCouponRule().getStatus())
+                .createTime(couponDo.getCouponQuota().getCreateTime())
+                .updateTime(couponDo.getCouponQuota().getUpdateTime())
+                .deleteTime(couponDo.getCouponQuota().getDeleteTime())
+                .createBy(couponDo.getCouponQuota().getCreateBy())
+                .updateBy(couponDo.getCouponQuota().getUpdateBy())
+                .remark(couponDo.getCouponQuota().getRemark())
                 .build();
     }
 }

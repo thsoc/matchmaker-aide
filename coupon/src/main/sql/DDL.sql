@@ -18,7 +18,7 @@ CREATE TABLE `aide_coupon` (
   `max_discount` decimal(10, 2) DEFAULT NULL COMMENT '折扣上限',
   `rule_json` text COMMENT '规则json,用于存储更复杂的扩展规则,暂时不用',
   `description` VARCHAR(200) DEFAULT NULL COMMENT '描述',
-  `status` TINYINT NOT NULL,
+  `status` TINYINT NOT NULL COMMENT '0-创建 1-已抢光 2-已删除',
   `delete_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '取消时间',
   `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',

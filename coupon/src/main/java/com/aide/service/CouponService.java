@@ -1,7 +1,12 @@
 package com.aide.service;
 
-import com.aide.adapter.VO.CouponRequest;
-import com.aide.common.dto.order.OrderRequest;
+import com.aide.adapter.VO.CouponVo;
+import com.aide.adapter.VO.UserCouponVo;
+import com.aide.adapter.dto.CouponRequest;
+import com.aide.adapter.dto.UserCouponRequest;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
+import javax.validation.Valid;
 
 public interface CouponService {
     /**
@@ -11,4 +16,8 @@ public interface CouponService {
      * @return 优惠券ID
      */
     String createCoupon(CouponRequest request);
+
+    Page<UserCouponVo> getPageUserCoupon(UserCouponRequest userCouponRequest);
+
+    Page<CouponVo> getPageCoupon(CouponRequest request);
 }

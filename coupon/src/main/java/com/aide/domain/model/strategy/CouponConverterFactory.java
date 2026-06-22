@@ -1,7 +1,8 @@
-package com.aide.adapter.converter.strategy;
+package com.aide.domain.model.strategy;
 
 
 
+import com.aide.domain.model.CouponDiscountType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 @Component
 public class CouponConverterFactory {
 
-    private  Map<Integer, CouponConverterStrategy> strategyMap = new HashMap<>();
+    private  Map<CouponDiscountType, CouponConverterStrategy> strategyMap = new HashMap<>();
 
     /**
      * 通过构造函数注入所有策略实现
