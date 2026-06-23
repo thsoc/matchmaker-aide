@@ -14,10 +14,6 @@ import java.time.LocalDateTime;
 @Getter
 @Builder(toBuilder = true)
 public class CouponQuota {
-    /**
-     * 优惠券名称
-     */
-    private String couponName;
 
     /**
      * 创建时间

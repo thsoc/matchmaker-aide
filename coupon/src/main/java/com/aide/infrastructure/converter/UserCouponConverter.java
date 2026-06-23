@@ -1,7 +1,9 @@
 package com.aide.infrastructure.converter;
 
-import com.aide.domain.model.*;
+import com.aide.domain.model.CouponDo;
+import com.aide.domain.model.UserCouponDo;
 import com.aide.infrastructure.persistence.entity.Coupon;
+import com.aide.infrastructure.persistence.entity.UserCoupon;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.stereotype.Component;
 
@@ -15,16 +17,16 @@ import java.util.stream.Collectors;
  * @date 04:06
  */
 @Component
-public class CouponConverter {
+public class UserCouponConverter {
 
     /**
      * 将 PO 转换为 DO
      */
-    public Page<CouponDo> convertCouponPage(Page<Coupon> pojoPage) {
-        List<CouponDo> couponDos = pojoPage.getRecords().stream()
-                .map(CouponDo::fromPOJO)
+    public Page<UserCouponDo> convertCouponPage(Page<UserCoupon> pojoPage) {
+        List<UserCouponDo> couponDos = pojoPage.getRecords().stream()
+                .map(UserCouponDo::fromPOJO)
                 .collect(Collectors.toList());
-        Page<CouponDo> resultPage = new Page<>(pojoPage.getCurrent(), pojoPage.getSize(), pojoPage.getTotal());
+        Page<UserCouponDo> resultPage = new Page<>(pojoPage.getCurrent(), pojoPage.getSize(), pojoPage.getTotal());
         resultPage.setRecords(couponDos);
         // 2. 保留原始分页元数据（总记录数、页码等）
         return resultPage;

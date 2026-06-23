@@ -2,7 +2,6 @@ package com.aide.domain.service;
 
 import com.aide.adapter.dto.UserCouponRequest;
 import com.aide.domain.model.UserCouponDo;
-import com.aide.domain.model.strategy.UserCouponConverterFactory;
 import com.aide.domain.repository.UserCouponRepository;
 import com.aide.infrastructure.persistence.entity.UserCoupon;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -31,8 +30,7 @@ public class UserCouponDomainService {
         return pageUserCoupon;
     }
 
-    public UserCouponDo createUserCouponDo(UserCouponConverterFactory userCouponConverterFactory, UserCouponRequest userCouponRequest, Long userId) {
-        UserCouponDo.injectFactory(userCouponConverterFactory);
+    public UserCouponDo createUserCouponDo(UserCouponRequest userCouponRequest, Long userId) {
         UserCouponDo userCouponDo = UserCouponDo.createFromDTO(userCouponRequest, userId);
         return userCouponDo;
     }

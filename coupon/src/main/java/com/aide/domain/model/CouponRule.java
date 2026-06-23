@@ -30,43 +30,43 @@ public class CouponRule {
     /**
      * 优惠券生效时间
      */
-    private final LocalDateTime effectiveTime;
+    private LocalDateTime effectiveTime;
 
     /**
      * 优惠券失效时间
      */
-    private final LocalDateTime expireTime;
+    private LocalDateTime expireTime;
 
     /**
      * 发行总量
      */
-    private final Integer totalCount;
+    private Integer totalCount;
 
     /**
      * 优惠券剩余数量
      */
-    private final Integer availableStock;
+    private Integer availableStock;
 
 
     /**
      * 对于代金券，直接存储固定抵扣金额（如 20 元）；对于折扣券，存储折扣比例（如 0.85 代表 85 折）
      */
-    private final BigDecimal amount;
+    private BigDecimal amount;
 
     /**
      * 使用门槛。满减券和折扣券需要填写（如满 100 可用），代金券如果无门槛则填 0。
      */
-    private final BigDecimal conditionAmount;
+    private BigDecimal conditionAmount;
 
     /**
      * 折扣上限
      */
-    private final BigDecimal maxDiscount;
+    private BigDecimal maxDiscount;
 
     /**
      * 规则json
      */
-    private final String ruleJson;
+    private String ruleJson;
 
     private CouponLifeCycleStatus couponLifeCycleStatus;
 
@@ -114,6 +114,26 @@ public class CouponRule {
             return false;
         }
         return orderAmount.compareTo(this.conditionAmount) >= 0;
+    }
+
+    /**
+     * 优惠券是否有库存
+     */
+    public boolean exhausted() {
+        // 2. 库存耗尽
+        if (this.availableStock != null && this.availableStock <= 0) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 优惠券库存减一
+     */
+    public void decrease() {
+        if (this.availableStock > 0) {
+            this.availableStock -= 1;
+        }
     }
 
 

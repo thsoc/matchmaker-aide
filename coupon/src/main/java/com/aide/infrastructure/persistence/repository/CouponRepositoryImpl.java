@@ -2,6 +2,7 @@ package com.aide.infrastructure.persistence.repository;
 
 import com.aide.domain.model.*;
 import com.aide.domain.repository.CouponRepository;
+import com.aide.infrastructure.converter.CouponConverter;
 import com.aide.infrastructure.persistence.entity.Coupon;
 import com.aide.infrastructure.persistence.entity.UserCoupon;
 import com.aide.infrastructure.persistence.mapper.CouponMapper;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class CouponRepositoryImpl implements CouponRepository {
     private final CouponMapper couponMapper;
+    private final CouponConverter couponConverter;
 
     @Override
     public String createCoupon(CouponDo couponDo) {
@@ -45,42 +47,19 @@ public class CouponRepositoryImpl implements CouponRepository {
             wrapper.eq(Coupon::getCouponDiscountType, couponDo.getCouponRule().getDiscountType().getCode());
         }
         //优惠券名称,前后都有%
-        if (couponDo.getCouponQuota().getCouponName() != null){
-            wrapper.like(Coupon::getCouponName, couponDo.getCouponQuota().getCouponName());
+        if (couponDo.getCouponName() != null){
+            wrapper.like(Coupon::getCouponName, couponDo.getCouponName());
 //            //后%
 //            wrapper.likeRight(CouponDo::getCouponName, couponDo.getCouponName());
         }
-        IPage<Coupon> page = couponMapper.selectPage(objectPage, wrapper);
-        return page.convert(entity ->
-                CouponDo.builder()
-                        .id(entity.getId())
-                        .couponRule(CouponRule.builder()
-                                .amount(entity.getAmount())
-                                .discountType(CouponDiscountType.getByCode(entity.getCouponDiscountType()))
-                                .conditionAmount(entity.getConditionAmount())
-                                .effectiveTime(entity.getEffectiveTime())
-                                .expireTime(entity.getExpireTime())
-                                .maxDiscount(entity.getMaxDiscount())
-                                .ruleJson(entity.getRuleJson())
-                                .status(entity.getStatus())
-                                .build())
-                        .couponQuota(CouponQuota.builder()
-                                .couponName(entity.getCouponName())
-                                .description(entity.getDescription())
-                                .createTime(entity.getCreateTime())
-                                .updateTime(entity.getUpdateTime())
-                                .deleteTime(entity.getDeleteTime())
-                                .createBy(entity.getCreateBy())
-                                .updateBy(entity.getUpdateBy())
-                                .remark(entity.getRemark())
-                                .build())
-                        .rebuild());
+        Page<Coupon> page = couponMapper.selectPage(objectPage, wrapper);
+        return couponConverter.convertCouponPage(page);
     }
 
     private Coupon fromCouponDo(CouponDo couponDo) {
         return Coupon.builder()
                 .id(couponDo.getId())
-                .couponName(couponDo.getCouponQuota().getCouponName())
+                .couponName(couponDo.getCouponName())
                 .effectiveTime(couponDo.getCouponRule().getEffectiveTime())
                 .expireTime(couponDo.getCouponRule().getExpireTime())
                 .couponDiscountType(couponDo.getCouponRule().getDiscountType().getCode())

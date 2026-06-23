@@ -2,22 +2,17 @@ package com.aide.service.impl;
 
 import com.aide.adapter.VO.CouponVo;
 import com.aide.adapter.VO.UserCouponVo;
-import com.aide.common.domain.IClock;
-import com.aide.common.domain.SystemClock;
-import com.aide.common.util.PageUtil;
-import com.aide.domain.model.strategy.UserCouponConverterFactory;
-import com.aide.domain.model.strategy.UserCouponConverterStrategy;
 import com.aide.adapter.dto.CouponRequest;
 import com.aide.adapter.dto.UserCouponRequest;
 import com.aide.common.auth.context.UserContext;
+import com.aide.common.domain.IClock;
+import com.aide.common.domain.SystemClock;
+import com.aide.common.util.PageUtil;
 import com.aide.domain.model.CouponDo;
 import com.aide.domain.model.UserCouponDo;
-import com.aide.domain.model.strategy.CouponConverterFactory;
-import com.aide.domain.model.strategy.CouponConverterStrategy;
 import com.aide.domain.repository.CouponRepository;
 import com.aide.domain.service.CouponDomainService;
 import com.aide.domain.service.UserCouponDomainService;
-import com.aide.infrastructure.persistence.entity.Coupon;
 import com.aide.infrastructure.persistence.entity.UserCoupon;
 import com.aide.service.CouponService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -39,8 +34,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class CouponServiceImpl implements CouponService {
     private final CouponDomainService couponDomainService;
     private final UserCouponDomainService userCouponDomainService;
-    private final CouponConverterFactory couponConverterFactory;
-    private final UserCouponConverterFactory userCouponConverterFactory;
     private final CouponRepository couponRepository;
 
     @Override
@@ -51,7 +44,7 @@ public class CouponServiceImpl implements CouponService {
         log.info(">>> createCoupon START userid={}, request={}", userId, request);
         //获取优惠券领域对象
         IClock clock = new SystemClock();
-        CouponDo couponDo = couponDomainService.createCouponDo(couponConverterFactory, request, userId, null, clock);
+        CouponDo couponDo = couponDomainService.createCouponDo(request, userId, null, clock);
 
         return couponRepository.createCoupon(couponDo);
     }
@@ -61,7 +54,7 @@ public class CouponServiceImpl implements CouponService {
         Long userId = UserContext.getUserId();
         log.info(">>> getPageUserCoupon START userId={}, request={}", UserContext.getUserId(), userCouponRequest);
         //将用户优惠券请求对象转换领域对象
-        UserCouponDo userCouponDo = userCouponDomainService.createUserCouponDo(userCouponConverterFactory, userCouponRequest, userId);
+        UserCouponDo userCouponDo = userCouponDomainService.createUserCouponDo(userCouponRequest, userId);
         Page<UserCoupon> objectPage = PageUtil.buildPage(userCouponRequest);
         IPage<UserCouponDo> pageUserCoupon = userCouponDomainService.getPageUserCoupon(objectPage, userCouponDo, userId);
 
@@ -94,13 +87,13 @@ public class CouponServiceImpl implements CouponService {
     public Page<CouponVo> getPageCoupon(CouponRequest request) {
         log.info(">>> getPageCoupon START request={}", request);
         //获取优惠券领域对象
-        IPage<CouponDo> pageCoupon = couponDomainService.getPageCoupon(couponConverterFactory, request);
+        IPage<CouponDo> pageCoupon = couponDomainService.getPageCoupon(request);
 
         //根据需要转换返回对象（加密等）
         IPage<CouponVo> convert = pageCoupon.convert(entity -> CouponVo.builder()
                 .amount(entity.getCouponRule().getAmount())
                 .couponDiscountType(entity.getCouponRule().getDiscountType().getCode())
-                .couponName(entity.getCouponQuota().getCouponName())
+                .couponName(entity.getCouponName())
                 .conditionAmount(entity.getCouponRule().getConditionAmount())
                 .description(entity.getCouponQuota().getDescription())
                 .effectiveTime(entity.getCouponRule().getEffectiveTime())
