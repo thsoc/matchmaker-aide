@@ -36,7 +36,7 @@ import java.util.Collections;
 public class IdempotentFilter implements GlobalFilter, Ordered {
 
     private final StringRedisTemplate redisTemplate;
-    private final DefaultRedisScript<Long> dedupScript; // 注入你的 Lua 脚本
+    private final DefaultRedisScript<Long> dedupScript; // 注入 Lua 脚本
     private static final int MAX_BODY_CACHE_SIZE = 64 * 1024; // 限制最大缓存 64KB，防止 OOM
 
     @Override

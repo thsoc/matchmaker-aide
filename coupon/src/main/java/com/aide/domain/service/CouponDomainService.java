@@ -5,6 +5,7 @@ import com.aide.common.auth.context.UserContext;
 import com.aide.common.domain.IClock;
 import com.aide.common.util.PageUtil;
 import com.aide.domain.model.CouponDo;
+import com.aide.domain.repository.CouponRedisRepository;
 import com.aide.domain.repository.CouponRepository;
 import com.aide.infrastructure.persistence.entity.Coupon;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class CouponDomainService {
     private final CouponRepository couponRepository;
+    private final CouponRedisRepository couponRedisRepository;
 
 
     /**
@@ -40,13 +42,20 @@ public class CouponDomainService {
         return couponDo;
     }
 
-    public IPage<CouponDo> getPageCoupon(CouponRequest request) {
+    public Page<CouponDo> getPageCoupon(CouponRequest request) {
         log.info(">>> getPageCoupon START userId={}, request={}", UserContext.getUser().getId(), request);
         CouponDo couponDo = this.createCouponDo(request, null, "0", null);
         Page<Coupon> objectPage = PageUtil.buildPage(request);
 
-        IPage<CouponDo> pageUserCoupon = couponRepository.getPageCoupon(objectPage, couponDo);
+        Page<CouponDo> pageUserCoupon = couponRepository.getPageCoupon(objectPage, couponDo);
         log.info(">>> getPageCoupon END userId={}, request={}, response={}", UserContext.getUser().getId(), couponDo, pageUserCoupon);
         return pageUserCoupon;
+    }
+
+    public void deduceCoupon(Long id, Long userId) {
+        log.info(">>> deduceCoupon START userId={}, couponId={}", userId, id);
+        //1.一人一单， 2.库存-1
+        //执行lua脚本
+        couponRedisRepository.deduceCoupon(id, userId);
     }
 }

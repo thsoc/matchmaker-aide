@@ -26,7 +26,7 @@ public class UserCouponRepositoryImpl implements UserCouponRepository {
     private final UserCouponConverter userCouponConverter;
 
     @Override
-    public IPage<UserCouponDo> getPageUserCoupon(Page<UserCoupon> objectPage, UserCouponDo userCouponDo, Long userId) {
+    public Page<UserCouponDo> getPageUserCoupon(Page<UserCoupon> objectPage, UserCouponDo userCouponDo, Long userId) {
         log.info(">>> getPageUserCoupon START userId={}, request={}", userId, userCouponDo);
         LambdaQueryWrapper<UserCoupon> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(UserCoupon::getUserId, userId)

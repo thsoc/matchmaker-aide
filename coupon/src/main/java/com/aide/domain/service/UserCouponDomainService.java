@@ -23,9 +23,9 @@ public class UserCouponDomainService {
     private final UserCouponRepository userCouponRepository;
 
 
-    public IPage<UserCouponDo> getPageUserCoupon(Page<UserCoupon> objectPage, UserCouponDo userCouponDo, Long userId) {
+    public Page<UserCouponDo> getPageUserCoupon(Page<UserCoupon> objectPage, UserCouponDo userCouponDo, Long userId) {
         log.info(">>> getPageUserCoupon START userId={}, request={}", userId, userCouponDo);
-        IPage<UserCouponDo> pageUserCoupon = userCouponRepository.getPageUserCoupon(objectPage,userCouponDo, userId);
+        Page<UserCouponDo> pageUserCoupon = userCouponRepository.getPageUserCoupon(objectPage,userCouponDo, userId);
         log.info(">>> getPageUserCoupon END userId={}, request={}, response={}", userId, userCouponDo, pageUserCoupon);
         return pageUserCoupon;
     }

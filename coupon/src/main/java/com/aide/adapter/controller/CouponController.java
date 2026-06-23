@@ -7,10 +7,7 @@ import com.aide.common.Result.Result;
 import com.aide.service.CouponService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.aide.adapter.dto.CouponRequest;
 
 import javax.validation.Valid;
@@ -54,7 +51,7 @@ public class CouponController {
     }
 
     /**
-     * //todo 定时任务，预热快生效的优惠券，保存到redis
+     * //todo 定时任务，预热快生效的优惠券，保存到redis,可使用事件发布(运营在后台点「发布秒杀活动」→ 调用预热接口 → 写 Redis + 初始化库存)
      */
     @PostMapping("/preheatCoupon")
     public Result<String> preheatCoupon() {
@@ -69,7 +66,6 @@ public class CouponController {
     }
 
     /**
-     * //todo 领取优惠券，
      * 1.一人一单，
      * 2.库存-1
      * 3.异步下单待支付
@@ -77,8 +73,12 @@ public class CouponController {
      * 5.余额支付：确认支付，更新redis中的库存 ,异步MQ更新订单状态+扣款
      * 6.支付宝等支付：异步回调确认支付，更新redis中的库存 ,异步MQ更新订单状态
      */
-    @PostMapping("/receiveCoupon")
-    public Result<String> receiveCoupon() {
+    @PostMapping("/receiveCoupon/{id}")
+    public Result<String> receiveCoupon(@PathVariable Long id) {
+        if(id == null){
+            return Result.error("优惠券ID不能为空");
+        }
+        couponService.receiveCoupon(id);
         return Result.success("领取优惠券成功");
     }
 }

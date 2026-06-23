@@ -3,7 +3,6 @@ package com.aide.domain.repository;
 
 import com.aide.domain.model.CouponDo;
 import com.aide.infrastructure.persistence.entity.Coupon;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 /**
@@ -21,5 +20,6 @@ public interface CouponRepository {
      */
     String createCoupon(CouponDo couponDo);
 
-    IPage<CouponDo> getPageCoupon(Page<Coupon> objectPage, CouponDo couponDo);
+    Page<CouponDo> getPageCoupon(Page<Coupon> objectPage, CouponDo couponDo);
+
 }

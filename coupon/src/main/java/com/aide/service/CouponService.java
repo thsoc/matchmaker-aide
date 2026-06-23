@@ -20,4 +20,6 @@ public interface CouponService {
     Page<UserCouponVo> getPageUserCoupon(UserCouponRequest userCouponRequest);
 
     Page<CouponVo> getPageCoupon(CouponRequest request);
+
+    void receiveCoupon(Long id);
 }

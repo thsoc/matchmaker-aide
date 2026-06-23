@@ -14,5 +14,5 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
  **/
 public interface UserCouponRepository {
 
-    IPage<UserCouponDo> getPageUserCoupon(Page<UserCoupon> userCouponRequest, UserCouponDo userCouponDo, Long userId);
+    Page<UserCouponDo> getPageUserCoupon(Page<UserCoupon> userCouponRequest, UserCouponDo userCouponDo, Long userId);
 }

@@ -1,13 +1,11 @@
 package com.aide.infrastructure.persistence.repository;
 
-import com.aide.domain.model.*;
+import com.aide.domain.model.CouponDo;
 import com.aide.domain.repository.CouponRepository;
 import com.aide.infrastructure.converter.CouponConverter;
 import com.aide.infrastructure.persistence.entity.Coupon;
-import com.aide.infrastructure.persistence.entity.UserCoupon;
 import com.aide.infrastructure.persistence.mapper.CouponMapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +34,7 @@ public class CouponRepositoryImpl implements CouponRepository {
     }
 
     @Override
-    public IPage<CouponDo> getPageCoupon(Page<Coupon> objectPage, CouponDo couponDo) {
+    public Page<CouponDo> getPageCoupon(Page<Coupon> objectPage, CouponDo couponDo) {
         LambdaQueryWrapper<Coupon> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByAsc(Coupon::getExpireTime)
                 .orderByDesc(Coupon::getEffectiveTime);
