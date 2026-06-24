@@ -26,7 +26,8 @@ seata:
   config:
     type: nacos  # 支持: nacos, consul, apollo, zk, etcd3
     nacos:
-      server-addr: 192.168.2.20:8848  # ⚠️ 替换为真实的 Nacos IP 地址
+#      server-addr: 192.168.2.20:8848  # ⚠️ 替换为真实的 Nacos IP 地址
+      server-addr: nacos:8848  # ⚠️ 替换为真实的 Nacos IP 地址
       namespace: ""                  # 命名空间 ID，为空则为 public
       group: SEATA_GROUP             # 分组名称，需与客户端保持一致
       username: nacos                # Nacos 账号（若开启了鉴权）
@@ -37,7 +38,8 @@ seata:
     type: nacos  # 支持: nacos, eureka, redis, zk, consul, etcd3, sofa
     nacos:
       application: seata-server      # 注册的服务名称
-      server-addr: 192.168.2.20:8848  # ⚠️ 替换为真实的 Nacos IP 地址
+#      server-addr: 192.168.2.20:8848  # ⚠️ 替换为真实的 Nacos IP 地址
+      server-addr: nacos:8848  # 替换为真实的 Nacos IP 地址
       namespace: ""
       group: SEATA_GROUP
       cluster: default               # TC 集群名称
@@ -51,7 +53,8 @@ seata:
       datasource: druid
       db-type: mysql
       driver-class-name: com.mysql.cj.jdbc.Driver  # MySQL 8.x 使用此驱动
-      url: jdbc:mysql://192.168.2.20:3306/seata?useUnicode=true&characterEncoding=utf8&useSSL=false
+#      url: jdbc:mysql://192.168.2.20:3306/seata?useUnicode=true&characterEncoding=utf8&useSSL=false
+      url: jdbc:mysql://mysql:3306/seata?useUnicode=true&characterEncoding=utf8&useSSL=false
       user: root
       password: 123456
       global-table: global_table
