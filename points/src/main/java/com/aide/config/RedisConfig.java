@@ -26,30 +26,32 @@ public class RedisConfig {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 
-        // 使用Jackson2JsonRedisSerializer来序列化和反序列化redis的value值
-        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
-
+        // --- 配置 ObjectMapper ---
+        // 为 GenericJackson2JsonRedisSerializer 创建一个专门的 ObjectMapper 实例
         ObjectMapper mapper = new ObjectMapper();
+        // 复制原有配置，确保功能一致
         mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+        // 启用默认类型信息，这对于反序列化回原始对象类型至关重要
         mapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL);
-
-        // 注册JavaTimeModule以支持Java 8日期时间类型（LocalDateTime等）
+        // 注册 JavaTimeModule 以支持 Java 8 日期时间类型（LocalDateTime等）
         mapper.registerModule(new JavaTimeModule());
 
-        serializer.setObjectMapper(mapper);
+        // --- 配置序列化器 ---
+        // 2. 使用 GenericJackson2JsonRedisSerializer 替换 Jackson2JsonRedisSerializer
+        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(mapper);
 
         // 使用StringRedisSerializer来序列化和反序列化redis的key值
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
-        
+
         // key采用String的序列化方式
         template.setKeySerializer(stringRedisSerializer);
         // hash的key也采用String的序列化方式
         template.setHashKeySerializer(stringRedisSerializer);
-        // value序列化方式采用jackson
+        // value序列化方式采用 GenericJackson2Json
         template.setValueSerializer(serializer);
-        // hash的value序列化方式采用jackson
+        // hash的value序列化方式采用 GenericJackson2Json
         template.setHashValueSerializer(serializer);
-        
+
         template.afterPropertiesSet();
         return template;
     }

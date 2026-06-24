@@ -32,6 +32,8 @@ spring:
     username: root
     password: 123456
 
+
+###################################### redis 配置 #####################################
   redis:
     host: ${REDIS_HOST:192.168.2.20}
     port: 6379
@@ -45,7 +47,7 @@ spring:
         max-idle: 8
         min-idle: 0
 
-
+##################################### mybatis 配置 #####################################
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
@@ -58,11 +60,12 @@ mybatis-plus:
       id-type: assign_id
   mapper-locations: classpath*:/mapper/**/*.xml
 
+########################################## JWT 配置 #####################################
 jwt:
   secret: myVerySecureSecretKeyForMatchmakerAideApplicationThatIsAtLeast256BitsLong
   expiration: 7200  # 令牌过期时间（秒），默认2小时
 
-# Seata 配置
+##################################### Seata 配置 #####################################
 seata:
   enabled: true
   application-id: coupon-service
@@ -103,7 +106,7 @@ seata:
     enabled: false
 
 
-# 日志配置
+#####################################日志配置 #####################################
 logging:
   level:
     # 观察事务是否创建以及是否正确触发回滚
@@ -124,4 +127,19 @@ logging:
     name: logs/coupon-service.log
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+##################################### xxl执行器配置 #####################################
+xxl:
+  job:
+    admin:
+      addresses: http://xxl-job-admin:9080/xxl-job-admin
+    executor:
+      appname: xxl-coupon-service # 执行器AppName，需与后台配置一致
+      # 在 Docker 环境中，建议设为 0，让系统自动分配一个可用端口，避免端口冲突
+      port: ${SERVER_PORT:9999}
+      # 日志路径，确保容器内有写入权限 /data/applogs/xxl-job/jobhandler
+      logpath: ${LOG_PATH:logs}
+      logretentiondays: 30
+    # 配置通讯Token 和docker-compose中保持一致
+    accessToken:
 

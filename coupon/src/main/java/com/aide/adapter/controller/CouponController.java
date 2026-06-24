@@ -51,7 +51,8 @@ public class CouponController {
     }
 
     /**
-     * //todo 定时任务，预热快生效的优惠券，保存到redis,可使用事件发布(运营在后台点「发布秒杀活动」→ 调用预热接口 → 写 Redis + 初始化库存)
+     * 定时任务，预热快生效的优惠券，保存到redis,移植到job中
+     * //todo 可使用事件发布(运营在后台点「发布秒杀活动」→ 调用预热接口 → 写 Redis + 初始化库存)
      */
     @PostMapping("/preheatCoupon")
     public Result<String> preheatCoupon() {

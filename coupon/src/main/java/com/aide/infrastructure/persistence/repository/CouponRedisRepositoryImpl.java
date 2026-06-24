@@ -1,8 +1,13 @@
 package com.aide.infrastructure.persistence.repository;
 
 import com.aide.domain.repository.CouponRedisRepository;
+import com.aide.infrastructure.persistence.entity.Coupon;
+import com.aide.infrastructure.persistence.mapper.CouponMapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Component;
@@ -22,7 +27,8 @@ import java.util.List;
 @AllArgsConstructor
 public class CouponRedisRepositoryImpl implements CouponRedisRepository {
     private final DefaultRedisScript<Long> deducedCouponScript;
-    private final StringRedisTemplate redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final CouponMapper couponMapper;
     private final String STOCK_KEY_PREFIX = "seckill:stock:";
     private final String USERS_KEY_PREFIX = "seckill:user_set:";
 
@@ -50,5 +56,25 @@ public class CouponRedisRepositoryImpl implements CouponRedisRepository {
                 throw new RuntimeException("活动尚未开始或已结束");
         }
         return null;
+    }
+
+    /**
+     * @author mazg
+     * @description 预热快生效的优惠券，保存到redis
+     * @date 20:34 2026/6/24
+     * @return
+     **/
+    @Override
+    public void preheatCoupon(int advanceTime) {
+        long now = System.currentTimeMillis();
+        //查询快生效的优惠券（提前时间小于等于advanceTime分钟）
+        LambdaQueryChainWrapper<Coupon> couponLambdaQueryChainWrapper = new LambdaQueryChainWrapper<>(couponMapper);
+        couponLambdaQueryChainWrapper.eq(Coupon::getStatus, "0")
+                .le(Coupon::getEffectiveTime, now + advanceTime * 60 * 1000);// todo 要平衡提前时间和执行频率
+        List<Coupon> coupons = couponMapper.selectList(couponLambdaQueryChainWrapper);
+        //将这些数据保持到redis中,key为优惠券id，value为优惠券数量
+        for (Coupon coupon : coupons) {
+            redisTemplate.opsForValue().setIfAbsent(STOCK_KEY_PREFIX + coupon.getId(), coupon.getAvailableStock());
+        }
     }
 }

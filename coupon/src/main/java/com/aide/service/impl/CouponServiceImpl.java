@@ -10,6 +10,7 @@ import com.aide.common.domain.SystemClock;
 import com.aide.common.util.PageUtil;
 import com.aide.domain.model.CouponDo;
 import com.aide.domain.model.UserCouponDo;
+import com.aide.domain.repository.CouponRedisRepository;
 import com.aide.domain.repository.CouponRepository;
 import com.aide.domain.service.CouponDomainService;
 import com.aide.domain.service.UserCouponDomainService;
@@ -20,6 +21,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +43,7 @@ public class CouponServiceImpl implements CouponService {
     private final UserCouponDomainService userCouponDomainService;
     private final CouponRepository couponRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final CouponRedisRepository couponRedisRepository;
 
     @Override
     @Transactional
@@ -109,6 +112,21 @@ public class CouponServiceImpl implements CouponService {
     }
 
 
+    /**
+     * @author mazg
+     * @description 预热快生效的优惠券，保存到redis
+     * @date 20:31 2026/6/24
+     * @return
+     **/
+    @Override
+    public void preheatCoupon(String param) {
+        //提前时间（分钟）
+        int advanceTime = 30;
+        if(StringUtils.isNotBlank(param)){
+            advanceTime = Integer.parseInt(param);
+        }
+        couponRedisRepository.preheatCoupon(advanceTime);
+    }
 
 
     private CouponVo getVoFromCoupon(CouponDo entity){

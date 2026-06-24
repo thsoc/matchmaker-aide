@@ -43,6 +43,7 @@
         <mysql-connector.version>8.0.33</mysql-connector.version><!-- 或 8.0.30+，推荐 8.0.33 -->
         <seata.version>1.5.2</seata.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
+        <xxl-job-core.version>2.4.0</xxl-job-core.version>
     </properties>
 
     <dependencyManagement>

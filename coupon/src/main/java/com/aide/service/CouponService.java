@@ -6,8 +6,6 @@ import com.aide.adapter.dto.CouponRequest;
 import com.aide.adapter.dto.UserCouponRequest;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
-import javax.validation.Valid;
-
 public interface CouponService {
     /**
      * 创建优惠券
@@ -22,4 +20,6 @@ public interface CouponService {
     Page<CouponVo> getPageCoupon(CouponRequest request);
 
     void receiveCoupon(Long id);
+
+    void preheatCoupon(String param);
 }

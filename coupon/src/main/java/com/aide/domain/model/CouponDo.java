@@ -131,6 +131,8 @@ public class CouponDo {
                 .remark("创建优惠券")
                 .description(request.getDescription());
         CouponRule.CouponRuleBuilder couponRuleBuilder = CouponRule.builder()
+                .totalCount(request.getCouponCount())
+                .availableStock(request.getCouponCount())
                 .effectiveTime(request.getEffectiveTime())
                 .expireTime(request.getExpireTime());
         if (CouponDiscountType.VOUCHER.getCode().equals(request.getCouponDiscountType())) {

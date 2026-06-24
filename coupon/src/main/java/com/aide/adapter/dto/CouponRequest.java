@@ -31,12 +31,12 @@ public class CouponRequest extends BasePageQuery {
     private Integer couponType;
 
     /**
-     * 优惠券状态：1-未生效 2-已生效 3-已过期
+     * 优惠券数量
      */
-    @NotNull(message = "优惠券状态不能为空")
-    @Min(value = 1, message = "优惠券状态不能小于1")
-    @Max(value = 3, message = "优惠券状态不能大于3")
-    private Integer couponStatus;
+    @NotNull(message = "优惠券数量不能为空")
+    @Min(value = 1, message = "优惠券数量不能小于1")
+    private Integer couponCount;
+
 
     /**
      * 优惠券名称

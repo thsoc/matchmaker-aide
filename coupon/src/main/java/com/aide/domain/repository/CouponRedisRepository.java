@@ -9,4 +9,6 @@ package com.aide.domain.repository;
  **/
 public interface CouponRedisRepository {
     String deduceCoupon(Long id, Long userId);
+
+    void preheatCoupon(int advanceTime);
 }
