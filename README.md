@@ -24,7 +24,7 @@ openfeign调用api需要的对象
 [gateway](gateway)
 验证token
 缓存
-校验用户
+校验用户（可动态踢出用户登录）
 防重校验
 ...
 
