@@ -27,7 +27,7 @@ public class CouponController {
     /**
      * 创建优惠券
      */
-    @PostMapping("/createCoupon")
+    @PostMapping("/admin/createCoupon")
     public Result<String> buyMember(@Valid @RequestBody CouponRequest request) {
         String result = couponService.createCoupon(request);
         return Result.success(result);

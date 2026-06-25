@@ -1,13 +1,9 @@
 package com.aide.infrastructure.listener;
 
-import com.aide.domain.event.UserLoggedInEvent;
-import com.aide.infrastructure.persistence.entity.User;
-import com.aide.infrastructure.persistence.mapper.UserMapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.aide.domain.event.UserRegistedEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
@@ -29,10 +25,9 @@ public class UserRegistEventListener {
      */
     @Async("loginEventExecutor")
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void handleUserLoggedIn(UserLoggedInEvent event) {
-        //todo 发送mq去创建用户账户
-        log.info("用户注册成功，发送mq去创建用户账户");
-        log.info("用户注册成功，用户ID: {}, 登录时间: {}, 登录IP: {}, 登录次数: {}",
-                event.getUserId(), event.getLoginTime(), event.getLoginIp(), event.getLoginCount());
+    public void handleUserLoggedIn(UserRegistedEvent event) {
+        //todo 发送mq去创建用户资金账户
+        log.info("用户注册成功，发送mq去创建用户资金账户");
+        log.info("用户注册成功，发送mq去创建用户资金账户,用户ID: {}", event.getUserId());
     }
 }

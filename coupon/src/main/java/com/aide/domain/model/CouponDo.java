@@ -53,9 +53,9 @@ public class CouponDo {
         if (couponName == null) {
             throw new RuntimeException("优惠券名称不能为空");
         }
-        if (couponRule == null) {
-            throw new RuntimeException("优惠券规则不能为空");
-        }
+//        if (couponRule == null) {
+//            throw new RuntimeException("优惠券规则不能为空");
+//        }
         if (couponRule.getExpireTime() == null) {
             throw new RuntimeException("优惠券失效时间不能为空");
         }
@@ -65,15 +65,15 @@ public class CouponDo {
         if (couponRule.getTotalCount() == null) {
             throw new RuntimeException("发行总量不能为空");
         }
-        if (couponRule.getAmount() == null) {
-            throw new RuntimeException("优惠券金额不能为空");
-        }
+//        if (couponRule.getAmount() == null) {
+//            throw new RuntimeException("优惠券金额不能为空");
+//        }
         if (couponRule.getConditionAmount() == null) {
             throw new RuntimeException("使用门槛不能为空");
         }
-        if (couponRule.getMaxDiscount() == null) {
-            throw new RuntimeException("折扣上限不能为空");
-        }
+//        if (couponRule.getMaxDiscount() == null) {
+//            throw new RuntimeException("折扣上限不能为空");
+//        }
     }
 
     // 自定义 Builder 逻辑，确保状态计算一定会被触发

@@ -1,6 +1,7 @@
 package com.aide.adapter.dto;
 
 import com.aide.common.util.BasePageQuery;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -48,11 +49,13 @@ public class CouponRequest extends BasePageQuery {
      * 优惠券生效时间
      */
     @NotNull(message = "优惠券生效时间不能为空")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime effectiveTime;
     /**
      * 优惠券失效时间
      */
     @NotNull(message = "优惠券失效时间不能为空")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime expireTime;
 
     /**

@@ -1,6 +1,6 @@
 package com.aide;
 
-import com.aide.adapter.VO.LoginResponse;
+import com.aide.adapter.dto.LoginResponse;
 import com.aide.common.auth.context.UserContext;
 import com.aide.common.auth.entity.UserInfo;
 import com.aide.domain.model.UserDo;

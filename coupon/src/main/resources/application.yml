@@ -113,14 +113,14 @@ logging:
     org.springframework.transaction: DEBUG
     org.springframework.jdbc.datasource.DataSourceTransactionManager: DEBUG
 
-    # 观察 ShardingSphere 的分片路由和实际执行引擎
-    org.apache.shardingsphere.core.route: DEBUG
-    org.apache.shardingsphere.core.execute.sql.execute.engine: DEBUG
-    #    io.seata: DEBUG
-    io.seata: INFO                 # 基本信息
-    #    io.seata.core.rpc.netty: DEBUG # 心跳详情
-    io.seata.rm: DEBUG             # 资源管理器细节
-    io.seata.tm: DEBUG             # 事务管理器细节
+#    # 观察 ShardingSphere 的分片路由和实际执行引擎
+#    org.apache.shardingsphere.core.route: DEBUG
+#    org.apache.shardingsphere.core.execute.sql.execute.engine: DEBUG
+#    #    io.seata: DEBUG
+#    io.seata: INFO                 # 基本信息
+#    #    io.seata.core.rpc.netty: DEBUG # 心跳详情
+#    io.seata.rm: DEBUG             # 资源管理器细节
+#    io.seata.tm: DEBUG             # 事务管理器细节
     com.alibaba.nacos: INFO
   #    org.apache.shardingsphere: DEBUG
   file:
@@ -132,11 +132,16 @@ logging:
 xxl:
   job:
     admin:
-      addresses: http://xxl-job-admin:9080/xxl-job-admin
+#      # 代码和调度中心在同一个docker中的配置
+#      addresses: http://xxl-job-admin:9080/xxl-job-admin
+      addresses: http://192.168.2.20:9080/xxl-job-admin
     executor:
       appname: xxl-coupon-service # 执行器AppName，需与后台配置一致
       # 在 Docker 环境中，建议设为 0，让系统自动分配一个可用端口，避免端口冲突
-      port: ${SERVER_PORT:9999}
+#      ip: 192.168.x.x        # 指定注册到调度中心的 IP，方便本地测试
+#      ip: host.docker.internal        # 指定注册到调度中心的 IP，方便本地测试
+      ip: 192.168.2.11
+      port: ${SERVER_PORT:10000}
       # 日志路径，确保容器内有写入权限 /data/applogs/xxl-job/jobhandler
       logpath: ${LOG_PATH:logs}
       logretentiondays: 30

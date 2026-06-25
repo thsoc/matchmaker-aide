@@ -37,6 +37,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Result<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        log.error("请求体参数校验失败", e);  // 打印完整异常堆栈
         // 获取第一个校验失败的错误信息
         String message = e.getBindingResult().getFieldError().getDefaultMessage();
 
