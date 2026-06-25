@@ -71,6 +71,13 @@ spring:
           filters:
             - StripPrefix=1
 
+        - id: coupon-service
+          uri: lb://coupon-service
+          predicates:
+            - Path=/api/coupon/**
+          filters:
+            - StripPrefix=1
+
       #          #过滤器的值一样按照 默认过滤器>路由过滤器>全局过滤器
       ##          过滤器 过滤器过滤器之内按照声明顺序从1递增
       #          filters:
@@ -92,7 +99,7 @@ spring:
           '[/**]':
             allowedOrigins: # 允许哪些网站的跨域请求
               - "http://localhost:8090"
-              - "http://www.leyou.com"
+              - "http://www.abc.com"
             allowedMethods: # 允许的跨域ajax的请求方式
               - "GET"
               - "POST"

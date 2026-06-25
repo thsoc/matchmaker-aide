@@ -60,7 +60,12 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
 
-        // 1. 放行公开接口（如登录、注册）
+        // 1. 放行公开接口（如登录、注册），可配置在配置文件中 ，
+        // 2.也可以不校验（效率稍低）
+        // 逻辑：这边有token解析放redis，
+        //      无token放行，在每个服务中自己从redis中获取用户信息,
+        //          有就放ThreadLocal中，然后放行
+        //          没有就拦截，返回401
         if (path.startsWith("/api/user/register") || path.startsWith("/api/user/login")) {
             return chain.filter(exchange);
         }
