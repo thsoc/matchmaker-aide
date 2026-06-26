@@ -7,9 +7,13 @@ import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapp
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,21 +29,24 @@ import java.util.List;
 @AllArgsConstructor
 public class CouponRedisRepositoryImpl implements CouponRedisRepository {
     private final DefaultRedisScript<Long> deducedCouponScript;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final StringRedisTemplate stringRedisTemplate;
     private final CouponMapper couponMapper;
     private final String STOCK_KEY_PREFIX = "seckill:stock:";
     private final String USERS_KEY_PREFIX = "seckill:user_set:";
 
     @Override
     public String deduceCoupon(Long id, Long userId) {
+        log.info("优惠券主键：{}, 用户主键：{}， 库存key:{},购买用户集合key：{}", id, userId, STOCK_KEY_PREFIX + id, USERS_KEY_PREFIX + id);
 
         // 准备 keys 和 args
         List<String> keys = Arrays.asList(STOCK_KEY_PREFIX + id, USERS_KEY_PREFIX + id);
-        List<String> args = Arrays.asList(userId.toString(), "1");
+//        List<String> args = Arrays.asList(userId.toString(), "1");
+        Object[] args = new Object[]{userId.toString(), "1"};
 
         //执行lua脚本
         log.info(">>> 优惠券开始执行Lua脚本");
-        Long execute = redisTemplate.execute(deducedCouponScript, keys, args);
+        //使用stringRedis，防止“1”被转换成nil
+        Long execute = stringRedisTemplate.execute(deducedCouponScript, keys, args);
         switch (execute.intValue()) {
             case 1:
                 return "抢购成功！";
@@ -57,26 +64,31 @@ public class CouponRedisRepositoryImpl implements CouponRedisRepository {
     }
 
     /**
+     * @return
      * @author mazg
      * @description 预热快生效的优惠券，保存到redis
      * @date 20:34 2026/6/24
-     * @return
      **/
     @Override
     public void preheatCoupon(int advanceTime) {
         try {
             long now = System.currentTimeMillis();
+            // 1. 将毫秒时间戳转换为 LocalDateTime（确保时区正确，这里用系统默认时区）
+            LocalDateTime currentTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.systemDefault());
+            // 2. 计算提前时间边界,加上advanceTime分钟（注意单位是分钟，转为 Duration）
+            LocalDateTime startTime = currentTime.plusMinutes(advanceTime);
+
             //查询快生效的优惠券（提前时间小于等于advanceTime分钟）
             LambdaQueryChainWrapper<Coupon> couponLambdaQueryChainWrapper = new LambdaQueryChainWrapper<>(couponMapper);
             couponLambdaQueryChainWrapper.eq(Coupon::getStatus, "0")
-                    .le(Coupon::getEffectiveTime, now + advanceTime * 60 * 1000)
-                    .ge(Coupon::getExpireTime, now);// todo 要平衡提前时间和执行频率
+                    .le(Coupon::getEffectiveTime, startTime)
+                    .ge(Coupon::getExpireTime, currentTime);// todo 要平衡提前时间和执行频率
             List<Coupon> coupons = couponLambdaQueryChainWrapper.list();
             //将这些数据保持到redis中,key为优惠券id，value为优惠券数量
             for (Coupon coupon : coupons) {
-                redisTemplate.opsForValue().setIfAbsent(STOCK_KEY_PREFIX + coupon.getId(), coupon.getAvailableStock());
+                stringRedisTemplate.opsForValue().setIfAbsent(STOCK_KEY_PREFIX + coupon.getId(), coupon.getAvailableStock().toString());
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             log.info("出现异常防止被xxl-job吞掉：{}", e);
             throw e;
         }

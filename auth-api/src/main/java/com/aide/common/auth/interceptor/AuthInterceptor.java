@@ -1,7 +1,7 @@
 package com.aide.common.auth.interceptor;
 
 
-import com.aide.common.auth.context.UserContext;
+import com.aide.common.exception.ForbiddenException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.stereotype.Component;
@@ -24,21 +24,25 @@ import javax.servlet.http.HttpServletResponse;
 //@Conditional(JwtAuthenticationFilter.class)
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET) //web应用下才生效, 非web应用下不生效,gateway下不生效
 public class AuthInterceptor implements HandlerInterceptor {
+    private static final String USER_ROLE_HEADER = "X-User-Role";
+    private static final String USER_ROLE_ADMIN = "ADMIN";
 
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 从请求中获取用户角色信息
-        String userRole = request.getHeader("user-role");
-        if (userRole != null && userRole.equals("admin")) {
-            return true;
+        String userRole = request.getHeader(USER_ROLE_HEADER);
+        if (userRole == null || !userRole.equalsIgnoreCase(USER_ROLE_ADMIN)) {
+            log.info("用户角色不是admin，无法操作，当前角色是：{}", userRole);
+            throw new ForbiddenException("Admin only"); // 自定义异常
+
         }
-        return false;
+        log.info("当前角色是：{}", userRole);
+        return true;
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
                                 Object handler, Exception ex) throws Exception {
-        UserContext.clear();
     }
 }

@@ -44,4 +44,11 @@ public class GlobalExceptionHandler {
         // 返回统一的失败响应
         return Result.error(message);
     }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public Result<?> handleForbidden(ForbiddenException e) {
+        log.error("实际异常类型: {}", e.getClass().getName());
+        log.error("权限不足", e);
+        return Result.error(e.getMessage());
+    }
 }

@@ -4,6 +4,10 @@
 -- ARGV[2]: 扣减数量（通常为1）
 -- ARGV[3]: 总库存上限（可选，用于初始化检查）
 
+-- debug
+local arg2_raw = ARGV[2]
+redis.log(redis.LOG_WARNING, ">>> DEBUG ARGV[2] RAW VALUE: [" .. tostring(arg2_raw) .. "]")
+
 -- 1. 检查用户是否已经购买过（一人一单）
 local isMember = redis.call('SISMEMBER', KEYS[2], ARGV[1])
 if isMember == 1 then
@@ -11,15 +15,20 @@ if isMember == 1 then
 end
 
 -- 2. 获取当前库存
-local stock = tonumber(redis.call('GET', KEYS[1]))
-if not stock then
-    -- 如果库存 key 不存在，视为售罄或未初始化
-    return -3   -- 返回 -3 表示库存不存在
+-- 先获取原始值
+local rawStock = redis.call('GET', KEYS[1])
+
+-- 显式判断：如果 Key 不存在，rawStock 会是 false
+if not rawStock then
+    return -3
 end
 
--- 3. 判断库存是否充足
-if stock < tonumber(ARGV[2]) then
-    return -1   -- 返回 -1 表示库存不足
+-- 尝试将原始值转换为数字
+local stock = tonumber(rawStock)
+
+-- 如果转换失败（比如存进去的是JSON字符串），stock 会是 nil
+if not stock then
+    return -3
 end
 
 -- 4. 扣减库存（原子操作）
