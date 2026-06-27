@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: rabbitmq
+    restart: always
+    #    restart: unless-stopped  # 生产配置
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: 123456
+    volumes:
+      - /var/rabbitmq/rabbitmq_data:/var/lib/rabbitmq   # 使用绝对路径，生产要调整
+      - /var/rabbitmq/rabbitmq_log:/var/log/rabbitmq
+    networks:
+      - mynet

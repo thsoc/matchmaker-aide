@@ -6,6 +6,9 @@ networks:
     # 如果已有外部网络 mynet，取消下一行注释并删除上一行
     external: true
 
+#volumes:
+#  rabbitmq_data:                            # 声明，Docker 托管
+
 
 services:
 
@@ -53,7 +56,7 @@ services:
       MYSQL_SERVICE_HOST: mysql
       MYSQL_SERVICE_PORT: 3306
       MYSQL_SERVICE_DB_NAME: nacos-config
-      MYSQL_SERVICE_USER: nacos-config
+      MYSQL_SERVICE_USER: root
       MYSQL_SERVICE_PASSWORD: "123456"
     volumes:
       - /var/nacos/logs:/home/nacos/logs
@@ -130,3 +133,24 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+
+
+
+  # ========== rabbitmq ==========
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: rabbitmq
+    command: ["rabbitmq-server"] #因为是非官方镜像，所以需要
+    restart: always
+    #    restart: unless-stopped  # 生产配置
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: 123456
+    volumes:
+      - /var/rabbitmq/rabbitmq_data:/var/lib/rabbitmq   # 使用绝对路径，生产要调整
+      - /var/rabbitmq/rabbitmq_log:/var/log/rabbitmq
+    networks:
+      - mynet

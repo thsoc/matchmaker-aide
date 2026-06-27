@@ -2,7 +2,10 @@
   "registry-mirrors": [
     "https://docker.m.daocloud.io",
     "https://gst6rzl9.mirror.aliyuncs.com",
-    "https://hub-mirror.c.163.com"
+    "https://hub-mirror.c.163.com",
+    "https://docker.xuanyuan.me",
+    "https://docker.1ms.run",
+    "https://docker.m.daocloud.io"
   ],
   "insecure-registries": [],
   "debug": false,

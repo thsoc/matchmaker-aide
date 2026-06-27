@@ -1,0 +1,1 @@
+docker pull docker.m.daocloud.io/library/rabbitmq:3.12-management
