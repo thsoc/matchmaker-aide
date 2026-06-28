@@ -22,6 +22,38 @@ spring:
           # 方式二：显式指定拉取特定的配置文件（例如 abcs.yaml）
           # - optional:nacos:abcs.yaml?refreshEnabled=true
 
+  #MQ配置
+  rabbitmq:
+    host: 192.168.2.20
+    port: 5672
+    username: admin
+    password: 123456
+    virtual-host: /
+    # 生产者
+    publisher-confirm-type: correlated #开启 Confirm
+    publisher-returns: true # 开启 Return（路由失败回调）
+    template:
+      mandatory: true #Return机制生效
+    #消费者
+    listener:
+      simple:
+        acknowledge-mode: manual   # 手动 ACK
+        prefetch: 10               # 每次预取多少条
+        concurrency: 5             # 最小并发消费者数
+        max-concurrency: 20        # 最大并发
+        retry:
+          enabled: true
+          max-attempts: 3
+    # 公共配置
+    cache:
+      connection:
+        mode: channel
+      channel:
+        size: 50
+    connection-timeout: 5000
+
+
+
   jackson:
     generator:
       write_numbers_as_strings: true
@@ -125,6 +157,10 @@ logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
+# 机器id
 app:
   worker-id: ${WORKER_ID:1}
+
+
+
 

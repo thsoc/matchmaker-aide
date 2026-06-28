@@ -4,6 +4,7 @@ import com.aide.adapter.VO.CouponVo;
 import com.aide.adapter.VO.UserCouponVo;
 import com.aide.adapter.dto.UserCouponRequest;
 import com.aide.common.Result.Result;
+import com.aide.common.dto.feign.coupon.CouponInfo;
 import com.aide.service.CouponService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
@@ -51,19 +52,12 @@ public class CouponController {
     }
 
     /**
-     * 定时任务，预热快生效的优惠券，保存到redis,移植到job中
-     * //todo 可使用事件发布(运营在后台点「发布秒杀活动」→ 调用预热接口 → 写 Redis + 初始化库存)
+     * 优惠券详情
      */
-    @PostMapping("/preheatCoupon")
-    public Result<String> preheatCoupon() {
-        return Result.success("预热快生效的优惠券成功");
-    }
-    /**
-     * //todo 优惠券详情
-     */
-    @PostMapping("/getCouponDetail")
-    public Result<String> getCouponDetail() {
-        return Result.success("获取优惠券详情成功");
+    @PostMapping("/getCouponInfo/{id}")
+    public Result<CouponInfo> getCouponDetail(@PathVariable Long id) {
+        CouponInfo info  = couponService.getCouponInfo(id);
+        return Result.success(info);
     }
 
     /**
@@ -82,4 +76,21 @@ public class CouponController {
         couponService.receiveCoupon(id);
         return Result.success("领取优惠券成功");
     }
+
+    /**
+     * @author mazg
+     * @description 用户购买购物券成功
+     * @date 18:48 2026/6/28
+     * @return 
+     **/
+    @PostMapping("/buyCouPon/{id}")
+    public Result<String> buyCouPon(@PathVariable Long id) {
+        if(id == null){
+            return Result.error("优惠券ID不能为空");
+        }
+//        couponService.buyCouPon(id); //todo
+        return Result.success("用户购买购物券成功");
+    }
+
+
 }

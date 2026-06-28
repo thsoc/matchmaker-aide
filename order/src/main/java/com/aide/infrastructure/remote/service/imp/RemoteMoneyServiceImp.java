@@ -1,7 +1,7 @@
 package com.aide.infrastructure.remote.service.imp;
 
 import com.aide.common.Result.Result;
-import com.aide.common.dto.money.DeductRequest;
+import com.aide.common.dto.feign.money.DeductRequest;
 import com.aide.infrastructure.remote.feign.MoneyFeignClient;
 import com.aide.infrastructure.remote.service.RemoteMoneyService;
 import lombok.RequiredArgsConstructor;

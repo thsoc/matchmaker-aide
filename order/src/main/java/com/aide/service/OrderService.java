@@ -1,6 +1,7 @@
 package com.aide.service;
 
-import com.aide.common.dto.order.OrderRequest;
+import com.aide.common.dto.feign.order.OrderRequest;
+import com.aide.common.dto.feign.order.OrderUpdateRequest;
 
 public interface OrderService {
     /**
@@ -13,8 +14,6 @@ public interface OrderService {
     /**
      * 更新订单状态
      *
-     * @param userId  用户ID
-     * @param orderNo 订单编号
      */
-    void changeOrderStatus(Long userId, String orderNo);
+    void changeOrderStatus(OrderUpdateRequest request);
 }

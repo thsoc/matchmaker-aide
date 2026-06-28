@@ -1,6 +1,6 @@
 package com.aide.service.impl;
 
-import com.aide.common.dto.member.MemberTypeConfig;
+import com.aide.common.dto.feign.member.MemberTypeConfig;
 import com.aide.domain.factory.MemberTypeFactory;
 import com.aide.domain.model.MemberDo;
 import com.aide.domain.service.MemberDomainService;

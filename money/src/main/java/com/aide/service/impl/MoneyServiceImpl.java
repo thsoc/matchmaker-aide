@@ -5,7 +5,7 @@ import com.aide.adapter.converter.RechargeRecordConverter;
 import com.aide.adapter.dto.RechargeRequestDTO;
 import com.aide.adapter.dto.RechargeResponseDTO;
 import com.aide.common.auth.context.UserContext;
-import com.aide.common.dto.money.DeductRequest;
+import com.aide.common.dto.feign.money.DeductRequest;
 import com.aide.common.exception.MoneyException;
 import com.aide.domain.event.PaymentFailureEvent;
 import com.aide.domain.event.PaymentSuccessEvent;

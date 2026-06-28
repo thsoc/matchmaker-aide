@@ -1,7 +1,7 @@
 package com.aide.domain.strategy.impl;
 
 
-import com.aide.common.dto.member.MemberTypeConfig;
+import com.aide.common.dto.feign.member.MemberTypeConfig;
 import com.aide.domain.strategy.MemberTypeStrategy;
 import org.springframework.stereotype.Component;
 

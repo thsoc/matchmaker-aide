@@ -2,7 +2,7 @@ package com.aide.infrastructure.remote.feign;
 
 
 import com.aide.common.Result.Result;
-import com.aide.common.dto.money.DeductRequest;
+import com.aide.common.dto.feign.money.DeductRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

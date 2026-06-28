@@ -95,12 +95,23 @@
             <artifactId>common-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.springcloud</groupId>
+            <artifactId>common-mq</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- 添加认证模块 -->
         <dependency>
             <groupId>com.springcloud</groupId>
             <artifactId>auth-api</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <!-- 底座：Spring AMQP，必选 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
     </dependencies>
 </project>

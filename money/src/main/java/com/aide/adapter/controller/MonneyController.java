@@ -3,7 +3,7 @@ package com.aide.adapter.controller;
 import com.aide.adapter.dto.RechargeRequestDTO;
 import com.aide.adapter.dto.RechargeResponseDTO;
 import com.aide.common.Result.Result;
-import com.aide.common.dto.money.DeductRequest;
+import com.aide.common.dto.feign.money.DeductRequest;
 import com.aide.common.exception.MoneyException;
 import com.aide.domain.service.PaymentContext;
 import com.aide.service.MoneyService;

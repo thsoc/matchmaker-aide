@@ -7,6 +7,7 @@ import com.aide.adapter.dto.UserCouponRequest;
 import com.aide.common.auth.context.UserContext;
 import com.aide.common.domain.IClock;
 import com.aide.common.domain.SystemClock;
+import com.aide.common.dto.feign.coupon.CouponInfo;
 import com.aide.common.util.PageUtil;
 import com.aide.domain.model.CouponDo;
 import com.aide.domain.model.UserCouponDo;
@@ -126,6 +127,12 @@ public class CouponServiceImpl implements CouponService {
             advanceTime = Integer.parseInt(param);
         }
         couponRedisRepository.preheatCoupon(advanceTime);
+    }
+
+    @Override
+    public CouponInfo getCouponInfo(Long id) {
+        CouponInfo info = couponDomainService.getCouponInfo(id);
+        return info;
     }
 
 

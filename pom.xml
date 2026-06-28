@@ -28,6 +28,7 @@
         <module>points</module>
         <module>aide-sharding-sdk</module>
         <module>auth-api</module>
+        <module>common-mq</module>
     </modules>
 
     <properties>

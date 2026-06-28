@@ -2,7 +2,7 @@ package com.aide.domain.factory;
 
 
 
-import com.aide.common.dto.member.MemberTypeConfig;
+import com.aide.common.dto.feign.member.MemberTypeConfig;
 import com.aide.domain.strategy.MemberTypeStrategy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

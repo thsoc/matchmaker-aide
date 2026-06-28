@@ -1,6 +1,6 @@
 package com.aide.domain.model;
 
-import com.aide.common.dto.member.MemberTypeConfig;
+import com.aide.common.dto.feign.member.MemberTypeConfig;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

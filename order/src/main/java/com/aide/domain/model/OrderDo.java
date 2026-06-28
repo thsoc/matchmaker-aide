@@ -89,7 +89,6 @@ public class OrderDo {
         this.createTime = LocalDateTime.now();
         this.updateTime = LocalDateTime.now();
         this.status = "1";
-        this.remark = "购买会员";
         this.createBy = this.userId.toString();
         this.updateBy = this.userId.toString();
     }

@@ -30,5 +30,6 @@ CREATE TABLE `aide_order` (
   `reserved8` INT DEFAULT NULL COMMENT '预留字段8',
   PRIMARY KEY (`id`),
   KEY `idx_create_time` (`create_time`),
-  KEY `idx_delete_time` (`delete_time`)
+  KEY `idx_delete_time` (`delete_time`),
+  UNIQUE (order_no)  -- 保证消费消息的幂等性
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单表';

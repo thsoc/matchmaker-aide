@@ -3,12 +3,12 @@ package com.aide.domain.service;
 import com.aide.adapter.dto.CouponRequest;
 import com.aide.common.auth.context.UserContext;
 import com.aide.common.domain.IClock;
+import com.aide.common.dto.feign.coupon.CouponInfo;
 import com.aide.common.util.PageUtil;
 import com.aide.domain.model.CouponDo;
 import com.aide.domain.repository.CouponRedisRepository;
 import com.aide.domain.repository.CouponRepository;
 import com.aide.infrastructure.persistence.entity.Coupon;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,5 +57,10 @@ public class CouponDomainService {
         //1.一人一单， 2.库存-1
         //执行lua脚本
         couponRedisRepository.deduceCoupon(id, userId);
+    }
+
+    public CouponInfo getCouponInfo(Long id) {
+        CouponInfo info = couponRepository.getCouponInfo(id);
+        return info;
     }
 }

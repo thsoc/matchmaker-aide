@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.springcloud</groupId>
+        <artifactId>matchmaker-aide</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>common-mq</artifactId>
+    <packaging>jar</packaging>
+    <name>common-mq</name>
+    <description>通用消息队列公共模块</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <!-- 版本由 spring-boot-dependencies BOM 管，不用写 -->
+        </dependency>
+        <!-- 只引 spring-amqp，不引 starter-amqp -->
+        <!-- Queue/Exchange/Binding/DirectExchange 这些类型都在这里 -->
+        <dependency>
+            <groupId>org.springframework.amqp</groupId>
+            <artifactId>spring-amqp</artifactId>
+            <!-- Boot parent 已锁版本 2.4.17，不用写 -->
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.amqp</groupId>
+            <artifactId>spring-rabbit</artifactId>
+            <!-- @RabbitListener、@Exchange/@Queue 注解在 spring-rabbit 里，
+                 如果 RabbitConfig 用 @RabbitListener 相关或 @Exchange 注解，
+                 需要这个；纯 @Bean 声明 Queue/Exchange/Binding 只用 spring-amqp 就够了。
+                 保险起见加上 -->
+        </dependency>
+
+        <!-- amqp-client 是 spring-amqp 的传递依赖，显式锁一下更稳 -->
+        <dependency>
+            <groupId>com.rabbitmq</groupId>
+            <artifactId>amqp-client</artifactId>
+        </dependency>
+
+        <!-- DTO 用的 Lombok → 编译期 -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- DTO 上的 @JsonProperty 等 → 编译期 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+
+<!--        &lt;!&ndash; 底座：Spring AMQP &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-amqp</artifactId>-->
+<!--        </dependency>-->
+
+<!--        &lt;!&ndash; Spring Cloud Stream + RabbitMQ Binder（可选，做消息驱动微服务用） &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.cloud</groupId>-->
+<!--            <artifactId>spring-cloud-starter-stream-rabbit</artifactId>-->
+<!--        </dependency>-->
+
+<!--        &lt;!&ndash; Spring Cloud Bus（可选，做配置动态刷新用） &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.cloud</groupId>-->
+<!--            <artifactId>spring-cloud-starter-bus-amqp</artifactId>-->
+<!--        </dependency>-->
+    </dependencies>
+</project>

@@ -1,6 +1,8 @@
 package com.aide.domain.service;
 
 import com.aide.adapter.converter.OrderVoConverter;
+import com.aide.common.dto.type.OrderStatusEnum;
+import com.aide.common.dto.type.OrderTypeEnum;
 import com.aide.domain.model.OrderDo;
 import com.aide.domain.repository.OrderRepository;
 import com.aide.util.ImprovedSnowflakeGenerator;
@@ -31,7 +33,7 @@ public class OrderDomainService {
      * @return 
      **/
     public String createOrder(Long userId, Integer orderType, BigDecimal amount, String description) {
-
+        // todo 幂等性有orderNo唯一来判断，也可以在这边查询在判断
         log.info("创建订单，用户ID: {}, 订单类型: {}, 金额: {}, 描述: {}", userId, orderType, amount, description);
         //将订单转换为领域对象
         OrderDo orderDo = orderVoConverter.fromOrderRequest(userId, orderType, amount, description);
@@ -64,9 +66,19 @@ public class OrderDomainService {
             log.error("订单不存在，订单编号: {}", orderDo.getOrderNo());
             throw new RuntimeException("订单不存在");
         }
-        if (!orderDo.getStatus().equals("1")) {
+        // 校验幂等
+        if (!orderDo.getStatus().equals(OrderStatusEnum.PENDING_PAYMENT.getCode())) {
             log.error("订单状态错误，订单编号: {}, 订单状态: {}", orderDo.getOrderNo(), orderDo.getStatus());
             throw new RuntimeException("订单状态错误");
         }
+    }
+
+    public OrderDo getOrderDo(String orderNo) {
+        //查询订单是否存在
+        OrderDo orderDo = orderRepository.getOrderByOrderNo(orderNo);
+        //获取订单详情
+        //判断订单状态
+        checkOrderStatus(orderDo);
+        return orderDo;
     }
 }

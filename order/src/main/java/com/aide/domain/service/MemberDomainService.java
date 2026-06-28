@@ -1,14 +1,11 @@
 package com.aide.domain.service;
 
 import com.aide.common.Result.Result;
-import com.aide.common.dto.member.MemberTypeConfig;
+import com.aide.common.dto.feign.member.MemberTypeConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.aide.infrastructure.remote.service.RemoteMemberService;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 /**

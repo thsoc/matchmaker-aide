@@ -1,6 +1,7 @@
 package com.aide.domain.repository;
 
 
+import com.aide.common.dto.feign.coupon.CouponInfo;
 import com.aide.domain.model.CouponDo;
 import com.aide.infrastructure.persistence.entity.Coupon;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -22,4 +23,5 @@ public interface CouponRepository {
 
     Page<CouponDo> getPageCoupon(Page<Coupon> objectPage, CouponDo couponDo);
 
+    CouponInfo getCouponInfo(Long id);
 }

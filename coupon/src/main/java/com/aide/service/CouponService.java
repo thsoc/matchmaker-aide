@@ -4,6 +4,7 @@ import com.aide.adapter.VO.CouponVo;
 import com.aide.adapter.VO.UserCouponVo;
 import com.aide.adapter.dto.CouponRequest;
 import com.aide.adapter.dto.UserCouponRequest;
+import com.aide.common.dto.feign.coupon.CouponInfo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 public interface CouponService {
@@ -22,4 +23,6 @@ public interface CouponService {
     void receiveCoupon(Long id);
 
     void preheatCoupon(String param);
+
+    CouponInfo getCouponInfo(Long id);
 }

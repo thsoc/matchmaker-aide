@@ -5,7 +5,7 @@ import org.springframework.context.ApplicationEvent;
 
 /**
  * @author mazg
- * @description TODO
+ * @description 购买优惠券后事件对象
  * @date 2026/6/23
  * @date 15:35
  */

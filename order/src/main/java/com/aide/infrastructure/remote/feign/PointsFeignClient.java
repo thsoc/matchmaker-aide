@@ -1,7 +1,7 @@
 package com.aide.infrastructure.remote.feign;
 
 
-import com.aide.common.dto.points.AddPointsRequest;
+import com.aide.common.dto.feign.points.AddPointsRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

@@ -2,7 +2,7 @@ package com.aide.infrastructure.remote.feign;
 
 
 import com.aide.common.Result.Result;
-import com.aide.common.dto.member.MemberTypeConfig;
+import com.aide.common.dto.feign.member.MemberTypeConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

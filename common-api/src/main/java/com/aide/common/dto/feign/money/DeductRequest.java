@@ -1,4 +1,4 @@
-package com.aide.common.dto.money;
+package com.aide.common.dto.feign.money;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

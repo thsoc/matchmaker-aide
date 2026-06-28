@@ -1,6 +1,6 @@
 package com.aide.service.impl;
 
-import com.aide.common.dto.points.AddPointsRequest;
+import com.aide.common.dto.feign.points.AddPointsRequest;
 import com.aide.adapter.converter.PointsVoConverter;
 import com.aide.domain.model.PointsDo;
 import com.aide.domain.service.PointsDomainService;
@@ -28,6 +28,7 @@ public class PointsServiceImpl implements PointsService {
     public void addPoints(AddPointsRequest addPointsRequest) {
         log.info("会员服务开始发放积分,用户id:{}，发放积分是：{}", addPointsRequest.getUserId(), addPointsRequest.getPoints());
 
+        // todo 这边需要一个唯一标识来保证幂等性
         //转换成领域对象
         PointsDo pointsDo = pointsVoConverter.fromAddPointsRequest(addPointsRequest);
 

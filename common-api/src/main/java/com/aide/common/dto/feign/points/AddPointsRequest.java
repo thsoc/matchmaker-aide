@@ -1,4 +1,4 @@
-package com.aide.common.dto.points;
+package com.aide.common.dto.feign.points;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

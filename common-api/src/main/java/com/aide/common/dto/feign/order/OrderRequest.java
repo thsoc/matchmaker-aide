@@ -1,4 +1,4 @@
-package com.aide.common.dto.order;
+package com.aide.common.dto.feign.order;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 
 /**
  * @author mazg
- * @description 订单请求参数
+ * @description 订单创建请求参数
  * @date 2026/6/14
  * @date 13:16
  */
@@ -22,11 +22,12 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderRequest {
-    @NotNull(message = "用户ID不能为空")
+    private Long id;
+
     private Long userId;
 
     /**
-     * 订单类型：1-会员购买
+     * 订单类型：1-会员购买,2-抢购优惠券
      */
     @NotNull(message = "订单类型不能为空")
     @Min(value = 1, message = "订单类型不能小于1")

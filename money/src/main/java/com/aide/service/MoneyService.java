@@ -2,7 +2,7 @@ package com.aide.service;
 
 import com.aide.adapter.dto.RechargeRequestDTO;
 import com.aide.adapter.dto.RechargeResponseDTO;
-import com.aide.common.dto.money.DeductRequest;
+import com.aide.common.dto.feign.money.DeductRequest;
 import com.aide.common.exception.MoneyException;
 
 /**

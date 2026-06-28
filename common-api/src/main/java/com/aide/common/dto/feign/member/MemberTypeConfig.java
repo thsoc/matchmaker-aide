@@ -1,4 +1,4 @@
-package com.aide.common.dto.member;
+package com.aide.common.dto.feign.member;
 
 
 import lombok.AllArgsConstructor;

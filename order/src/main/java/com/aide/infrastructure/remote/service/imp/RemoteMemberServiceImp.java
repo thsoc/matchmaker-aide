@@ -1,7 +1,7 @@
 package com.aide.infrastructure.remote.service.imp;
 
 import com.aide.common.Result.Result;
-import com.aide.common.dto.member.MemberTypeConfig;
+import com.aide.common.dto.feign.member.MemberTypeConfig;
 import com.aide.infrastructure.remote.feign.MemberFeignClient;
 import com.aide.infrastructure.remote.service.RemoteMemberService;
 import lombok.RequiredArgsConstructor;

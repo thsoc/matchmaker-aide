@@ -1,6 +1,6 @@
 package com.aide.adapter.controller;
 
-import com.aide.common.dto.points.AddPointsRequest;
+import com.aide.common.dto.feign.points.AddPointsRequest;
 import com.aide.common.Result.Result;
 import com.aide.service.PointsService;
 import lombok.RequiredArgsConstructor;
