@@ -1,6 +1,6 @@
 package com.aide.infrastructure.persistence.repository;
 
-import com.aide.common.constant.coupon.Constant;
+import com.aide.common.constant.Constant;
 import com.aide.common.dto.feign.coupon.CouponInfo;
 import com.aide.domain.model.CouponDo;
 import com.aide.domain.repository.CouponRepository;
@@ -13,7 +13,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;

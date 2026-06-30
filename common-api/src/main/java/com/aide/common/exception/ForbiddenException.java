@@ -1,6 +1,7 @@
 package com.aide.common.exception;
 
 
+import com.aide.common.Result.BizCodeEnum;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -13,24 +14,24 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.FORBIDDEN) // 可选注解，简化全局处理
 public class ForbiddenException extends RuntimeException {
 
-    private final int code;
+    private final BizCodeEnum bizCodeEnum;
 
     public ForbiddenException() {
         super("Forbidden");
-        this.code = HttpStatus.FORBIDDEN.value();
+        this.bizCodeEnum = BizCodeEnum.NO_PERMISSION;
     }
 
     public ForbiddenException(String message) {
         super(message);
-        this.code = HttpStatus.FORBIDDEN.value();
+        this.bizCodeEnum = BizCodeEnum.NO_PERMISSION;
     }
 
     public ForbiddenException(String message, Throwable cause) {
         super(message, cause);
-        this.code = HttpStatus.FORBIDDEN.value();
+        this.bizCodeEnum = BizCodeEnum.NO_PERMISSION;
     }
 
-    public int getCode() {
-        return code;
+    public BizCodeEnum getCode() {
+        return bizCodeEnum;
     }
 }

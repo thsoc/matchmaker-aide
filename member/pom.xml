@@ -169,5 +169,10 @@
             <artifactId>shardingsphere-transaction-base-seata-at</artifactId>
             <version>${shardingsphere-transaction-base-seata-at.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-sleuth</artifactId>
+        </dependency>
     </dependencies>
 </project>

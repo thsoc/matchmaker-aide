@@ -49,10 +49,10 @@ public class BalanceStrategy implements OrderPayStrategy {
         //扣款
         log.info("开始扣款，用户ID: {}, 金额: {}", userId, orderDo.getAmount());
         Result result = moneyDomainService.deductMoney(userId, orderDo.getAmount(), "下单");
-        if (!result.isSuccess()) {
-            log.error("扣款失败，用户ID: {}, 金额: {}", userId, orderDo.getAmount());
-            throw new RuntimeException("扣款失败");
-        }
+//        if (!result.isSuccess()) {
+//            log.error("扣款失败，用户ID: {}, 金额: {}", userId, orderDo.getAmount());
+//            throw new RuntimeException("扣款失败");
+//        }
 
         OrderServiceStrategy strategy = orderTypeFactory.getStrategy(OrderTypeEnum.getByCode(orderDo.getOrderType()));
         strategy.nextStep(orderDo);

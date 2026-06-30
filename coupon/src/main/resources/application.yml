@@ -4,6 +4,12 @@ server:
 spring:
   application:
     name: coupon-service
+#  zipkin:
+#    base-url: http://localhost:9411 #上报
+  sleuth:
+    sampler:
+      probability: 1.0
+
   cloud:
     nacos:
       # 确保这里的地址是实际 Nacos 服务器的地址
@@ -21,6 +27,22 @@ spring:
 
           # 方式二：显式指定拉取特定的配置文件（例如 abcs.yaml）
           # - optional:nacos:abcs.yaml?refreshEnabled=true
+
+#    openfeign支持sentinel
+    openfeign:
+      sentinel:
+        enabled: true
+    sentinel:
+      datasource:
+        flow:
+          nacos:
+            server-addr: 192.168.2.20:8848
+            data-id: ${spring.application.name}-flow-rules
+            group-id: SENTINEL_GROUP
+            rule-type: flow
+      transport:
+        dashboard: 192.168.2.20:8080   # 控制台地址
+      eager: true                   # 取消懒加载，启动即注册（默认首次请求才注册）
 
   jackson:
     generator:
@@ -126,6 +148,7 @@ logging:
   file:
     name: logs/coupon-service.log
   pattern:
+    level: "%5p [${spring.application.name},%X{traceId:-}]"
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
 ##################################### xxl执行器配置 #####################################

@@ -2,7 +2,7 @@ package com.aide.service.impl;
 
 import com.aide.common.Result.Result;
 import com.aide.common.auth.context.UserContext;
-import com.aide.common.constant.coupon.Constant;
+import com.aide.common.constant.Constant;
 import com.aide.common.dto.feign.coupon.CouponInfo;
 import com.aide.common.dto.feign.order.OrderRequest;
 import com.aide.common.dto.type.OrderTypeEnum;
@@ -66,9 +66,9 @@ public class OrderBuyCouponImp implements OrderServiceStrategy {
         //todo 应该有个订单详情保存优惠券id，这边放在描述中
         Result result = remoteCouponService.buyCouPon(Long.valueOf(orderDo.getDescription()));
         log.info("创建用户优惠券，用户ID: {}",  UserContext.getUserId());
-        if (!result.isSuccess()){
-            log.error("创建用户优惠券，用户ID: {}", UserContext.getUserId());
-            throw new RuntimeException("创建用户优惠券");
-        }
+//        if (!result.isSuccess()){
+//            log.error("创建用户优惠券，用户ID: {}", UserContext.getUserId());
+//            throw new RuntimeException("创建用户优惠券");
+//        }
     }
 }

@@ -2,6 +2,7 @@ package com.aide.infrastructure.remote.feign;
 
 
 import com.aide.common.dto.feign.points.AddPointsRequest;
+import com.aide.infrastructure.remote.fallback.PointFeignClientFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 /**
  * 积分服务Feign客户端
  */
-@FeignClient(name = "points-service", path = "/points")
+@FeignClient(name = "points-service", path = "/points", fallbackFactory = PointFeignClientFallbackFactory.class)
 public interface PointsFeignClient {
 
     /**

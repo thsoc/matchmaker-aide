@@ -1,0 +1,21 @@
+//resource 是服务内部的地址不是页面访问的地址
+[
+  {
+    "resource": "/order/create",
+    "limitApp": "default",
+    "grade": 1,
+    "count": 100,
+    "strategy": 0,
+    "controlBehavior": 0,
+    "clusterMode": false
+  },
+  {
+    "resource": "createOrder",
+    "limitApp": "default",
+    "grade": 1,
+    "count": 50,
+    "strategy": 0,
+    "controlBehavior": 0,
+    "clusterMode": false
+  }
+]

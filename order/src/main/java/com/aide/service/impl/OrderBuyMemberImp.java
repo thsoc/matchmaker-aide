@@ -67,10 +67,10 @@ public class OrderBuyMemberImp implements OrderServiceStrategy {
         //todo 应该有个订单详情保存会员类型，这边放在描述中
         Result memberResult = memberDomainService.createMember(userId, Integer.valueOf(orderDo.getDescription()), orderDo.getAmount());
         log.info("创建用户优惠券，用户ID: {}", userId);
-        if (!memberResult.isSuccess()){
-            log.error("创建用户优惠券，用户ID: {}", userId);
-            throw new RuntimeException("创建用户优惠券");
-        }
+//        if (!memberResult.isSuccess()){
+//            log.error("创建用户优惠券，用户ID: {}", userId);
+//            throw new RuntimeException("创建用户优惠券");
+//        }
     }
 
 }

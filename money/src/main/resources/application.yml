@@ -2,6 +2,11 @@ server:
   port: 8082
 
 spring:
+  #  zipkin:
+  #    base-url: http://localhost:9411 #上报
+  sleuth:
+    sampler:
+      probability: 1.0
   application:
     name: money-service
   cloud:
@@ -150,6 +155,7 @@ logging:
   file:
     name: logs/money-service.log
   pattern:
+    level: "%5p [${spring.application.name},%X{traceId:-}]"
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
 
