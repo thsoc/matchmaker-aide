@@ -10,7 +10,16 @@
     "clusterMode": false
   },
   {
-    "resource": "createOrder",
+    "resource": "/createOrder",
+    "limitApp": "default",
+    "grade": 1,
+    "count": 50,
+    "strategy": 0,
+    "controlBehavior": 0,
+    "clusterMode": false
+  },
+  {
+    "resource": "/buyCouPon",
     "limitApp": "default",
     "grade": 1,
     "count": 50,
