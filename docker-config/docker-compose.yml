@@ -154,3 +154,18 @@ services:
       - /var/rabbitmq/rabbitmq_log:/var/log/rabbitmq
     networks:
       - mynet
+
+  # ========== sentinel dashboard ==========
+  sentinel:
+    image: bladex/sentinel-dashboard:1.8.6
+    container_name: sentinel-dashboard
+    ports:
+      - "8858:8858"
+    environment:
+      TZ: Asia/Shanghai
+      JAVA_OPTS: >-
+        -Dsentinel.dashboard.auth.username=sentinel
+        -Dsentinel.dashboard.auth.password=sentinel
+    restart: always
+    networks:
+      - mynet

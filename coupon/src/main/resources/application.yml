@@ -34,7 +34,7 @@ spring:
         enabled: true
     sentinel:
       datasource:
-        flow:
+        flow-ds1:
           nacos:
             server-addr: 192.168.2.20:8848
             data-id: ${spring.application.name}-flow-rules
