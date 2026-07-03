@@ -69,3 +69,7 @@ openfeign调用api需要的对象
 优惠券领取->mq创建订单
 
 
+# 流程
+![img.png](img.png)
+
+
